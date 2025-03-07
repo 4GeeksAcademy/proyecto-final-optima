@@ -136,3 +136,77 @@ def signup():
     db.session.add(new_user)
     db.session.commit()
     return jsonify({"msg": "user created"}), 201
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# endpoint delete cuenta (de gastos)
+@api.route("/accounts/<int:account_id>", methods=["DELETE"])
+def delete_account(account_id):
+    try:
+        account = Accounts.query.get(account_id)
+        if not account:
+            return jsonify({"msg": "account not found"}), 404
+
+        db.session.delete(account)
+        db.session.commit()
+        return jsonify({"msg": "account deleted"}), 200
+    except:
+        return jsonify({"msg": "internal server error"}), 500
