@@ -151,6 +151,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						body: JSON.stringify(formData)
 					});
 					const result = await response.json();
+					console.log(result)
 
 					if (response.status === 201) {
 						return { success: true, message: "Successfully registered" };
