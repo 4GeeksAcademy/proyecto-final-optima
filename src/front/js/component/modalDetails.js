@@ -65,7 +65,7 @@ export const ModalDetails = () => {
         };
 
     }
-    const addItem = () => {
+    const addAccountDetail = () => {
         if (inputValue.detail.length != 0 && inputValue.type != "" && inputValue.amount != 0) {
             createAccount(inputValue)
             setInputValue({
@@ -318,7 +318,7 @@ export const ModalDetails = () => {
                                 </div>
                             </>}
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={addItem}>
+                            <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={addAccountDetail}>
                                 Agregar
                             </button>
                             <button type="button" className="btn btn-danger" data-bs-dismiss="modal">
