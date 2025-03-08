@@ -29,7 +29,8 @@ const Layout = () => {
                 <Route element={<Login />} path="/" />
                 <Route element={<Demo />} path="/demo" />
                 <Route element={<PrincipalPage />} path="/cuentas" />
-                <Route element={<PrincipalPage />} path="/movimientos" />                
+                <Route element={<PrincipalPage />} path="/cuentas/:id" />                
+                <Route element={<PrincipalPage />} path="/movimientos" />
                 <Route element={<SignupForm />} path="/registro" />
                 <Route element={<Single />} path="/single/:theid" />
                 <Route element={<NotFound/>} path="*" />
