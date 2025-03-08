@@ -5,3 +5,49 @@
 	border-radius: 25%;
 	font-size: 1.8rem;
 }
+/* Contenedor compacto estilo Bootstrap */
+.toggle-container {
+    display: flex;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid var(--primary);
+    width: fit-content;
+    margin: auto;
+}
+
+/* Ocultar inputs */
+.hidden {
+    display: none;
+}
+
+/* Botones alineados */
+.toggle-option {
+    padding: 10px 20px;
+    font-family: "Anton", sans-serif;
+    font-size: 16px;
+    cursor: pointer;
+    text-transform: uppercase;
+    background-color: var(--gray-light);
+    color: var(--primary);
+    border: none;
+    flex: 1;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+/* Separador entre botones */
+.toggle-option:not(:last-child) {
+    border-right: 2px solid var(--primary);
+}
+
+/* Botón activo */
+.toggle-option.active {
+    background-color: var(--primary);
+    color: white;
+}
+
+/* Hover */
+.toggle-option:hover {
+    background-color: var(--gray-dark);
+    color: white;
+}

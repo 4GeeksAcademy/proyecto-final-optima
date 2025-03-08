@@ -20,8 +20,6 @@ export const PrincipalPage = () => {
         if (!store.auth) {
             navigate("/");
         }
-        console.log(path);
-
     }, []);
 
     if (!store.auth) {

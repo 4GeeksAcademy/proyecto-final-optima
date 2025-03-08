@@ -1,12 +1,11 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
-
+import Swal from 'sweetalert2'
 import "../../styles/modal.css";
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 
 const useStyles = makeStyles((theme) => ({
-
     container: {
         display: 'flex',
         flexWrap: 'wrap',
@@ -19,33 +18,36 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const ModalDetails = () => {
-    const [currentDateTime, setCurrentDateTime] = useState("");
+    const [currentDate, setCurrentDate] = useState("");
+    const [currentTime, setCurrentTime] = useState("");
     const { store, actions } = useContext(Context)
-    const [showBalance, setShowBalance] = useState(true)
     const classes = useStyles();
+    const [balanceType, setBalanceType] = useState("egreso");
 
-    const toggleBalance = () => {
-        console.log("prueba en consola");
-
-        let toggle = !showBalance
-        setShowBalance(toggle);
-    }
+    const handleBalanceChange = (type) => {
+        setBalanceType(type);
+    };
 
     const [inputValue, setInputValue] = useState({
-        name: "",
-        balance: 0,
+        detail: "",
+        amount: 0,
         coin: "",
-        type: ""
+        type: "",
+        date: "",
+        time: ""
     });
+
     async function createAccount(body) {
         const myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
 
         const raw = JSON.stringify({
-            "name": body.name,
-            "balance": body.balance,
+            "detail": body.detail,
+            "amount": body.amount,
             "coin": body.coin,
-            "type": body.type
+            "type": body.type,
+            "date": body.date,
+            "time": body.time
         });
 
         const requestOptions = {
@@ -56,42 +58,68 @@ export const ModalDetails = () => {
         };
 
         try {
-            const response = await fetch(`${process.env.BACKEND_URL}/api/${store.user.id}/new-account`, requestOptions);
-            const result = await response.text();
+            const response = await fetch(`${process.env.BACKEND_URL}/api/new-account-detail/1`, requestOptions);
+            const result = await response.json();
         } catch (error) {
             console.error(error);
         };
 
     }
     const addItem = () => {
-        if (inputValue.name.length != 0 && inputValue.type != "") {
+        if (inputValue.detail.length != 0 && inputValue.type != "" && inputValue.amount != 0) {
             createAccount(inputValue)
             setInputValue({
-                name: "",
-                balance: 0,
+                detail: "",
+                amount: 0,
                 coin: "",
-                type: ""
+                type: "",
+                date: currentDate,
+                time: currentTime
             });
-            alert("Se ingresó todo correctamente")
+            Swal.fire({
+                title: "Movimiento registrado con éxito",
+                icon: "success"
+            });
         } else {
-            alert(
-                "------------------------INFORMACIÓN INCOMPLETA-------------------- RECUERDA ESCRIBIR UN NOMBRE, ESCOGER UN TIPO E INTRODUCIR UNA CANTIDAD DE MAXIMO 10 UNIDADES"
-            );
+            Swal.fire({
+                title: 'Error!',
+                text: 'Campos incompletos, asegúrate de escribir toda la información',
+                icon: 'error',
+                confirmButtonText: 'Volver'
+            })
         }
     };
     const handleChange = (e) => {
         const { name, value } = e.target;
         setInputValue({ ...inputValue, [name]: value });
+        if (name === "date") setCurrentDate(value);
+        if (name === "time") setCurrentTime(value);
     };
+    const handleClick = () => {
+        setInputValue({
+            detail: "",
+            amount: 0,
+            coin: "",
+            type: "",
+            date: currentDate,
+            time: currentTime
+        })
+    }
     useEffect(() => {
         const now = new Date();
-        now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); // Ajusta la zona horaria
-        const formattedDateTime = now.toISOString().slice(0, 16); // "YYYY-MM-DDTHH:mm"
-        setCurrentDateTime(formattedDateTime);
+        const formattedDate = now.toISOString().split("T")[0];
+        const formattedTime = now.toLocaleTimeString("es-ES", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+        });
+
+        setCurrentDate(formattedDate);
+        setCurrentTime(formattedTime);
     }, []);
     return (
         <>
-            <button type="button" className="add-item btn btn-secondary btn-modal" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            <button type="button" className="add-item btn btn-secondary btn-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" onClick={handleClick}>
                 <i className="bi bi-plus-lg"></i>
             </button>
             <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -103,13 +131,32 @@ export const ModalDetails = () => {
                             </h1>
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <div className="btn-group" role="group" aria-label="Basic radio toggle button group">
-                            <input type="radio" className="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked />
-                            <label className="btn btn-outline-primary" htmlFor="btnradio1" onClick={toggleBalance}>Egreso</label>
-                            <input type="radio" className="btn-check" name="btnradio" id="btnradio2" autocomplete="off" />
-                            <label className="btn btn-outline-primary" htmlFor="btnradio2" onClick={toggleBalance}>Ingreso</label>
+                        <div className="toggle-container mt-2">
+                            <input
+                                type="radio"
+                                id="btnradio1"
+                                name="btnradio"
+                                checked={balanceType === "egreso"}
+                                onChange={() => handleBalanceChange("egreso")}
+                                className="hidden"
+                            />
+                            <label htmlFor="btnradio1" className={`toggle-option ${balanceType === "egreso" ? "active" : ""}`}>
+                                Egreso
+                            </label>
+
+                            <input
+                                type="radio"
+                                id="btnradio2"
+                                name="btnradio"
+                                checked={balanceType === "ingreso"}
+                                onChange={() => handleBalanceChange("ingreso")}
+                                className="hidden"
+                            />
+                            <label htmlFor="btnradio2" className={`toggle-option ${balanceType === "ingreso" ? "active" : ""}`}>
+                                Ingreso
+                            </label>
                         </div>
-                        {showBalance ?
+                        {balanceType === "egreso" ?
                             <>
                                 <div className="modal-body d-flex gap-5">
                                     <input
@@ -126,7 +173,7 @@ export const ModalDetails = () => {
                                         type="text"
                                         className="form-control w-25"
                                         placeholder="Monto"
-                                        value={inputValue.balance}
+                                        value={inputValue.amount}
                                         aria-label="Amount"
                                         name="amount"
                                         required
@@ -167,6 +214,29 @@ export const ModalDetails = () => {
                                         <option value="mascota">Mascota</option>
                                         <option value="otros">Otros</option>
                                     </select>
+                                    <div className="px-5 pb-3">
+                                        <form className={classes.container} noValidate>
+                                            <TextField
+                                                id="date"
+                                                name="date"
+                                                label="Fecha"
+                                                type="date"
+                                                value={currentDate}
+                                                onChange={handleChange}
+                                                InputLabelProps={{ shrink: true }}
+                                            />
+                                            <TextField
+                                                id="time"
+                                                name="time"
+                                                label="Hora"
+                                                type="time"
+                                                value={currentTime}
+                                                onChange={handleChange}
+                                                InputLabelProps={{ shrink: true }}
+                                                style={{ marginLeft: "10px" }}
+                                            />
+                                        </form>
+                                    </div>
                                 </div>
                             </>
                             :
@@ -222,20 +292,29 @@ export const ModalDetails = () => {
                                         <option value="transferencia">Transferencia</option>
                                         <option value="Otros">Otros</option>
                                     </select>
-                                </div>
-                                <div className="px-5 pb-3">
-                                    <form className={classes.container} noValidate>
-                                        <TextField
-                                            id="datetime-local"
-                                            label="Next appointment"
-                                            type="datetime-local"
-                                            value={currentDateTime} // Se establece la fecha y hora actual
-                                            onChange={(e) => setCurrentDateTime(e.target.value)} // Permite edición
-                                            InputLabelProps={{
-                                                shrink: true,
-                                            }}
-                                        />
-                                    </form>
+                                    <div className="px-5 pb-3">
+                                        <form className={classes.container} noValidate>
+                                            <TextField
+                                                id="date"
+                                                name="date"
+                                                label="Fecha"
+                                                type="date"
+                                                value={currentDate}
+                                                onChange={handleChange}
+                                                InputLabelProps={{ shrink: true }}
+                                            />
+                                            <TextField
+                                                id="time"
+                                                name="time"
+                                                label="Hora"
+                                                type="time"
+                                                value={currentTime}
+                                                onChange={handleChange}
+                                                InputLabelProps={{ shrink: true }}
+                                                style={{ marginLeft: "10px" }}
+                                            />
+                                        </form>
+                                    </div>
                                 </div>
                             </>}
                         <div className="modal-footer">
