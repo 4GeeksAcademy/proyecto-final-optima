@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Accounts
+from api.models import db, User, Accounts, Account_details
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required,verify_jwt_in_request, decode_token
@@ -136,3 +136,6 @@ def signup():
     db.session.add(new_user)
     db.session.commit()
     return jsonify({"msg": "user created"}), 201
+
+#nuevo endpoint
+
