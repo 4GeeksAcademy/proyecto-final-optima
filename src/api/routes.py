@@ -210,3 +210,25 @@ def delete_account(account_id):
         return jsonify({"msg": "account deleted"}), 200
     except:
         return jsonify({"msg": "internal server error"}), 500
+
+# endpoint editar cuenta (de gastos)
+@api.route('/accounts/<int:account_id>', methods=['PUT'])
+def update_account(account_id):
+    try:
+        body = request.json
+        account = db.session.execute(db.select(Accounts).filter_by(id=account_id)).scalar_one()
+        if not account:
+            return jsonify({"msg": "account not found"}), 404
+        if "name" in body:
+            account.name = body["name"]
+        if "balance" in body:
+            account.balance = body["balance"]
+        if "coin" in body:
+            account.coin = body["coin"]
+        if "type" in body:
+            account.type = body["type"]
+        db.session.commit()
+        return jsonify({"msg": "account updated"}), 200
+
+    except:
+        return jsonify({"msg": "internal server error"}), 500
