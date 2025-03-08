@@ -1,0 +1,333 @@
+import React, { useState, useContext, useEffect } from "react";
+import { Context } from "../store/appContext";
+import Swal from 'sweetalert2'
+import "../../styles/modal.css";
+import { makeStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+
+const useStyles = makeStyles((theme) => ({
+    container: {
+        display: 'flex',
+        flexWrap: 'wrap',
+    },
+    textField: {
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
+        width: 200,
+    },
+}));
+
+export const ModalDetails = () => {
+    const [currentDate, setCurrentDate] = useState("");
+    const [currentTime, setCurrentTime] = useState("");
+    const { store, actions } = useContext(Context)
+    const classes = useStyles();
+    const [balanceType, setBalanceType] = useState("egreso");
+
+    const handleBalanceChange = (type) => {
+        setBalanceType(type);
+    };
+
+    const [inputValue, setInputValue] = useState({
+        detail: "",
+        amount: 0,
+        coin: "",
+        type: "",
+        date: "",
+        time: ""
+    });
+
+    async function createAccount(body) {
+        const myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+
+        const raw = JSON.stringify({
+            "detail": body.detail,
+            "amount": body.amount,
+            "coin": body.coin,
+            "type": body.type,
+            "date": body.date,
+            "time": body.time
+        });
+
+        const requestOptions = {
+            method: "POST",
+            headers: myHeaders,
+            body: raw,
+            redirect: "follow"
+        };
+
+        try {
+            const response = await fetch(`${process.env.BACKEND_URL}/api/new-account-detail/1`, requestOptions);
+            const result = await response.json();
+        } catch (error) {
+            console.error(error);
+        };
+
+    }
+    const addAccountDetail = () => {
+        if (inputValue.detail.length != 0 && inputValue.type != "" && inputValue.amount != 0) {
+            createAccount(inputValue)
+            setInputValue({
+                detail: "",
+                amount: 0,
+                coin: "",
+                type: "",
+                date: currentDate,
+                time: currentTime
+            });
+            Swal.fire({
+                title: "Movimiento registrado con éxito",
+                icon: "success"
+            });
+        } else {
+            Swal.fire({
+                title: 'Error!',
+                text: 'Campos incompletos, asegúrate de escribir toda la información',
+                icon: 'error',
+                confirmButtonText: 'Volver'
+            })
+        }
+    };
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setInputValue({ ...inputValue, [name]: value });
+        if (name === "date") setCurrentDate(value);
+        if (name === "time") setCurrentTime(value);
+    };
+    const handleClick = () => {
+        setInputValue({
+            detail: "",
+            amount: 0,
+            coin: "",
+            type: "",
+            date: currentDate,
+            time: currentTime
+        })
+    }
+    useEffect(() => {
+        const now = new Date();
+        const formattedDate = now.toISOString().split("T")[0];
+        const formattedTime = now.toLocaleTimeString("es-ES", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+        });
+
+        setCurrentDate(formattedDate);
+        setCurrentTime(formattedTime);
+    }, []);
+    return (
+        <>
+            <button type="button" className="add-item btn btn-secondary btn-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" onClick={handleClick}>
+                <i className="bi bi-plus-lg"></i>
+            </button>
+            <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h1 className="modal-title fs-5" id="exampleModalLabel">
+                                Añadir Movimiento
+                            </h1>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="toggle-container mt-2">
+                            <input
+                                type="radio"
+                                id="btnradio1"
+                                name="btnradio"
+                                checked={balanceType === "egreso"}
+                                onChange={() => handleBalanceChange("egreso")}
+                                className="hidden"
+                            />
+                            <label htmlFor="btnradio1" className={`toggle-option ${balanceType === "egreso" ? "active" : ""}`}>
+                                Egreso
+                            </label>
+
+                            <input
+                                type="radio"
+                                id="btnradio2"
+                                name="btnradio"
+                                checked={balanceType === "ingreso"}
+                                onChange={() => handleBalanceChange("ingreso")}
+                                className="hidden"
+                            />
+                            <label htmlFor="btnradio2" className={`toggle-option ${balanceType === "ingreso" ? "active" : ""}`}>
+                                Ingreso
+                            </label>
+                        </div>
+                        {balanceType === "egreso" ?
+                            <>
+                                <div className="modal-body d-flex gap-5">
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        placeholder="Detalle"
+                                        value={inputValue.name}
+                                        aria-label="Detalle"
+                                        name="detail"
+                                        required
+                                        onChange={handleChange}
+                                    />
+                                    <input
+                                        type="text"
+                                        className="form-control w-25"
+                                        placeholder="Monto"
+                                        value={inputValue.amount}
+                                        aria-label="Amount"
+                                        name="amount"
+                                        required
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                                <div className="px-5 pb-3">
+                                    <select
+                                        className="form-select mr-5 "
+                                        aria-label="Default select example"
+                                        name="coin"
+                                        required
+                                        value={inputValue.coin}
+                                        onChange={handleChange}>
+                                        <option value="">Moneda</option>
+                                        <option value="EUR">EUR</option>
+                                        <option value="USD">USD</option>
+                                        <option value="COP">COP</option>
+                                        <option value="PER">PER</option>
+                                    </select>
+                                </div>
+                                <div className="px-5 pb-3">
+                                    <select
+                                        className="form-select mr-5 "
+                                        aria-label="Default select example"
+                                        name="type"
+                                        required
+                                        value={inputValue.type}
+                                        onChange={handleChange}>
+                                        <option value="">Tipo de Gasto</option>
+                                        <option value="gastos hormiga">Gastos Horgima</option>
+                                        <option value="servicios">Servicios</option>
+                                        <option value="alquiler">Alquiler</option>
+                                        <option value="transporte">Transporte</option>
+                                        <option value="ocio">Ocio</option>
+                                        <option value="ropa y complementos">Ropa y Complementos</option>
+                                        <option value="alimentacion">Alimentación</option>
+                                        <option value="mascota">Mascota</option>
+                                        <option value="otros">Otros</option>
+                                    </select>
+                                    <div className="px-5 pb-3">
+                                        <form className={classes.container} noValidate>
+                                            <TextField
+                                                id="date"
+                                                name="date"
+                                                label="Fecha"
+                                                type="date"
+                                                value={currentDate}
+                                                onChange={handleChange}
+                                                InputLabelProps={{ shrink: true }}
+                                            />
+                                            <TextField
+                                                id="time"
+                                                name="time"
+                                                label="Hora"
+                                                type="time"
+                                                value={currentTime}
+                                                onChange={handleChange}
+                                                InputLabelProps={{ shrink: true }}
+                                                style={{ marginLeft: "10px" }}
+                                            />
+                                        </form>
+                                    </div>
+                                </div>
+                            </>
+                            :
+                            <>
+                                <div className="modal-body d-flex gap-5">
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        placeholder="Detalle"
+                                        value={inputValue.name}
+                                        aria-label="Detalle"
+                                        name="detail"
+                                        required
+                                        onChange={handleChange}
+                                    />
+                                    <input
+                                        type="text"
+                                        className="form-control w-25"
+                                        placeholder="Monto"
+                                        value={inputValue.balance}
+                                        aria-label="Amount"
+                                        name="amount"
+                                        required
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                                <div className="px-5 pb-3">
+                                    <select
+                                        className="form-select mr-5 "
+                                        aria-label="Default select example"
+                                        name="coin"
+                                        required
+                                        value={inputValue.coin}
+                                        onChange={handleChange}>
+                                        <option value="">Moneda</option>
+                                        <option value="EUR">EUR</option>
+                                        <option value="USD">USD</option>
+                                        <option value="COP">COP</option>
+                                        <option value="PER">PER</option>
+                                    </select>
+                                </div>
+                                <div className="px-5 pb-3">
+                                    <select
+                                        className="form-select mr-5 "
+                                        aria-label="Default select example"
+                                        name="type"
+                                        required
+                                        value={inputValue.type}
+                                        onChange={handleChange}>
+                                        <option value="">Tipo de Ingreso</option>
+                                        <option value="sueldos y salarios">Sueldos y Salarios</option>
+                                        <option value="inversiones">Inversiones</option>
+                                        <option value="transferencia">Transferencia</option>
+                                        <option value="Otros">Otros</option>
+                                    </select>
+                                    <div className="px-5 pb-3">
+                                        <form className={classes.container} noValidate>
+                                            <TextField
+                                                id="date"
+                                                name="date"
+                                                label="Fecha"
+                                                type="date"
+                                                value={currentDate}
+                                                onChange={handleChange}
+                                                InputLabelProps={{ shrink: true }}
+                                            />
+                                            <TextField
+                                                id="time"
+                                                name="time"
+                                                label="Hora"
+                                                type="time"
+                                                value={currentTime}
+                                                onChange={handleChange}
+                                                InputLabelProps={{ shrink: true }}
+                                                style={{ marginLeft: "10px" }}
+                                            />
+                                        </form>
+                                    </div>
+                                </div>
+                            </>}
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={addAccountDetail}>
+                                Agregar
+                            </button>
+                            <button type="button" className="btn btn-danger" data-bs-dismiss="modal">
+                                Cancelar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
+    )
+}

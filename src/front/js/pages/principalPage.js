@@ -4,23 +4,22 @@ import { Card } from "../component/card";
 import { GeneralBalance } from "../component/balanceGeneral";
 import "../../styles/container.css";
 import { Context } from "../store/appContext";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Modal } from "../component/modal";
-
+import { ModalDetails } from "../component/modalDetails";
 
 export const PrincipalPage = () => {
-    const { store, actions } = useContext(Context)       
+    const { store, actions } = useContext(Context)
     const totalBalance = store.userAccounts.reduce((acc, item) => acc + item.balance, 0);
-
+    const path = useLocation()
     let navigate = useNavigate();
-    
+
     useEffect(() => {
         actions.verifyToken();
         actions.initializeStore();
         if (!store.auth) {
             navigate("/");
         }
-        
     }, []);
 
     if (!store.auth) {
@@ -45,7 +44,7 @@ export const PrincipalPage = () => {
                         })}
                     </div>
                 </div>
-                <Modal />
+                {path.pathname === "/cuentas" ? <Modal /> : <ModalDetails />}
             </div>
         </div>
     );
