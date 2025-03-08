@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Accounts
+from api.models import db, User, Accounts, Account_details
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required,verify_jwt_in_request, decode_token
@@ -13,14 +13,7 @@ api = Blueprint('api', __name__)
 bcrypt = Bcrypt()
 
 CORS(api)
-# @api.route('/hello', methods=['POST', 'GET'])
-# def handle_hello():
 
-#     response_body = {
-#         "message": "Hello! I'm a message that came from the backend, check the network tab on the google inspector and you will see the GET request"
-#     }
-
-#     return jsonify(response_body), 200
         #este endpoint busca y muestra a todos los usuarios registrados
 @api.route('/users', methods=['GET'])
 def get_users():
@@ -32,6 +25,7 @@ def get_users():
         "results": result
     }
     return jsonify(response_body), 200
+
         #este endpoint busca un usuario especifico entre todos los demas
 @api.route('/user/<int:user_id>', methods=['GET'])
 def get_one_user(user_id):
@@ -40,6 +34,7 @@ def get_one_user(user_id):
         return jsonify({"result":user.serialize()}), 200
     except:
         return jsonify({"msg":"Usuario o contraseña incorrecta"}), 404
+    
     #este endpoint valida los datos de usuario y crea el token de acceso
 @api.route("/login", methods=["POST"])
 def login():
@@ -53,11 +48,11 @@ def login():
         return jsonify(access_token=access_token)
     except:
         return jsonify({"msg": "this user does not exist"}), 404
+    
         #este endpoin protege la ruta del usuario
 @api.route("/protected", methods=["GET"])
 @jwt_required()
 def protected():
-    # Access the identity of the current user with get_jwt_identity
     current_user = get_jwt_identity()
     return jsonify(logged_in_as=current_user), 200
 
@@ -86,6 +81,7 @@ def post_account(user_id):
             return jsonify({"msg": "Account already exist"}), 404
     except Exception as e:
         return jsonify({"msg":"Error", "error": str(e)}), 500
+    
         #este endpint muestra todas cuentas en general
 @api.route('/accounts', methods=['GET'])
 def get_accounts():
@@ -97,6 +93,7 @@ def get_accounts():
         "results": result
     }
     return jsonify(response_body), 200
+
         # este endpoin busca la lista de cuentas y muestra una sola cuenta especifica
 @api.route('/accounts/<int:accounts_id>', methods=['GET'])
 def get_one_accounts(accounts_id):
@@ -105,6 +102,7 @@ def get_one_accounts(accounts_id):
         return jsonify({"result":account.serialize()}), 200
     except:
         return jsonify({"msg":"account not found"}), 404
+    
          #este endpoint valida si existe el usuario y muestra las cuentas de un usuario especifico
 @api.route('/user/<int:user_id>/accounts', methods=['GET'])
 def get_one_account_to_one_user(user_id):
@@ -121,8 +119,6 @@ def get_one_account_to_one_user(user_id):
     except Exception as e:
         return jsonify({"msg":"Error", "error": str(e)}), 500
 
-    
-# endpoints
 # registro usuario
 @api.route("/signup", methods=["POST"])
 def signup():
@@ -137,66 +133,55 @@ def signup():
     db.session.commit()
     return jsonify({"msg": "user created"}), 201
 
+#endpoint que crea un nuevo movimiento en una cuenta
+@api.route('/new-account-detail/<int:accounts_id>', methods=['POST'])
+def post_account_detail(accounts_id):
+    try:
+        request_body = request.json
+        new_account_detail = Account_details(accounts_id=accounts_id, detail=request_body["detail"], amount=request_body["amount"], coin=request_body["coin"], type=request_body["type"],date=request_body["date"],time=request_body["time"])
+        db.session.add(new_account_detail)
+        db.session.commit()  
+        return jsonify(request_body), 200
+    
+    except:
+        return jsonify({"msg":"miss information"}), 400
+#endpoint que muestra uno o varios detalles de una cuenta especifica
+@api.route('/account-detail/<int:accounts_id>', methods=['GET'])
+def get_accounts_details(accounts_id):
+    try:
+        account_details = db.session.execute(db.select(Account_details).filter_by(accounts_id=accounts_id)).scalars().all()
+        if account_details != []:
+            return jsonify({"result": [acc.serialize() for acc in account_details]}), 200
+        return jsonify({"msg": "No accounts to show"})
+    except:
+        return jsonify({"msg":"account not found"}), 404
 
+#endpoint que suma al balance de la cuenta 
+@api.route('/accounts/<int:account_id>/deposit', methods=['PUT'])
+def deposit(account_id):
+    try:
+        body = request.json
+        account = db.session.execute(db.select(Accounts).filter_by(id=account_id)).scalar_one()
+        if "amount" in body:
+            account.balance = account.balance + body["amount"]
+        db.session.commit()
+        return jsonify({"msg": "account updated"}), 200
+    except:
+        return jsonify({"msg": "internal server error"}), 500
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#endpoint que resta del balance de la cuenta 
+@api.route('/accounts/<int:account_id>/debit', methods=['PUT'])
+def Debit(account_id):
+    try:
+        body = request.json
+        account = db.session.execute(db.select(Accounts).filter_by(id=account_id)).scalar_one()
+        if "amount" in body:
+            account.balance = account.balance - body["amount"] 
+        db.session.commit()
+        return jsonify({"msg": "account updated"}), 200
+    except:
+        return jsonify({"msg": "internal server error"}), 500
+    
 # endpoint delete cuenta (de gastos)
 @api.route("/accounts/<int:account_id>", methods=["DELETE"])
 def delete_account(account_id):
