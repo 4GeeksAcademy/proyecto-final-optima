@@ -218,6 +218,8 @@ def update_account(account_id):
     except:
         return jsonify({"msg": "internal server error"}), 500
 
+
+# endpoint editar movimiento de cuenta
 @api.route('/account-detail/<int:account_detail_id>', methods=['PUT'])
 def update_account_detail(account_detail_id):
     try:
@@ -260,6 +262,31 @@ def update_account_detail(account_detail_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"msg": "Internal server error"}), 500
+# fin endpoint editar movimiento de cuenta
 
+# endpoint eliminar movimiento
+@api.route('/account-detail/<int:account_detail_id>', methods=['DELETE'])
+def delete_account_detail(account_detail_id):
+    try:
+        movement = db.session.execute(db.select(Account_details).filter_by(id=account_detail_id)).scalar_one_or_none()
+        if not movement:
+            return jsonify({"msg": "Movement not found"}), 404
+        account = db.session.execute(db.select(Accounts).filter_by(id=movement.accounts_id)).scalar_one_or_none()
+        if not account:
+            return jsonify({"msg": "Account not found"}), 404
+        # resta si es en
+        if movement.type == "deposit":
+            account.balance -= movement.amount  
+        # suma si es en debito
+        if movement.type == "debit":
+            account.balance += movement.amount  
+        db.session.delete(movement)  
+        db.session.commit()
+        return jsonify({"msg": "Movement deleted"}), 200
+
+    except:
+        db.session.rollback()
+        return jsonify({"msg": "Internal server error"}), 500
+# fin endpoint elinimar movimiento de cuenta
 
     
