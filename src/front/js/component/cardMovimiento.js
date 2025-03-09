@@ -14,7 +14,7 @@ export const CardMovimientos = (props) => {
                 <div className="card flex-row mb-3 "  >
                     <div className="card-body d-flex justify-content-around col-4 align-items-center " >
                         <div className="justify-content-center">
-                            <h5 className="card-title ">Detalle Ultimo movimiento</h5>
+                            <h5 className="card-title ">{props.name}</h5>
                             <div className="">
                                 <p>detalle</p>
                                 <p>Egreso o ingreso</p>

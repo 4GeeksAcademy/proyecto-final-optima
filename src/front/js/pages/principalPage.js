@@ -47,7 +47,13 @@ export const PrincipalPage = () => {
                                 <p>No hay cuentas disponibles.</p>
                             )
                         ) : (
-                            <CardMovimientos />
+                            store.detailAccounts.length > 0 ? (
+                                store.detailAccounts.map((item) => (
+                                    <CardMovimientos key={item.id} id={item.id} name={item.name} balance={item.balance} coin={item.coin} type={item.type} />
+                                ))
+                            ) : (
+                                <p>No hay cuentas disponibles.</p>
+                            )
                         )}
                     </div>
 
