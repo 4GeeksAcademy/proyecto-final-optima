@@ -60,6 +60,11 @@ export const ModalDetails = () => {
         try {
             const response = await fetch(`${process.env.BACKEND_URL}/api/new-account-detail/1`, requestOptions);
             const result = await response.json();
+            if (balanceType === "egreso"){
+                actions.debit(parseInt(result.amount))
+            } else if ((balanceType === "ingreso")){
+                actions.deposit(parseInt(result.amount))
+            }
         } catch (error) {
             console.error(error);
         };
