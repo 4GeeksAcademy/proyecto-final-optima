@@ -3,14 +3,17 @@ import { Context } from "../store/appContext";
 import Swal from 'sweetalert2'
 import "../../styles/modal.css";
 import TextField from '@material-ui/core/TextField';
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 
 export const ModalDetails = () => {
     const [currentDate, setCurrentDate] = useState("");
+    const [accountName, setAccountName] = useState("")
+    const [accountId, setAccountId] = useState("")
     const [currentTime, setCurrentTime] = useState("");
     const { store, actions } = useContext(Context)
     const [balanceType, setBalanceType] = useState("egreso");
     const path = useLocation()
+    const params = useParams()
 
     const handleBalanceChange = (type) => {
         setBalanceType(type);
@@ -50,9 +53,9 @@ export const ModalDetails = () => {
             const response = await fetch(`${process.env.BACKEND_URL}/api/new-account-detail/${body.accountId}`, requestOptions);
             const result = await response.json();
             if (balanceType === "egreso") {
-                actions.debit(parseInt(result.amount))
+                actions.debit(parseInt(result.amount), body.accountId)
             } else if ((balanceType === "ingreso")) {
-                actions.deposit(parseInt(result.amount))
+                actions.deposit(parseInt(result.amount), body.accountId)
             }
         } catch (error) {
             console.error(error);
@@ -90,10 +93,12 @@ export const ModalDetails = () => {
         if (name === "date") setCurrentDate(value);
         if (name === "time") setCurrentTime(value);
         if (name === "account") {
-            const accountId = store.userAccounts.find((account) => account.name === value);
-            if (accountId) {
-                setInputValue((prev) => ({ ...prev, accountId: accountId.id }));
+            const accountIdFilter = store.userAccounts.find((account) => account.name === value);
+            if (accountIdFilter) {
+                setInputValue((prev) => ({ ...prev, accountId: accountIdFilter.id }));
             }
+        } else {
+            setInputValue((prev) => ({ ...prev, accountId: accountId }));
         }
     };
     const handleClick = () => {
@@ -106,6 +111,12 @@ export const ModalDetails = () => {
             time: currentTime,
             account: ""
         })
+        if(path.pathname != "/movimiento"){
+            const name = store.userAccounts.find((name)=>name.id == params.id)
+            setAccountName(name.name)
+            setAccountId(name.id)
+        }
+
     }
     useEffect(() => {
         const now = new Date();
@@ -176,7 +187,18 @@ export const ModalDetails = () => {
                                     })}
                                 </select>
                             </div>
-                            : null}
+                            : <div className="modal-body d-flex flex-column gap-3 px-4">
+                                <input
+                                    className="form-input"
+                                    aria-label="Default select example"
+                                    name="account"
+                                    required
+                                    value={accountName}
+                                    onChange={handleChange}
+                                    disabled
+                                />
+                            </div>
+                        }
                         {balanceType === "egreso" ?
                             <>
                                 <div className="modal-body d-flex flex-column gap-3 px-4">

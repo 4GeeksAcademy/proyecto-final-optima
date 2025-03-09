@@ -188,7 +188,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 				};
 			},
-			debit: async (amout) => {
+			debit: async (amout, accountId) => {
 
 				const myHeaders = new Headers();
 				myHeaders.append("Content-Type", "application/json");
@@ -205,14 +205,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 				};
 
 				try {
-					const response = await fetch(`${process.env.BACKEND_URL}/api/accounts/1/debit`, requestOptions);
+					const response = await fetch(`${process.env.BACKEND_URL}/api/accounts/${accountId}/debit`, requestOptions);
 					const result = await response.json();
-					console.log(result)
 				} catch (error) {
 					console.error(error);
 				};
 			},
-			deposit: async (amout) => {
+			deposit: async (amout, accountId) => {
 				const myHeaders = new Headers();
 				myHeaders.append("Content-Type", "application/json");
 
@@ -228,9 +227,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 				};
 
 				try {
-					const response = await fetch(`${process.env.BACKEND_URL}/api/accounts/1/deposit`, requestOptions);
+					const response = await fetch(`${process.env.BACKEND_URL}/api/accounts/${accountId}/deposit`, requestOptions);
 					const result = await response.json();
-					console.log(result)
 				} catch (error) {
 					console.error(error);
 				};
