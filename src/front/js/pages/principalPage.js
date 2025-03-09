@@ -7,6 +7,7 @@ import { Context } from "../store/appContext";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Modal } from "../component/modal";
 import { ModalDetails } from "../component/modalDetails";
+import { CardMovimientos } from "../component/cardMovimiento";
 
 export const PrincipalPage = () => {
     const { store, actions } = useContext(Context)
@@ -37,12 +38,19 @@ export const PrincipalPage = () => {
                         <GeneralBalance balance={totalBalance} />
                     </div>
                     <div className="scrollmenu">
-                        {store.userAccounts.map((item) => {
-                            return (
-                                <Card id={item.id} name={item.name} balance={item.balance} coin={item.coin} type={item.type} />
+                        {path.pathname === "/cuentas" ? (
+                            store.userAccounts.length > 0 ? (
+                                store.userAccounts.map((item) => (
+                                    <Card key={item.id} id={item.id} name={item.name} balance={item.balance} coin={item.coin} type={item.type} />
+                                ))
+                            ) : (
+                                <p>No hay cuentas disponibles.</p>
                             )
-                        })}
+                        ) : (
+                            <CardMovimientos />
+                        )}
                     </div>
+
                 </div>
                 {path.pathname === "/cuentas" ? <Modal /> : <ModalDetails />}
             </div>
