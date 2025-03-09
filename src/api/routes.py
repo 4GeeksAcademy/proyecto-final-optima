@@ -217,3 +217,49 @@ def update_account(account_id):
 
     except:
         return jsonify({"msg": "internal server error"}), 500
+
+@api.route('/account-detail/<int:account_detail_id>', methods=['PUT'])
+def update_account_detail(account_detail_id):
+    try:
+        body = request.json
+        movement = db.session.execute(db.select(Account_details).filter_by(id=account_detail_id)).scalar_one_or_none()
+        if not movement:
+            return jsonify({"msg": "Movement not found"}), 404
+        account = db.session.execute(db.select(Accounts).filter_by(id=movement.accounts_id)).scalar_one_or_none()
+        if not account:
+            return jsonify({"msg": "Account not found"}), 404
+
+        # Esto es para que el balance no sume dos veces, primero se borra lo anterior
+        if movement.type == "deposit":
+            account.balance = account.balance - movement.amount
+        else:
+            if movement.type == "debit":
+                account.balance = account.balance + movement.amount
+        # Se cambia lo que llega en el body
+        if "detail" in body:
+            movement.detail = body["detail"]
+        if "amount" in body:
+            movement.amount = body["amount"]
+        if "coin" in body:
+            movement.coin = body["coin"]
+        if "type" in body:
+            movement.type = body["type"]
+        if "date" in body:
+            movement.date = body["date"]
+        if "time" in body:
+            movement.time = body["time"]
+        # Ahora se vuelve a hacer la operación con los datos nuevos
+        if movement.type == "deposit":
+            account.balance = account.balance + movement.amount
+        else:
+            if movement.type == "debit":
+                account.balance = account.balance - movement.amount
+        db.session.commit()
+        return jsonify({"msg": "Movement updated and balance adjusted"}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"msg": "Internal server error"}), 500
+
+
+    
