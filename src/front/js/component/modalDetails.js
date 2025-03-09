@@ -2,27 +2,15 @@ import React, { useState, useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
 import Swal from 'sweetalert2'
 import "../../styles/modal.css";
-import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-
-const useStyles = makeStyles((theme) => ({
-    container: {
-        display: 'flex',
-        flexWrap: 'wrap',
-    },
-    textField: {
-        marginLeft: theme.spacing(1),
-        marginRight: theme.spacing(1),
-        width: 200,
-    },
-}));
+import { useLocation } from "react-router-dom";
 
 export const ModalDetails = () => {
     const [currentDate, setCurrentDate] = useState("");
     const [currentTime, setCurrentTime] = useState("");
     const { store, actions } = useContext(Context)
-    const classes = useStyles();
     const [balanceType, setBalanceType] = useState("egreso");
+    const path = useLocation()
 
     const handleBalanceChange = (type) => {
         setBalanceType(type);
@@ -34,7 +22,8 @@ export const ModalDetails = () => {
         coin: "",
         type: "",
         date: "",
-        time: ""
+        time: "",
+        account: ""
     });
 
     async function createAccount(body) {
@@ -58,11 +47,11 @@ export const ModalDetails = () => {
         };
 
         try {
-            const response = await fetch(`${process.env.BACKEND_URL}/api/new-account-detail/1`, requestOptions);
+            const response = await fetch(`${process.env.BACKEND_URL}/api/new-account-detail/${body.accountId}`, requestOptions);
             const result = await response.json();
-            if (balanceType === "egreso"){
+            if (balanceType === "egreso") {
                 actions.debit(parseInt(result.amount))
-            } else if ((balanceType === "ingreso")){
+            } else if ((balanceType === "ingreso")) {
                 actions.deposit(parseInt(result.amount))
             }
         } catch (error) {
@@ -71,7 +60,7 @@ export const ModalDetails = () => {
 
     }
     const addAccountDetail = () => {
-        if (inputValue.detail.length != 0 && inputValue.type != "" && inputValue.amount != 0) {
+        if (inputValue.detail.length != 0 && inputValue.type != "" && inputValue.amount != 0 && inputValue.coin != "") {
             createAccount(inputValue)
             setInputValue({
                 detail: "",
@@ -79,7 +68,8 @@ export const ModalDetails = () => {
                 coin: "",
                 type: "",
                 date: currentDate,
-                time: currentTime
+                time: currentTime,
+                account: ""
             });
             Swal.fire({
                 title: "Movimiento registrado con éxito",
@@ -99,6 +89,12 @@ export const ModalDetails = () => {
         setInputValue({ ...inputValue, [name]: value });
         if (name === "date") setCurrentDate(value);
         if (name === "time") setCurrentTime(value);
+        if (name === "account") {
+            const accountId = store.userAccounts.find((account) => account.name === value);
+            if (accountId) {
+                setInputValue((prev) => ({ ...prev, accountId: accountId.id }));
+            }
+        }
     };
     const handleClick = () => {
         setInputValue({
@@ -107,7 +103,8 @@ export const ModalDetails = () => {
             coin: "",
             type: "",
             date: currentDate,
-            time: currentTime
+            time: currentTime,
+            account: ""
         })
     }
     useEffect(() => {
@@ -161,6 +158,25 @@ export const ModalDetails = () => {
                                 Ingreso
                             </label>
                         </div>
+                        {path.pathname === "/movimientos" ?
+                            <div className="modal-body d-flex flex-column gap-3 px-4">
+                                <select
+                                    className="form-select"
+                                    aria-label="Default select example"
+                                    name="account"
+                                    required
+                                    value={inputValue.account}
+                                    onChange={handleChange}
+                                >
+                                    <option value="">Selecciona una cuenta</option>
+                                    {store.userAccounts.map((i) => {
+                                        return (
+                                            <option value={i.name}>{i.name}</option>
+                                        )
+                                    })}
+                                </select>
+                            </div>
+                            : null}
                         {balanceType === "egreso" ?
                             <>
                                 <div className="modal-body d-flex flex-column gap-3 px-4">
