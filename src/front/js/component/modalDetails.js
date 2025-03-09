@@ -60,6 +60,11 @@ export const ModalDetails = () => {
         try {
             const response = await fetch(`${process.env.BACKEND_URL}/api/new-account-detail/1`, requestOptions);
             const result = await response.json();
+            if (balanceType === "egreso"){
+                actions.debit(parseInt(result.amount))
+            } else if ((balanceType === "ingreso")){
+                actions.deposit(parseInt(result.amount))
+            }
         } catch (error) {
             console.error(error);
         };
@@ -158,7 +163,7 @@ export const ModalDetails = () => {
                         </div>
                         {balanceType === "egreso" ?
                             <>
-                                <div className="modal-body d-flex gap-5">
+                                <div className="modal-body d-flex flex-column gap-3 px-4">
                                     <input
                                         type="text"
                                         className="form-control"
@@ -169,42 +174,45 @@ export const ModalDetails = () => {
                                         required
                                         onChange={handleChange}
                                     />
-                                    <input
-                                        type="text"
-                                        className="form-control w-25"
-                                        placeholder="Monto"
-                                        value={inputValue.amount}
-                                        aria-label="Amount"
-                                        name="amount"
-                                        required
-                                        onChange={handleChange}
-                                    />
-                                </div>
-                                <div className="px-5 pb-3">
+
+                                    <div className="d-flex gap-3">
+                                        <input
+                                            type="text"
+                                            className="form-control flex-grow-1"
+                                            placeholder="Monto"
+                                            value={inputValue.amount}
+                                            aria-label="Amount"
+                                            name="amount"
+                                            required
+                                            onChange={handleChange}
+                                        />
+                                        <select
+                                            className="form-select"
+                                            aria-label="Default select example"
+                                            name="coin"
+                                            required
+                                            value={inputValue.coin}
+                                            onChange={handleChange}
+                                            style={{ width: "30%" }}
+                                        >
+                                            <option value="">Moneda</option>
+                                            <option value="EUR">EUR</option>
+                                            <option value="USD">USD</option>
+                                            <option value="COP">COP</option>
+                                            <option value="PER">PER</option>
+                                        </select>
+                                    </div>
+
                                     <select
-                                        className="form-select mr-5 "
-                                        aria-label="Default select example"
-                                        name="coin"
-                                        required
-                                        value={inputValue.coin}
-                                        onChange={handleChange}>
-                                        <option value="">Moneda</option>
-                                        <option value="EUR">EUR</option>
-                                        <option value="USD">USD</option>
-                                        <option value="COP">COP</option>
-                                        <option value="PER">PER</option>
-                                    </select>
-                                </div>
-                                <div className="px-5 pb-3">
-                                    <select
-                                        className="form-select mr-5 "
+                                        className="form-select"
                                         aria-label="Default select example"
                                         name="type"
                                         required
                                         value={inputValue.type}
-                                        onChange={handleChange}>
+                                        onChange={handleChange}
+                                    >
                                         <option value="">Tipo de Gasto</option>
-                                        <option value="gastos hormiga">Gastos Horgima</option>
+                                        <option value="gastos hormiga">Gastos Hormiga</option>
                                         <option value="servicios">Servicios</option>
                                         <option value="alquiler">Alquiler</option>
                                         <option value="transporte">Transporte</option>
@@ -214,107 +222,109 @@ export const ModalDetails = () => {
                                         <option value="mascota">Mascota</option>
                                         <option value="otros">Otros</option>
                                     </select>
-                                    <div className="px-5 pb-3">
-                                        <form className={classes.container} noValidate>
-                                            <TextField
-                                                id="date"
-                                                name="date"
-                                                label="Fecha"
-                                                type="date"
-                                                value={currentDate}
-                                                onChange={handleChange}
-                                                InputLabelProps={{ shrink: true }}
-                                            />
-                                            <TextField
-                                                id="time"
-                                                name="time"
-                                                label="Hora"
-                                                type="time"
-                                                value={currentTime}
-                                                onChange={handleChange}
-                                                InputLabelProps={{ shrink: true }}
-                                                style={{ marginLeft: "10px" }}
-                                            />
-                                        </form>
-                                    </div>
+
+                                    <form className="d-flex gap-3" noValidate>
+                                        <TextField
+                                            id="date"
+                                            name="date"
+                                            label="Fecha"
+                                            type="date"
+                                            value={currentDate}
+                                            onChange={handleChange}
+                                            InputLabelProps={{ shrink: true }}
+                                            className="flex-grow-1"
+                                        />
+                                        <TextField
+                                            id="time"
+                                            name="time"
+                                            label="Hora"
+                                            type="time"
+                                            value={currentTime}
+                                            onChange={handleChange}
+                                            InputLabelProps={{ shrink: true }}
+                                            className="flex-grow-1"
+                                        />
+                                    </form>
                                 </div>
                             </>
                             :
                             <>
-                                <div className="modal-body d-flex gap-5">
+                                <div className="modal-body d-flex flex-column gap-3 px-4">
                                     <input
                                         type="text"
                                         className="form-control"
                                         placeholder="Detalle"
                                         value={inputValue.name}
-                                        aria-label="Detalle"
                                         name="detail"
                                         required
                                         onChange={handleChange}
                                     />
-                                    <input
-                                        type="text"
-                                        className="form-control w-25"
-                                        placeholder="Monto"
-                                        value={inputValue.balance}
-                                        aria-label="Amount"
-                                        name="amount"
-                                        required
-                                        onChange={handleChange}
-                                    />
-                                </div>
-                                <div className="px-5 pb-3">
+
+                                    <div className="d-flex gap-3">
+                                        <input
+                                            type="text"
+                                            className="form-control flex-grow-1"
+                                            placeholder="Monto"
+                                            value={inputValue.balance}
+                                            aria-label="Amount"
+                                            name="amount"
+                                            required
+                                            onChange={handleChange}
+                                        />
+                                        <select
+                                            className="form-select"
+                                            aria-label="Default select example"
+                                            name="coin"
+                                            required
+                                            value={inputValue.coin}
+                                            onChange={handleChange}
+                                            style={{ width: "30%" }}
+                                        >
+                                            <option value="">Moneda</option>
+                                            <option value="EUR">EUR</option>
+                                            <option value="USD">USD</option>
+                                            <option value="COP">COP</option>
+                                            <option value="PER">PER</option>
+                                        </select>
+                                    </div>
+
                                     <select
-                                        className="form-select mr-5 "
-                                        aria-label="Default select example"
-                                        name="coin"
-                                        required
-                                        value={inputValue.coin}
-                                        onChange={handleChange}>
-                                        <option value="">Moneda</option>
-                                        <option value="EUR">EUR</option>
-                                        <option value="USD">USD</option>
-                                        <option value="COP">COP</option>
-                                        <option value="PER">PER</option>
-                                    </select>
-                                </div>
-                                <div className="px-5 pb-3">
-                                    <select
-                                        className="form-select mr-5 "
+                                        className="form-select"
                                         aria-label="Default select example"
                                         name="type"
                                         required
                                         value={inputValue.type}
-                                        onChange={handleChange}>
+                                        onChange={handleChange}
+                                    >
                                         <option value="">Tipo de Ingreso</option>
                                         <option value="sueldos y salarios">Sueldos y Salarios</option>
                                         <option value="inversiones">Inversiones</option>
                                         <option value="transferencia">Transferencia</option>
-                                        <option value="Otros">Otros</option>
+                                        <option value="otros">Otros</option>
                                     </select>
-                                    <div className="px-5 pb-3">
-                                        <form className={classes.container} noValidate>
-                                            <TextField
-                                                id="date"
-                                                name="date"
-                                                label="Fecha"
-                                                type="date"
-                                                value={currentDate}
-                                                onChange={handleChange}
-                                                InputLabelProps={{ shrink: true }}
-                                            />
-                                            <TextField
-                                                id="time"
-                                                name="time"
-                                                label="Hora"
-                                                type="time"
-                                                value={currentTime}
-                                                onChange={handleChange}
-                                                InputLabelProps={{ shrink: true }}
-                                                style={{ marginLeft: "10px" }}
-                                            />
-                                        </form>
-                                    </div>
+
+                                    <form className="d-flex gap-3" noValidate>
+                                        <TextField
+                                            id="date"
+                                            name="date"
+                                            label="Fecha"
+                                            type="date"
+                                            value={currentDate}
+                                            onChange={handleChange}
+                                            InputLabelProps={{ shrink: true }}
+                                            className="flex-grow-1"
+                                        />
+                                        <TextField
+                                            id="time"
+                                            name="time"
+                                            label="Hora"
+                                            type="time"
+                                            value={currentTime}
+                                            onChange={handleChange}
+                                            InputLabelProps={{ shrink: true }}
+                                            className="flex-grow-1"
+                                        />
+                                    </form>
                                 </div>
                             </>}
                         <div className="modal-footer">
