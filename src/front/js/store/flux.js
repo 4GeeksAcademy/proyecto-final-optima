@@ -17,6 +17,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			user: JSON.parse(localStorage.getItem("userLogged")) || "",  // Cargar el usuario desde localStorage			email: "",
 			auth: !!localStorage.getItem("token"), // Verifica si hay un token para mantener la sesión activa
 			userAccounts: [],
+			detailAccounts:[],
 		},
 		actions: {
 			exampleFunction: () => {
@@ -59,6 +60,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						await getActions().getPrivate();
 						await getActions().getUserLogged();
 						await getActions().getAccountsUser();
+						await getActions().getAccountsDetail();
 					} else {
 						setStore({ auth: false });
 					}
@@ -186,22 +188,22 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 				};
 			},
-			debit: async (amout)=>{
+			debit: async (amout) => {
 
 				const myHeaders = new Headers();
 				myHeaders.append("Content-Type", "application/json");
-				
+
 				const raw = JSON.stringify({
 					"amount": amout
 				});
-				
+
 				const requestOptions = {
 					method: "PUT",
 					headers: myHeaders,
 					body: raw,
 					redirect: "follow"
-				  };
-				
+				};
+
 				try {
 					const response = await fetch(`${process.env.BACKEND_URL}/api/accounts/1/debit`, requestOptions);
 					const result = await response.json();
@@ -210,29 +212,48 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(error);
 				};
 			},
-			deposit: async (amout) =>{
+			deposit: async (amout) => {
 				const myHeaders = new Headers();
 				myHeaders.append("Content-Type", "application/json");
-				
+
 				const raw = JSON.stringify({
-				  "amount": amout
+					"amount": amout
 				});
-				
+
 				const requestOptions = {
 					method: "PUT",
 					headers: myHeaders,
 					body: raw,
 					redirect: "follow"
-				  };
-				
+				};
+
 				try {
-				  const response = await fetch(`${process.env.BACKEND_URL}/api/accounts/1/deposit`, requestOptions);
-				  const result = await response.json();
-				  console.log(result)
+					const response = await fetch(`${process.env.BACKEND_URL}/api/accounts/1/deposit`, requestOptions);
+					const result = await response.json();
+					console.log(result)
 				} catch (error) {
-				  console.error(error);
+					console.error(error);
 				};
 			},
+			getAccountsDetail: async () => {
+				const myHeaders = new Headers();
+				myHeaders.append("Cookie", ".Tunnels.Relay.WebForwarding.Cookies=CfDJ8Cs4yarcs6pKkdu0hlKHsZuR5ZcgQ2KTnWDNr3AUt8ybBx2u9D6V4wNy29qq0uvKyt0dEmrGGzWX4XiYfTpuTAnKnIIv9Ln23w-4vAGompckgCekREzckivfx1EFoIdA_AtlfZC_VbnLv9vgzTXZ6J6j0Di2KszNcr_soZxDjxwalD3Kt4nhLxxrSE_36qp-s6R7bRAfnfsIM2JBE5HftxL7unD6bUCWegqmIaXAb4JCjVtFJZNT1RoiDzvsZJNVHF6FHsyBtcLNb5CwUMf1GC_A06IGE0OaLbfaZ1CeGVbdQPtviNt_zvkPlfWZfM8-g1mepf4HIM_UaH1whZxYKiQgPvpBRb5-T_4FFOSba0d8VRwHK_VMicGi3ju5BqujVmLHBnJ98EjagWnxF9g8PCi_JuLb3N2yVvgFuw0T5m17lX_5_BHBjJD4laB6jRX1Qbhi_Yiuolg2-48UKfr_cgFlzx3MUCJcQdlQeNOX2LYEgRjDbHwACpZTTG6R32om-lrBu4TBD073sxXitNjFT98geeeONMbTuhEGgyql-qzfTYqWLeuAt062SQuuOpUCHMw7pdbO1vZVcLV3dg-Sd8l0XFINELsMYGmh5YSVmzHttBNXZj2G8Nx51HVlrHVH6lWegB6znFO_KKsWK1jW-kkrXmstr88RphGCYQhZVAzoI8ag4ddz0JMZYgB6wDPIVeTIVAcy57sDfPekzK_cIKNKTEs7yRCREiUT36s-xTqghLmXXgUyLMs_bCwabdzaCMbo4m5ejIURpzTofdyaaKWrmJERwYuryslcPTGWwhGgMtWNZIcmBWOqr4Mzt_v76XpfnLTiGDA-eHxSQoAynmHo51WihgL5FQxW0xNssPCGStiKhfLfiNE_t4XHUBmBom-WoLVq3U7W4QXXAdPCrz7hj3_E1LV0uZ_8EjpeNBpwGoj27u3RwLMmcjXxEC9np_Wlabme3C6mzc8I-XdbRNN3o7wSyJCukSwV8XyaM7IW");
+
+				const requestOptions = {
+					method: "GET",
+					headers: myHeaders,
+					redirect: "follow"
+				};
+
+				try {
+					const response = await fetch("https://ubiquitous-parakeet-wqxj59w67w7h9p5j-3001.app.github.dev/api/account-detail/1", requestOptions);
+					const result = await response.json();
+					console.log(result)
+					setStore({ detailAccounts: result.result });
+				} catch (error) {
+					console.error(error);
+				};
+			}
 		}
 	};
 };
