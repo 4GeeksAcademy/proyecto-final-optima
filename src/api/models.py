@@ -53,6 +53,7 @@ class Account_details(db.Model):
     type: Mapped[str] = mapped_column(String(80),nullable=False)
     date: Mapped[str] = mapped_column(String(80),nullable=False)
     time: Mapped[str] = mapped_column(String(80),nullable=False)
+    operation: Mapped[str] = mapped_column(String(80),nullable=True)
     
     def serialize(self):
         return {
@@ -64,4 +65,5 @@ class Account_details(db.Model):
             "type": self.type,
             "date": self.date,
             "time": self.time,
+            "operation": self.operation,
         }   
