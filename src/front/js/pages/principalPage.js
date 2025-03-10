@@ -41,15 +41,15 @@ export const PrincipalPage = () => {
                         {path.pathname === "/cuentas" ? (
                             store.userAccounts.length > 0 ? (
                                 store.userAccounts.map((item) => (
-                                    <Card key={item.id} id={item.id} name={item.name} balance={item.balance} coin={item.coin} type={item.type} />
+                                    <Card key={item.id} id={item.id} name={item.name} balance={item.balance} coin={item.coin} type={item.type}  />
                                 ))
                             ) : (
                                 <p>No hay cuentas disponibles.</p>
                             )
                         ) : (
                             store.detailAccounts.length > 0 ? (
-                                store.detailAccounts.map((item) => (
-                                    <CardMovimientos key={item.id} id={item.id} name={item.name} balance={item.balance} coin={item.coin} type={item.type} />
+                                store.detailAccounts.map((details) => (
+                                    <CardMovimientos key={details.id} amount={details.amount} coin={details.coin} date={details.date} time={details.time} detail={details.detail} type={details.type} operation={details.operation} />
                                 ))
                             ) : (
                                 <p>No hay cuentas disponibles.</p>
