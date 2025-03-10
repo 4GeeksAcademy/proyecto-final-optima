@@ -289,4 +289,26 @@ def delete_account_detail(account_detail_id):
         return jsonify({"msg": "Internal server error"}), 500
 # fin endpoint elinimar movimiento de cuenta
 
-    
+#endpoint colsulta todos los movimientos de 1 usuario
+@api.route('/all-details-user/<int:user_id>', methods=['GET'])
+def get_details_user(user_id):
+    try:
+        user_accounts = db.session.execute(
+            db.select(Accounts).filter_by(user_id=user_id)
+        ).scalars().all()
+
+        accounts_id = [account.id for account in user_accounts]
+
+        if not accounts_id:
+            return jsonify({"msg": "El usuario no tiene cuentas asociadas"}), 404
+
+        details = db.session.execute(
+            db.select(Account_details).filter(Account_details.accounts_id.in_(accounts_id))
+        ).scalars().all()
+
+        if details:
+            return jsonify({"result": [detail.serialize() for detail in details]}), 200
+        return jsonify({"msg": "No hay movimientos para este usuario"}), 404
+
+    except Exception as e:
+        return jsonify({"msg": "Error en la consulta"}), 500

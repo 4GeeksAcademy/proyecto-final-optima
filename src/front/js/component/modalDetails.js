@@ -53,12 +53,8 @@ export const ModalDetails = () => {
         };
 
         try {
-            console.log(body);
             const response = await fetch(`${process.env.BACKEND_URL}/api/new-account-detail/${body.accountId}`, requestOptions);
             const result = await response.json();
-            console.log(body);
-            console.log(body.accountId);
-
             if (balanceType === "egreso") {
                 actions.debit(parseInt(result.amount), body.accountId)
             } else if ((balanceType === "ingreso")) {
@@ -70,8 +66,6 @@ export const ModalDetails = () => {
 
     }
     const addAccountDetail = () => {
-        console.log(inputValue);
-
         if (inputValue.detail.length != 0 && inputValue.type != "" && inputValue.amount != 0 && inputValue.coin != "") {
             console.log(inputValue);
             createAccount(inputValue)
@@ -101,8 +95,6 @@ export const ModalDetails = () => {
     };
     const handleChange = (e) => {
         const { name, value } = e.target;
-        console.log(`Cambiando ${name}: ${value}`);
-
         setInputValue({ ...inputValue, [name]: value });
         if (name === "date") setCurrentDate(value);
         if (name === "time") setCurrentTime(value);
