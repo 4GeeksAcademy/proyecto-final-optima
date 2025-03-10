@@ -15,15 +15,15 @@ export const PrincipalPage = () => {
     const params = useParams()
     const totalBalance = store.userAccounts.reduce((acc, item) => acc + item.balance, 0);
     const totalBalanceMovements = store.detailAccounts.reduce((acc, detail) => {
-        return detail.operation === "ingreso" 
-            ? acc + detail.amount 
+        return detail.operation === "ingreso"
+            ? acc + detail.amount
             : acc - detail.amount;
     }, 0);
-    
+
     const path = useLocation()
     let navigate = useNavigate();
     console.log(params);
-    
+
 
     useEffect(() => {
         actions.verifyToken();
@@ -32,7 +32,7 @@ export const PrincipalPage = () => {
             navigate("/");
         }
         if (path.pathname != "/cuentas") {
-            actions.getAccountsDetail(params.id)            
+            actions.getAccountsDetail(params.id)
         }
     }, []);
 
@@ -48,28 +48,59 @@ export const PrincipalPage = () => {
                 <div className="row d-flex justify-content-center">
                     <h2>Balance general</h2>
                     <div className="scrollmenu">
-                        {path.pathname==="/cuentas"?
-                        <GeneralBalance balance={totalBalance} /> : <GeneralBalance balance={totalBalanceMovements} />}
+                        {path.pathname === "/cuentas" ?
+                            <GeneralBalance balance={totalBalance} /> : <GeneralBalance balance={totalBalanceMovements} />}
                     </div>
                     <div className="scrollmenu">
                         {path.pathname === "/cuentas" ? (
                             store.userAccounts.length > 0 ? (
                                 store.userAccounts.map((item) => (
-                                    <Card key={item.id} id={item.id} name={item.name} balance={item.balance} coin={item.coin} type={item.type}  />
+                                    <Card
+                                        key={item.id}
+                                        id={item.id}
+                                        name={item.name}
+                                        balance={item.balance}
+                                        coin={item.coin}
+                                        type={item.type}
+                                    />
                                 ))
                             ) : (
                                 <p>No hay cuentas disponibles.</p>
                             )
+                        ) : store.detailAccounts.length > 0 ? (
+                            store.detailAccounts.map((details) => (
+                                <CardMovimientos
+                                    key={details.id}
+                                    amount={details.amount}
+                                    coin={details.coin}
+                                    date={details.date}
+                                    time={details.time}
+                                    detail={details.detail}
+                                    type={details.type}
+                                    operation={details.operation}
+                                />
+                            ))
                         ) : (
-                            store.detailAccounts.length > 0 ? (
-                                store.detailAccounts.map((details) => (
-                                    <CardMovimientos key={details.id} amount={details.amount} coin={details.coin} date={details.date} time={details.time} detail={details.detail} type={details.type} operation={details.operation}/>
-                                ))
-                            ) : (
-                                <p>No hay cuentas disponibles.</p>
-                            )
+                            <p>No hay detalles disponibles.</p>
+                        )}                        
+                        {store.detailUser && store.detailUser.length > 0 ? (
+                            store.detailUser.map((movement) => (
+                                <CardMovimientos
+                                    key={movement.id}
+                                    amount={movement.amount}
+                                    coin={movement.coin}
+                                    date={movement.date}
+                                    time={movement.time}
+                                    detail={movement.detail}
+                                    type={movement.type}
+                                    operation={movement.operation}
+                                />
+                            ))
+                        ) : (
+                            <p>No hay movimientos disponibles.</p>
                         )}
                     </div>
+
 
                 </div>
                 {path.pathname === "/cuentas" ? <Modal /> : <ModalDetails />}

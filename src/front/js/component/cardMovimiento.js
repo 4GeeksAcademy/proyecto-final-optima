@@ -13,6 +13,7 @@ export const CardMovimientos = (props) => {
     }
     return (
         <>
+        {path.pathname === "/movimientos"}
             <div className="card flex-row mb-3 " key={props.id} >
                 <div className="card-body d-flex justify-content-around col-4 align-items-center " >
                     <div className="justify-content-center">
