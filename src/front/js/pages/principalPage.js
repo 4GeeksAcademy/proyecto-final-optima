@@ -4,13 +4,15 @@ import { Card } from "../component/card";
 import { GeneralBalance } from "../component/balanceGeneral";
 import "../../styles/container.css";
 import { Context } from "../store/appContext";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation, useParams } from "react-router-dom";
 import { Modal } from "../component/modal";
 import { ModalDetails } from "../component/modalDetails";
 import { CardMovimientos } from "../component/cardMovimiento";
 
+
 export const PrincipalPage = () => {
     const { store, actions } = useContext(Context)
+    const params = useParams()
     const totalBalance = store.userAccounts.reduce((acc, item) => acc + item.balance, 0);
     const totalBalanceMovements = store.detailAccounts.reduce((acc, detail) => {
         return detail.operation === "ingreso" 
@@ -20,12 +22,17 @@ export const PrincipalPage = () => {
     
     const path = useLocation()
     let navigate = useNavigate();
+    console.log(params);
+    
 
     useEffect(() => {
         actions.verifyToken();
         actions.initializeStore();
         if (!store.auth) {
             navigate("/");
+        }
+        if (path.pathname != "/cuentas") {
+            actions.getAccountsDetail(params.id)            
         }
     }, []);
 
