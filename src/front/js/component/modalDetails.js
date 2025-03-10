@@ -67,7 +67,6 @@ export const ModalDetails = () => {
     }
     const addAccountDetail = () => {
         if (inputValue.detail.length != 0 && inputValue.type != "" && inputValue.amount != 0 && inputValue.coin != "") {
-            console.log(inputValue);
             createAccount(inputValue)
             setInputValue({
                 detail: "",
@@ -99,12 +98,15 @@ export const ModalDetails = () => {
         if (name === "date") setCurrentDate(value);
         if (name === "time") setCurrentTime(value);
         if (name === "account") {
-            const selectedAccount = store.userAccounts.find((account) => account.name === value)
-            if (selectedAccount) {
-                inputValue.accountId = selectedAccount.id
-                setInputValue(inputValue);
+            const accountIdFilter = store.userAccounts.find((account) => account.name === value);
+            if (accountIdFilter) {
+                setInputValue((prev) => ({ 
+                    ...prev, 
+                    accountId: accountIdFilter.id,
+                    operation:balanceType
+                }));
             }
-        } else if(path.pathname != "/movimientos") {
+        } else if (path.pathname != "/movimientos") {
             setInputValue((prev) => ({ ...prev, accountId: accountId }));
         }
     };
@@ -158,7 +160,7 @@ export const ModalDetails = () => {
                                 type="radio"
                                 id="btnradio1"
                                 name="btnradio"
-                                checked={balanceType === "egreso"}
+                                checked={balanceType === "egreso" || false}
                                 onChange={() => handleBalanceChange("egreso")}
                                 className="hidden"
                             />
@@ -170,7 +172,7 @@ export const ModalDetails = () => {
                                 type="radio"
                                 id="btnradio2"
                                 name="btnradio"
-                                checked={balanceType === "ingreso"}
+                                checked={balanceType === "ingreso" || false}
                                 onChange={() => handleBalanceChange("ingreso")}
                                 className="hidden"
                             />
@@ -215,7 +217,7 @@ export const ModalDetails = () => {
                                         type="text"
                                         className="form-control"
                                         placeholder="Detalle"
-                                        value={inputValue.name}
+                                        value={inputValue.detail}
                                         aria-label="Detalle"
                                         name="detail"
                                         required
@@ -301,7 +303,7 @@ export const ModalDetails = () => {
                                         type="text"
                                         className="form-control"
                                         placeholder="Detalle"
-                                        value={inputValue.name}
+                                        value={inputValue.detail}
                                         name="detail"
                                         required
                                         onChange={handleChange}
