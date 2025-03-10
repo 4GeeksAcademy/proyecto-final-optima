@@ -12,6 +12,12 @@ import { CardMovimientos } from "../component/cardMovimiento";
 export const PrincipalPage = () => {
     const { store, actions } = useContext(Context)
     const totalBalance = store.userAccounts.reduce((acc, item) => acc + item.balance, 0);
+    const totalBalanceMovements = store.detailAccounts.reduce((acc, detail) => {
+        return detail.operation === "ingreso" 
+            ? acc + detail.amount 
+            : acc - detail.amount;
+    }, 0);
+    
     const path = useLocation()
     let navigate = useNavigate();
 
@@ -35,7 +41,8 @@ export const PrincipalPage = () => {
                 <div className="row d-flex justify-content-center">
                     <h2>Balance general</h2>
                     <div className="scrollmenu">
-                        <GeneralBalance balance={totalBalance} />
+                        {path.pathname==="/cuentas"?
+                        <GeneralBalance balance={totalBalance} /> : <GeneralBalance balance={totalBalanceMovements} />}
                     </div>
                     <div className="scrollmenu">
                         {path.pathname === "/cuentas" ? (
@@ -49,7 +56,7 @@ export const PrincipalPage = () => {
                         ) : (
                             store.detailAccounts.length > 0 ? (
                                 store.detailAccounts.map((details) => (
-                                    <CardMovimientos key={details.id} amount={details.amount} coin={details.coin} date={details.date} time={details.time} detail={details.detail} type={details.type} operation={details.operation} id={details.id} />
+                                    <CardMovimientos key={details.id} amount={details.amount} coin={details.coin} date={details.date} time={details.time} detail={details.detail} type={details.type} operation={details.operation}/>
                                 ))
                             ) : (
                                 <p>No hay cuentas disponibles.</p>
