@@ -24,6 +24,7 @@ export const CardMovimientos = (props) => {
                                 <p>{props.time}</p>
                                 <p>{props.type}</p>
                                 <p>{props.operation}</p>
+                                
                             </div>
                         </div>
                     </div>

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 export const GeneralBalance = (props) => {
   
   const [showBalance, setShowBalance] = useState(true)
+const path = useLocation()
   
       const toggleBalance = () => {
           let toggle = !showBalance

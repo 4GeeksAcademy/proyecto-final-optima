@@ -244,7 +244,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				};
 
 				try {
-					const response = await fetch("https://ubiquitous-parakeet-wqxj59w67w7h9p5j-3001.app.github.dev/api/account-detail/1", requestOptions);
+					const response = await fetch(`${process.env.BACKEND_URL}/api/account-detail/${getStore().user.id}`, requestOptions);
 					const result = await response.json();
 					setStore({ detailAccounts: result.result });
 				} catch (error) {
