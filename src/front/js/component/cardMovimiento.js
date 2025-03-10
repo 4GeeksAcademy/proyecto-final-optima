@@ -19,6 +19,7 @@ export const CardMovimientos = (props) => {
                             <div className="">
                                 <p>{props.details}</p>
                                 <p>{props.amount}</p>
+                                <p>{props.id}</p>
                                 <p>{props.coin}</p>
                                 <p>{props.date}</p>
                                 <p>{props.time}</p>

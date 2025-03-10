@@ -49,7 +49,7 @@ export const PrincipalPage = () => {
                         ) : (
                             store.detailAccounts.length > 0 ? (
                                 store.detailAccounts.map((details) => (
-                                    <CardMovimientos key={details.id} amount={details.amount} coin={details.coin} date={details.date} time={details.time} detail={details.detail} type={details.type} operation={details.operation} />
+                                    <CardMovimientos key={details.id} amount={details.amount} coin={details.coin} date={details.date} time={details.time} detail={details.detail} type={details.type} operation={details.operation} id={details.id} />
                                 ))
                             ) : (
                                 <p>No hay cuentas disponibles.</p>
