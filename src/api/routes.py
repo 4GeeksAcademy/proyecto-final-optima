@@ -138,7 +138,7 @@ def signup():
 def post_account_detail(accounts_id):
     try:
         request_body = request.json
-        new_account_detail = Account_details(accounts_id=accounts_id, detail=request_body["detail"], amount=request_body["amount"], coin=request_body["coin"], type=request_body["type"],date=request_body["date"],time=request_body["time"])
+        new_account_detail = Account_details(accounts_id=accounts_id, detail=request_body["detail"], amount=request_body["amount"], coin=request_body["coin"], type=request_body["type"],date=request_body["date"],time=request_body["time"],operation=request_body["operation"])
         db.session.add(new_account_detail)
         db.session.commit()  
         return jsonify(request_body), 200
