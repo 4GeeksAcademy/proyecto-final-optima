@@ -11,24 +11,30 @@ export const CardMovimientos = (props) => {
         let toggle = !showBalance
         setShowBalance(toggle);
     }
-    return (                   
-                <div className="card flex-row mb-3 " key={props.id} >
-                    <div className="card-body d-flex justify-content-around col-4 align-items-center " >
-                        <div className="justify-content-center">
-                            <h5 className="card-title ">Detalle Movimiento</h5>
-                            <div className="">
-                                <p>{props.details}</p>
-                                <p>{props.amount}</p>
-                                <p>{props.id}</p>
-                                <p>{props.coin}</p>
-                                <p>{props.date}</p>
-                                <p>{props.time}</p>
-                                <p>{props.type}</p>
-                                <p>{props.operation}</p>
-                                
-                            </div>
+    return (
+        <>
+            <div className="card flex-row mb-3 " key={props.id} >
+                <div className="card-body d-flex justify-content-around col-4 align-items-center " >
+                    <div className="justify-content-center">
+                        <h5 className="card-title ">Detalle Movimiento</h5>
+                        <div className="">
+                            <p>{props.detail}</p>
                         </div>
                     </div>
                 </div>
+                <div className="card-body d-flex justify-content-around col-4 align-items-center">
+                    <div className="justify-content-center">
+                        <p>{props.amount}</p>
+                        <p>{props.coin}</p>
+                    </div>
+                </div>
+                <div className="card-body d-flex justify-content-around col-4 align-items-center ">
+                    <p>{props.date}</p>
+                    <p>{props.time}</p>
+                    <p>{props.type}</p>
+                    <p>{props.operation}</p>
+                </div>
+            </div>
+        </>
     )
 }
