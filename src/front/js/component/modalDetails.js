@@ -26,7 +26,9 @@ export const ModalDetails = () => {
         type: "",
         date: "",
         time: "",
-        account: ""
+        account: "",
+        accountId: "",
+        operation: balanceType
     });
 
     async function createAccount(body) {
@@ -39,7 +41,8 @@ export const ModalDetails = () => {
             "coin": body.coin,
             "type": body.type,
             "date": body.date,
-            "time": body.time
+            "time": body.time,
+            "operation": body.operation
         });
 
         const requestOptions = {
@@ -50,8 +53,12 @@ export const ModalDetails = () => {
         };
 
         try {
+            console.log(body);
             const response = await fetch(`${process.env.BACKEND_URL}/api/new-account-detail/${body.accountId}`, requestOptions);
             const result = await response.json();
+            console.log(body);
+            console.log(body.accountId);
+
             if (balanceType === "egreso") {
                 actions.debit(parseInt(result.amount), body.accountId)
             } else if ((balanceType === "ingreso")) {
@@ -63,7 +70,10 @@ export const ModalDetails = () => {
 
     }
     const addAccountDetail = () => {
+        console.log(inputValue);
+
         if (inputValue.detail.length != 0 && inputValue.type != "" && inputValue.amount != 0 && inputValue.coin != "") {
+            console.log(inputValue);
             createAccount(inputValue)
             setInputValue({
                 detail: "",
@@ -72,7 +82,9 @@ export const ModalDetails = () => {
                 type: "",
                 date: currentDate,
                 time: currentTime,
-                account: ""
+                account: "",
+                accountId: "",
+                operation: balanceType
             });
             Swal.fire({
                 title: "Movimiento registrado con éxito",
@@ -89,15 +101,18 @@ export const ModalDetails = () => {
     };
     const handleChange = (e) => {
         const { name, value } = e.target;
+        console.log(`Cambiando ${name}: ${value}`);
+
         setInputValue({ ...inputValue, [name]: value });
         if (name === "date") setCurrentDate(value);
         if (name === "time") setCurrentTime(value);
         if (name === "account") {
-            const accountIdFilter = store.userAccounts.find((account) => account.name === value);
-            if (accountIdFilter) {
-                setInputValue((prev) => ({ ...prev, accountId: accountIdFilter.id }));
+            const selectedAccount = store.userAccounts.find((account) => account.name === value)
+            if (selectedAccount) {
+                inputValue.accountId = selectedAccount.id
+                setInputValue(inputValue);
             }
-        } else {
+        } else if(path.pathname != "/movimientos") {
             setInputValue((prev) => ({ ...prev, accountId: accountId }));
         }
     };
@@ -109,10 +124,12 @@ export const ModalDetails = () => {
             type: "",
             date: currentDate,
             time: currentTime,
-            account: ""
+            account: "",
+            accountId: "",
+            operation: balanceType
         })
-        if(path.pathname != "/movimiento"){
-            const name = store.userAccounts.find((name)=>name.id == params.id)
+        if (path.pathname != "/movimientos") {
+            const name = store.userAccounts.find((name) => name.id == params.id)
             setAccountName(name.name)
             setAccountId(name.id)
         }
