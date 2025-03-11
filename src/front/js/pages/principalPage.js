@@ -33,7 +33,8 @@ export const PrincipalPage = () => {
             navigate("/");
         }
         if (path.pathname != "/cuentas") {
-            actions.getAccountsDetail(params.id)
+            actions.getAccountsDetail(params.id),
+            actions.getDetailsUser()
         }
     }, []);
 

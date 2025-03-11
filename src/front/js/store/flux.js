@@ -262,7 +262,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			getDetailsUser: async () => {
 				const myHeaders = new Headers();
-				myHeaders.append("Cookie", ".Tunnels.Relay.WebForwarding.Cookies=CfDJ8Cs4yarcs6pKkdu0hlKHsZvQkA_p_59JLq1cwzs5hmehErxUq9wRvGMQJtH-sharjUFZ-6iu0lQypC64Tus65uQ1JcdQUVJO-0_z0t4XyKWjoqH7RAFcysdD-ray9kCTakNpxtqJuGegVs6ZQAOvbgCeRP_8k92ND_GlmTZiXjor8yoJKZzb_ufipDQcTK5P15dMu_L6qiMwGmquwoysEmT2rMErCuMO-nnBS9aG_PlEV0jhzzlm7rTT9X6VclGQ1FOZlevIraxf0mguNT48vF91xK3tX7dTHNaE32N4Xq2rZt3cRdrpxzkHBFEHy59Zku1VOGpLbde9B6Fr5zQ5e0RG-pqSm88yPOu0nqWcXynuoZ43_OY4w4UQkot27DGpZ2bdUcDeU-hrlNuJJCPA-376SMWhqkm_feBQKE77aYuMlUEB93NWkK_QlKvInIwWRGSaMSOvo-umAOeZms88RuqU61D3-k7brP3bTSYX4qmpfJMFvGBLftWgGAGs3TeosMinvrxrmoA5dcUp51N8rm7IXQo7F52yvQ_OeJGeRxSzOVK-HmgKEP7a3PUDWS25B2WzK5SK9pmYVWxgSzhP_iKNT0AJnk_0wbcPXaEKZ3HSO3-iOKJPlI2v4EOlLD45OC62z_kVj6DQiJeP8mdVNLzkPuHU1J07ltuBYchiVlgH0hjDZmdbET7KnD4YPLelSvtjVOMZkfTEFYl2Bo23XbivK46VC4QbseyyKW6RgbX0qnF924PxG-tjI22zPAdHP2uwzf-nXs2TC8G2AVIahVJCTTzjgMwZ4VZ3mhO5qIsSgZ4WQIK7JXsQwHr_HSq6XNu8IwDGWb0kSvbL29n8OGFQ9O7n_xwQ726gWK2ZB-ABc7FlA1fgTORKiV7ryOMouSNergPEmvSqmqPt22YZoAPXOHcFeOaI1mRYWo-RYQcRkC3HGGCDhd6PXwS-qSOnrsqdLHKdhD9APTg61IphSl9BbddSINCj8ESIJ38seWTy");
+				myHeaders.append("Cookie", ".Tunnels.Relay.WebForwarding.Cookies=CfDJ8Cs4yarcs6pKkdu0hlKHsZvKzJXDVBHphtOe1cSnqI_WGNBarWhekoBngCO2L9aYlZiJZUNFSo5r6cRa1JZRnt3tDvDF7Ju8HsF2_wlVv6d0ngzEe4a3p9kAtLbD6rh_dEsHrRyOxji_W_JZ67fyLveQiXL8UZVJYCCDsVb26VZawDK9kIiScx5KxSTSj9fXlfvWGiKyO1NK7HF7v3CdrAEgrAp3y3GneVFRM5C-VLorUQPAs2R8-ulbHmZ5QLKJgTZsc2FV-hOEihiDEvLylJFB7O4haThOGoBKAeZePyZDS1vF-uJHnMExb4tI79wAwEI7HylZ4cDyhrfSS1R989N5Z7pFfGGBuZRaBU0H2hYFgQKtG6FX7BJbKFmx9pdEa-d35nRp61B-Y7PziEKt4XKXeJAsWHr4uz2sQH2V23dFU_9jMDT5jhwKbjAXKQPCDs8FLaLnpVSmCX8mmhr5uuqzGIzVrNf-ZVyayh8VOSXPiB1BWzZQ-CINZAeQyMx2roVt5gAOjI1KMzdF6hWZ78HmZkJHDbNSB33E3G318NRiV1Qb1xLO8C1GUyog-wiuhN04ESi6ruAZcD4x34oMf7v7Vp228UHPGNmUpJ8x9Cd6MaS-3TCP0Drkh8A_rm5locNIzdd-tfanE_TuIlSr0UHQKATw32jDN1d8VKow_lEYXLywe0aGGGz8GYH7YVa4gJscmvfybNB2SUCJ4bipGYjjv9WQYICX34cZvy8wssoTQ7_0emJ38N4wlqHftWwgIcPYGH7dKLgoUphJf02r3d9XD1IGHqRJApYMERVINOwh6whQCuwCxjD9vlXf7lwqS_BhY2K51zPsm-xnwd9fnVBxdwoMw5W84pQwh-P3QymFJ7EiZ7P8zSO-26wt_0XY9l3EojptbOYi6zYyHWIXUvdkqBKJUDCR4QVYz9pWk2y09zVO8sKpVfIXUXTLtRdPlHUb_SNdecaAti632itSi1bCwOWkmYkiB25Q-EwNHwHA");
 
 				const requestOptions = {
 					method: "GET",
@@ -271,14 +271,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 				};
 
 				try {
-					const response = await fetch(`${process.env.BACKEND_URL}/api/all-details-user/${getStore().user.id}`, requestOptions);
+					const response = await fetch(`${process.env.BACKEND_URL}/api/all-details-user/2`, requestOptions);
 					const result = await response.json();
 					console.log(result)
 					setStore({ detailUser: result.result });
 				} catch (error) {
 					console.error(error);
 				};
-
 			},
 
 		}
