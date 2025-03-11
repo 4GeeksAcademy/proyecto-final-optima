@@ -9,6 +9,7 @@ export const ModalDetails = () => {
     const [currentDate, setCurrentDate] = useState("");
     const [accountName, setAccountName] = useState("")
     const [accountId, setAccountId] = useState("")
+    const [selectedCurrency, setSelectedCurrency] = useState("");
     const [currentTime, setCurrentTime] = useState("");
     const { store, actions } = useContext(Context)
     const [balanceType, setBalanceType] = useState("egreso");
@@ -100,14 +101,16 @@ export const ModalDetails = () => {
         if (name === "account") {
             const accountIdFilter = store.accounts.find((account) => account.name === value);
             if (accountIdFilter) {
-                setInputValue((prev) => ({ 
-                    ...prev, 
+                setInputValue((prev) => ({
+                    ...prev,
                     accountId: accountIdFilter.id,
-                    operation:balanceType
+                    operation: balanceType
                 }));
             }
         } else if (path.pathname != "/movimientos") {
-            setInputValue((prev) => ({ ...prev, accountId: accountId }));
+            setInputValue((prev) => ({
+                ...prev, accountId: accountId, operation: balanceType
+            }));
         }
     };
     const handleClick = () => {
@@ -123,11 +126,12 @@ export const ModalDetails = () => {
             operation: balanceType
         })
         if (path.pathname != "/movimientos") {
-            const name = store.accounts.find((name) => name.id == params.id)
-            setAccountName(name.name)
-            setAccountId(name.id)
+            const account = store.accounts.find((acc) => acc.id == params.id);
+            if (account) {
+                setAccountName(account.name);
+                setAccountId(account.id);
+            }
         }
-
     }
     useEffect(() => {
         const now = new Date();
@@ -193,7 +197,7 @@ export const ModalDetails = () => {
                                     <option value="">Selecciona una cuenta</option>
                                     {store.accounts.map((i) => {
                                         return (
-                                            <option value={i.name}>{i.name}</option>
+                                            <option key={i.id} value={i.name}>{i.name}</option>
                                         )
                                     })}
                                 </select>
@@ -240,15 +244,12 @@ export const ModalDetails = () => {
                                             aria-label="Default select example"
                                             name="coin"
                                             required
-                                            value={inputValue.coin}
+                                            // value={inputValue.coin}
+                                            value={selectedCurrency} disabled
                                             onChange={handleChange}
                                             style={{ width: "30%" }}
                                         >
-                                            <option value="">Moneda</option>
-                                            <option value="EUR">EUR</option>
-                                            <option value="USD">USD</option>
-                                            <option value="COP">COP</option>
-                                            <option value="PER">PER</option>
+                                            <option value="">{selectedCurrency || "Moneda"}</option>
                                         </select>
                                     </div>
 
