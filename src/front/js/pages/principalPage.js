@@ -23,7 +23,7 @@ export const PrincipalPage = () => {
 
     const path = useLocation()
     let navigate = useNavigate();
-
+    const params = useParams();
     useEffect(() => {
         actions.verifyToken();
         actions.initializeStore();
