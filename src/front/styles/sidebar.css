@@ -2,8 +2,8 @@
 .sidebar {
     min-width: 20vw;
     height: 100vh;
-    background-color: #343a40;
-    color: white;
+    background-color: var(--background-dark); /*variable dinamica*/
+    color: var(--text-light); /*ajusta el color segun el tema*/
     padding: 20px;
 }
 

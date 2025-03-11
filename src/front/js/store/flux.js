@@ -1,6 +1,7 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
+			theme: localStorage.getItem("theme") || "light", //estado modod clarp/oscuro (alamcena el tema)
 			message: null,
 			demo: [
 				{
@@ -21,6 +22,19 @@ const getState = ({ getStore, getActions, setStore }) => {
 			detailUser: [],
 		},
 		actions: {
+			initializeTheme: () => { //se ejecuta cuando la app se cargue para caragar el tema correcto
+				const savedTheme = localStorage.getItem("theme") || "light";
+				document.documentElement.setAttribute("data-theme", savedTheme);
+				setStore({ theme: savedTheme });
+			},
+		
+			toggleTheme: () => { //cambia el tema y lo guarda en local storage
+				const currentTheme = getStore().theme;
+				const newTheme = currentTheme === "light" ? "dark" : "light";
+				document.documentElement.setAttribute("data-theme", newTheme);
+				localStorage.setItem("theme", newTheme);
+				setStore({ theme: newTheme });
+			},
 			exampleFunction: () => {
 				getActions().changeColor(0, "green");
 			},

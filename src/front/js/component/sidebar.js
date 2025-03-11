@@ -18,6 +18,11 @@ export const Sidebar = () => {
                     <img src="" alt="logo" width="32" height="32" />
                 </Link>
             </div>
+            <div className="theme-toggle-container"> {/* Contenedor para el botón */}
+                <button className="toggle-theme" onClick={actions.toggleTheme}>
+                    {store.theme === "light" ? "🌙 Modo Oscuro" : "☀️ Modo Claro"}
+                </button>
+            </div>
             <div className="d-flex flex-column">
                 <p className="p-2">Welcome
                     <br></br>
