@@ -8,6 +8,7 @@ import { Link, useNavigate, useLocation, useParams } from "react-router-dom";
 import { Modal } from "../component/modal";
 import { ModalDetails } from "../component/modalDetails";
 import { CardMovimientos } from "../component/cardMovimiento";
+import { Currency } from "../component/currency";
 import { CardDetails } from "../component/cardDetails";
 
 
@@ -24,9 +25,6 @@ export const PrincipalPage = () => {
 
     const path = useLocation()
     let navigate = useNavigate();
-    console.log(store.detailUser);
-    
-
 
     useEffect(() => {
         actions.verifyToken();
@@ -51,6 +49,7 @@ export const PrincipalPage = () => {
             <div className="container">
                 <div className="row d-flex justify-content-center">
                     <h2>Balance general</h2>
+                    <Currency />
                     <div className="scrollmenu">
                         {path.pathname === "/cuentas" ?
                             <GeneralBalance balance={totalBalance} /> : <GeneralBalance balance={totalBalanceMovements} />}
