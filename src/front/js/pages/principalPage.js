@@ -11,13 +11,13 @@ import { CardMovimientos } from "../component/cardMovimiento";
 
 export const PrincipalPage = () => {
     const { store, actions } = useContext(Context)
-    const totalBalance = store.userAccounts.reduce((acc, item) => acc + item.balance, 0);
+    const totalBalance = store.accounts.reduce((acc, item) => acc + item.balance, 0);
     const totalBalanceMovements = store.detailAccounts.reduce((acc, detail) => {
-        return detail.operation === "ingreso" 
-            ? acc + detail.amount 
+        return detail.operation === "ingreso"
+            ? acc + detail.amount
             : acc - detail.amount;
     }, 0);
-    
+
     const path = useLocation()
     let navigate = useNavigate();
 
@@ -41,14 +41,14 @@ export const PrincipalPage = () => {
                 <div className="row d-flex justify-content-center">
                     <h2>Balance general</h2>
                     <div className="scrollmenu">
-                        {path.pathname==="/cuentas"?
-                        <GeneralBalance balance={totalBalance} /> : <GeneralBalance balance={totalBalanceMovements} />}
+                        {path.pathname === "/cuentas" ?
+                            <GeneralBalance balance={totalBalance} /> : <GeneralBalance balance={totalBalanceMovements} />}
                     </div>
                     <div className="scrollmenu">
                         {path.pathname === "/cuentas" ? (
-                            store.userAccounts.length > 0 ? (
-                                store.userAccounts.map((item) => (
-                                    <Card key={item.id} id={item.id} name={item.name} balance={item.balance} coin={item.coin} type={item.type}  />
+                            store.accounts.length > 0 ? (
+                                store.accounts.map((item) => (
+                                    <Card key={item.id} id={item.id} name={item.name} balance={item.balance} coin={item.coin} type={item.type} />
                                 ))
                             ) : (
                                 <p>No hay cuentas disponibles.</p>
@@ -56,7 +56,7 @@ export const PrincipalPage = () => {
                         ) : (
                             store.detailAccounts.length > 0 ? (
                                 store.detailAccounts.map((details) => (
-                                    <CardMovimientos key={details.id} amount={details.amount} coin={details.coin} date={details.date} time={details.time} detail={details.detail} type={details.type} operation={details.operation}/>
+                                    <CardMovimientos key={details.id} amount={details.amount} coin={details.coin} date={details.date} time={details.time} detail={details.detail} type={details.type} operation={details.operation} />
                                 ))
                             ) : (
                                 <p>No hay cuentas disponibles.</p>
