@@ -24,7 +24,8 @@ export const PrincipalPage = () => {
 
     const path = useLocation()
     let navigate = useNavigate();
-    console.log(params);
+    console.log(store.detailUser);
+    
 
 
     useEffect(() => {
@@ -34,7 +35,8 @@ export const PrincipalPage = () => {
             navigate("/");
         }
         if (path.pathname != "/cuentas") {
-            actions.getAccountsDetail(params.id)
+            actions.getAccountsDetail(params.id),
+            actions.getDetailsUser()
         }
     }, []);
 
