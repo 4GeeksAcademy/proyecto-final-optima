@@ -14,11 +14,11 @@ export const PrincipalPage = () => {
     const { store, actions } = useContext(Context)
     const params = useParams()
     const totalBalance = store.userAccounts.reduce((acc, item) => acc + item.balance, 0);
-    const totalBalanceMovements = store.detailAccounts.reduce((acc, detail) => {
-        return detail.operation === "ingreso"
-            ? acc + detail.amount
-            : acc - detail.amount;
-    }, 0);
+    // const totalBalanceMovements = store.detailAccounts.reduce((acc, detail) => {
+    //     return detail.operation === "ingreso"
+    //         ? acc + detail.amount
+    //         : acc - detail.amount;
+    // }, 0);
 
     const path = useLocation()
     let navigate = useNavigate();
@@ -49,7 +49,7 @@ export const PrincipalPage = () => {
                     <h2>Balance general</h2>
                     <div className="scrollmenu">
                         {path.pathname === "/cuentas" ?
-                            <GeneralBalance balance={totalBalance} /> : <GeneralBalance balance={totalBalanceMovements} />}
+                            <GeneralBalance balance={totalBalance} /> : <GeneralBalance  />}
                     </div>
                     <div className="scrollmenu">
                         {path.pathname === "/cuentas" ? (
@@ -91,7 +91,7 @@ export const PrincipalPage = () => {
                                     coin={movement.coin}
                                     date={movement.date}
                                     time={movement.time}
-                                    detail={movement.detail}
+                                    detailuser={movement.detail}
                                     type={movement.type}
                                     operation={movement.operation}
                                 />
