@@ -17,7 +17,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 			user: JSON.parse(localStorage.getItem("userLogged")) || "",  // Cargar el usuario desde localStorage			email: "",
 			accounts: JSON.parse(localStorage.getItem("userAccounts")) || [],
 			auth: !!localStorage.getItem("token"), // Verifica si hay un token para mantener la sesión activa
-			userAccounts: [],
 			detailAccounts: [],
 			detailUser:[],
 		},
