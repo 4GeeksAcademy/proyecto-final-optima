@@ -98,7 +98,7 @@ export const ModalDetails = () => {
         if (name === "date") setCurrentDate(value);
         if (name === "time") setCurrentTime(value);
         if (name === "account") {
-            const accountIdFilter = store.userAccounts.find((account) => account.name === value);
+            const accountIdFilter = store.accounts.find((account) => account.name === value);
             if (accountIdFilter) {
                 setInputValue((prev) => ({ 
                     ...prev, 
@@ -123,7 +123,7 @@ export const ModalDetails = () => {
             operation: balanceType
         })
         if (path.pathname != "/movimientos") {
-            const name = store.userAccounts.find((name) => name.id == params.id)
+            const name = store.accounts.find((name) => name.id == params.id)
             setAccountName(name.name)
             setAccountId(name.id)
         }
@@ -191,7 +191,7 @@ export const ModalDetails = () => {
                                     onChange={handleChange}
                                 >
                                     <option value="">Selecciona una cuenta</option>
-                                    {store.userAccounts.map((i) => {
+                                    {store.accounts.map((i) => {
                                         return (
                                             <option value={i.name}>{i.name}</option>
                                         )

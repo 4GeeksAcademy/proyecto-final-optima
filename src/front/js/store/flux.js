@@ -15,6 +15,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			],
 			user: JSON.parse(localStorage.getItem("userLogged")) || "",  // Cargar el usuario desde localStorage			email: "",
+			accounts: JSON.parse(localStorage.getItem("userAccounts")) || [],
 			auth: !!localStorage.getItem("token"), // Verifica si hay un token para mantener la sesión activa
 			userAccounts: [],
 			detailAccounts: [],
@@ -111,7 +112,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			logout: () => {
 				localStorage.removeItem("token");
 				localStorage.removeItem("userLogged");
-				setStore({ auth: false, user: "" });
+				localStorage.removeItem("userAccounts")
+				setStore({ auth: false, user: "", accounts: [] });
 			},
 			getUserLogged: async () => {
 
@@ -134,9 +136,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 			initializeStore: () => {
 				const userLogged = JSON.parse(localStorage.getItem("userLogged"));
 				const token = localStorage.getItem("token");
+				const userAccounts = JSON.parse(localStorage.getItem("userAccounts"));
 
 				if (userLogged) {
 					setStore({ user: userLogged });
+				}
+				if (userAccounts) {
+					setStore({ accounts: userAccounts });
 				}
 
 				if (token) {
@@ -155,8 +161,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 						body: JSON.stringify(formData)
 					});
 					const result = await response.json();
-					console.log(result)
-
 					if (response.status === 201) {
 						return { success: true, message: "Successfully registered" };
 					} else {
@@ -179,13 +183,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 				};
 
 				try {
-					const response = await fetch(`${process.env.BACKEND_URL}/api/user/${getStore().user.id}/accounts`, requestOptions);
-					const result = await response.json();
-					setStore({ userAccounts: result.result });
-
+					const userAccounts = JSON.parse(localStorage.getItem("userAccounts"));
+					if (userAccounts === null) {
+						const response = await fetch(`${process.env.BACKEND_URL}/api/user/${getStore().user.id}/accounts`, requestOptions);
+						const result = await response.json();
+						const userAccounts = await result.result
+						localStorage.setItem("userAccounts", JSON.stringify(userAccounts));
+						setStore({ accounts: userAccounts });
+					} else{
+						setStore({accounts: userAccounts})
+					}
 				} catch (error) {
 					console.error(error);
-
 				};
 			},
 			debit: async (amout, accountId) => {
