@@ -25,8 +25,6 @@ export const PrincipalPage = () => {
 
     const path = useLocation()
     let navigate = useNavigate();
-    console.log(params);
-
 
     useEffect(() => {
         actions.verifyToken();
