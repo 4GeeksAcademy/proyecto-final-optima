@@ -4,10 +4,12 @@ import { Card } from "../component/card";
 import { GeneralBalance } from "../component/balanceGeneral";
 import "../../styles/container.css";
 import { Context } from "../store/appContext";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation, useParams } from "react-router-dom";
 import { Modal } from "../component/modal";
 import { ModalDetails } from "../component/modalDetails";
 import { CardMovimientos } from "../component/cardMovimiento";
+import { CardDetails } from "../component/cardDetails";
+
 
 export const PrincipalPage = () => {
     const { store, actions } = useContext(Context)
@@ -17,15 +19,22 @@ export const PrincipalPage = () => {
             ? acc + detail.amount
             : acc - detail.amount;
     }, 0);
+    const params = useParams()
+
 
     const path = useLocation()
     let navigate = useNavigate();
+    console.log(params);
+
 
     useEffect(() => {
         actions.verifyToken();
         actions.initializeStore();
         if (!store.auth) {
             navigate("/");
+        }
+        if (path.pathname != "/cuentas") {
+            actions.getAccountsDetail(params.id)
         }
     }, []);
 
@@ -53,16 +62,32 @@ export const PrincipalPage = () => {
                             ) : (
                                 <p>No hay cuentas disponibles.</p>
                             )
-                        ) : (
+                        ) : path.pathname.startsWith("/cuentas/") ? (
                             store.detailAccounts.length > 0 ? (
                                 store.detailAccounts.map((details) => (
                                     <CardMovimientos key={details.id} amount={details.amount} coin={details.coin} date={details.date} time={details.time} detail={details.detail} type={details.type} operation={details.operation} />
                                 ))
                             ) : (
-                                <p>No hay cuentas disponibles.</p>
+                                <p>No hay movimientos en esta cuenta.</p>
                             )
-                        )}
+                        ) : path.pathname === "/movimientos" ? (
+                            <>
+                                {console.log("Contenido de store.detailUser:", store.detailUser)}
+                                {store.detailUser.length > 0 ? (
+                                    store.detailUser.map((movents) => {
+                                        console.log("Movimientos de todas las cuentas:", movents);
+                                        return (
+                                            <CardDetails key={movents.id} amount={movents.amount} coin={movents.coin} date={movents.date} time={movents.time} detail={movents.detail} type={movents.type} operation={movents.operation} />
+                                        );
+                                    })
+                                ) : (
+                                    <p>No hay movimientos en ninguna cuenta.</p>
+                                )}
+                            </>
+                        ) : null}
                     </div>
+
+
 
                 </div>
                 {path.pathname === "/cuentas" ? <Modal /> : <ModalDetails />}
