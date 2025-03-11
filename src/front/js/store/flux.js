@@ -18,7 +18,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			accounts: JSON.parse(localStorage.getItem("userAccounts")) || [],
 			auth: !!localStorage.getItem("token"), // Verifica si hay un token para mantener la sesión activa
 			detailAccounts: [],
-			detailUser:[],
+			detailUser: [],
 		},
 		actions: {
 			exampleFunction: () => {
@@ -187,11 +187,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 						const response = await fetch(`${process.env.BACKEND_URL}/api/user/${getStore().user.id}/accounts`, requestOptions);
 						const result = await response.json();
 						const userAccounts = await result.result
-						localStorage.setItem("userAccounts", JSON.stringify(userAccounts));
-						setStore({ accounts: userAccounts });
-					} else{
-						setStore({accounts: userAccounts})
-					}
+
+						if (userAccounts !== undefined) {
+							localStorage.setItem("userAccounts", JSON.stringify(userAccounts));
+							setStore({ accounts: userAccounts });
+						}
+					} else { setStore({ accounts: userAccounts }) }
 				} catch (error) {
 					console.error(error);
 				};
