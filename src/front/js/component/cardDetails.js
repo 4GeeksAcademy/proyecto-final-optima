@@ -18,6 +18,7 @@ export const CardDetails = (props) => {
                     <div className="justify-content-center">
                         <h5 className="card-title ">Detalle Movimiento</h5>
                         <div className="">
+                            <p>{props.name}</p>
                             <p>{props.detail}</p>
                         </div>
                     </div>
