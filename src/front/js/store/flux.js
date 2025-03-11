@@ -17,8 +17,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			user: JSON.parse(localStorage.getItem("userLogged")) || "",  // Cargar el usuario desde localStorage			email: "",
 			accounts: JSON.parse(localStorage.getItem("userAccounts")) || [],
 			auth: !!localStorage.getItem("token"), // Verifica si hay un token para mantener la sesión activa
-			userAccounts: [],
 			detailAccounts: [],
+			detailUser:[],
 		},
 		actions: {
 			exampleFunction: () => {
@@ -61,7 +61,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 						await getActions().getPrivate();
 						await getActions().getUserLogged();
 						await getActions().getAccountsUser();
-						await getActions().getAccountsDetail();
 					} else {
 						setStore({ auth: false });
 					}
@@ -242,7 +241,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(error);
 				};
 			},
-			getAccountsDetail: async () => {
+			getAccountsDetail: async (accountId) => {
 				const myHeaders = new Headers();
 				myHeaders.append("Cookie", ".Tunnels.Relay.WebForwarding.Cookies=CfDJ8Cs4yarcs6pKkdu0hlKHsZuR5ZcgQ2KTnWDNr3AUt8ybBx2u9D6V4wNy29qq0uvKyt0dEmrGGzWX4XiYfTpuTAnKnIIv9Ln23w-4vAGompckgCekREzckivfx1EFoIdA_AtlfZC_VbnLv9vgzTXZ6J6j0Di2KszNcr_soZxDjxwalD3Kt4nhLxxrSE_36qp-s6R7bRAfnfsIM2JBE5HftxL7unD6bUCWegqmIaXAb4JCjVtFJZNT1RoiDzvsZJNVHF6FHsyBtcLNb5CwUMf1GC_A06IGE0OaLbfaZ1CeGVbdQPtviNt_zvkPlfWZfM8-g1mepf4HIM_UaH1whZxYKiQgPvpBRb5-T_4FFOSba0d8VRwHK_VMicGi3ju5BqujVmLHBnJ98EjagWnxF9g8PCi_JuLb3N2yVvgFuw0T5m17lX_5_BHBjJD4laB6jRX1Qbhi_Yiuolg2-48UKfr_cgFlzx3MUCJcQdlQeNOX2LYEgRjDbHwACpZTTG6R32om-lrBu4TBD073sxXitNjFT98geeeONMbTuhEGgyql-qzfTYqWLeuAt062SQuuOpUCHMw7pdbO1vZVcLV3dg-Sd8l0XFINELsMYGmh5YSVmzHttBNXZj2G8Nx51HVlrHVH6lWegB6znFO_KKsWK1jW-kkrXmstr88RphGCYQhZVAzoI8ag4ddz0JMZYgB6wDPIVeTIVAcy57sDfPekzK_cIKNKTEs7yRCREiUT36s-xTqghLmXXgUyLMs_bCwabdzaCMbo4m5ejIURpzTofdyaaKWrmJERwYuryslcPTGWwhGgMtWNZIcmBWOqr4Mzt_v76XpfnLTiGDA-eHxSQoAynmHo51WihgL5FQxW0xNssPCGStiKhfLfiNE_t4XHUBmBom-WoLVq3U7W4QXXAdPCrz7hj3_E1LV0uZ_8EjpeNBpwGoj27u3RwLMmcjXxEC9np_Wlabme3C6mzc8I-XdbRNN3o7wSyJCukSwV8XyaM7IW");
 
@@ -253,13 +252,34 @@ const getState = ({ getStore, getActions, setStore }) => {
 				};
 
 				try {
-					const response = await fetch(`${process.env.BACKEND_URL}/api/account-detail/${getStore().user.id}`, requestOptions);
+					const response = await fetch(`${process.env.BACKEND_URL}/api/account-detail/${accountId}`, requestOptions);
 					const result = await response.json();
 					setStore({ detailAccounts: result.result });
 				} catch (error) {
 					console.error(error);
 				};
-			}
+			},
+			getDetailsUser: async () => {
+				const myHeaders = new Headers();
+				myHeaders.append("Cookie", ".Tunnels.Relay.WebForwarding.Cookies=CfDJ8Cs4yarcs6pKkdu0hlKHsZvQkA_p_59JLq1cwzs5hmehErxUq9wRvGMQJtH-sharjUFZ-6iu0lQypC64Tus65uQ1JcdQUVJO-0_z0t4XyKWjoqH7RAFcysdD-ray9kCTakNpxtqJuGegVs6ZQAOvbgCeRP_8k92ND_GlmTZiXjor8yoJKZzb_ufipDQcTK5P15dMu_L6qiMwGmquwoysEmT2rMErCuMO-nnBS9aG_PlEV0jhzzlm7rTT9X6VclGQ1FOZlevIraxf0mguNT48vF91xK3tX7dTHNaE32N4Xq2rZt3cRdrpxzkHBFEHy59Zku1VOGpLbde9B6Fr5zQ5e0RG-pqSm88yPOu0nqWcXynuoZ43_OY4w4UQkot27DGpZ2bdUcDeU-hrlNuJJCPA-376SMWhqkm_feBQKE77aYuMlUEB93NWkK_QlKvInIwWRGSaMSOvo-umAOeZms88RuqU61D3-k7brP3bTSYX4qmpfJMFvGBLftWgGAGs3TeosMinvrxrmoA5dcUp51N8rm7IXQo7F52yvQ_OeJGeRxSzOVK-HmgKEP7a3PUDWS25B2WzK5SK9pmYVWxgSzhP_iKNT0AJnk_0wbcPXaEKZ3HSO3-iOKJPlI2v4EOlLD45OC62z_kVj6DQiJeP8mdVNLzkPuHU1J07ltuBYchiVlgH0hjDZmdbET7KnD4YPLelSvtjVOMZkfTEFYl2Bo23XbivK46VC4QbseyyKW6RgbX0qnF924PxG-tjI22zPAdHP2uwzf-nXs2TC8G2AVIahVJCTTzjgMwZ4VZ3mhO5qIsSgZ4WQIK7JXsQwHr_HSq6XNu8IwDGWb0kSvbL29n8OGFQ9O7n_xwQ726gWK2ZB-ABc7FlA1fgTORKiV7ryOMouSNergPEmvSqmqPt22YZoAPXOHcFeOaI1mRYWo-RYQcRkC3HGGCDhd6PXwS-qSOnrsqdLHKdhD9APTg61IphSl9BbddSINCj8ESIJ38seWTy");
+
+				const requestOptions = {
+					method: "GET",
+					headers: myHeaders,
+					redirect: "follow"
+				};
+
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/all-details-user/${getStore().user.id}`, requestOptions);
+					const result = await response.json();
+					console.log(result)
+					setStore({ detailUser: result.result });
+				} catch (error) {
+					console.error(error);
+				};
+
+			},
+
 		}
 	};
 };

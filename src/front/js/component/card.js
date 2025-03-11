@@ -12,14 +12,16 @@ export const Card = (props) => {
     }
     return (
         <>
-            {path.pathname === "/cuentas" ?
                 <div className="card flex-row mb-3 " key={props.id} >
                     <div className="card-body d-flex justify-content-around col-4 align-items-center " >
                         <div className="justify-content-center">
                             <h5 className="card-title ">{props.name}</h5>
                             <div className="">
                                 <p>Ultimo movimiento</p>
-                                <p>Detalle ultimo movimiento</p>
+                                <p>{props.detail}</p>
+                                <p>{props.amount}</p>
+                                <p>{props.date}</p>
+
                             </div>
                         </div>
                     </div>
@@ -38,20 +40,7 @@ export const Card = (props) => {
                         </Link>
                     </div>
                 </div>
-                : <div className="card flex-row mb-3 "  >
-                    <div className="card-body d-flex justify-content-around col-4 align-items-center " >
-                        <div className="justify-content-center">
-                            <h5 className="card-title ">Detalle Ultimo movimiento</h5>
-                            <div className="">
-                                <p>detalle</p>
-                                <p>Egreso o ingreso</p>
-                                <p>monto</p>
-                                <p>fecha</p>
-                                <p>hora</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>}
+                
         </>
     )
 }

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { ModalDetails } from "./modalDetails";
 
-export const CardMovimientos = (props) => {
+export const CardDetails = (props) => {
     const [showBalance, setShowBalance] = useState(true)
     const path = useLocation()
 
