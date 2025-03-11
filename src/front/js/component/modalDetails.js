@@ -26,7 +26,9 @@ export const ModalDetails = () => {
         type: "",
         date: "",
         time: "",
-        account: ""
+        account: "",
+        accountId: "",
+        operation: balanceType
     });
 
     async function createAccount(body) {
@@ -39,7 +41,8 @@ export const ModalDetails = () => {
             "coin": body.coin,
             "type": body.type,
             "date": body.date,
-            "time": body.time
+            "time": body.time,
+            "operation": body.operation
         });
 
         const requestOptions = {
@@ -72,7 +75,9 @@ export const ModalDetails = () => {
                 type: "",
                 date: currentDate,
                 time: currentTime,
-                account: ""
+                account: "",
+                accountId: "",
+                operation: balanceType
             });
             Swal.fire({
                 title: "Movimiento registrado con éxito",
@@ -93,11 +98,15 @@ export const ModalDetails = () => {
         if (name === "date") setCurrentDate(value);
         if (name === "time") setCurrentTime(value);
         if (name === "account") {
-            const accountIdFilter = store.userAccounts.find((account) => account.name === value);
+            const accountIdFilter = store.accounts.find((account) => account.name === value);
             if (accountIdFilter) {
-                setInputValue((prev) => ({ ...prev, accountId: accountIdFilter.id }));
+                setInputValue((prev) => ({ 
+                    ...prev, 
+                    accountId: accountIdFilter.id,
+                    operation:balanceType
+                }));
             }
-        } else {
+        } else if (path.pathname != "/movimientos") {
             setInputValue((prev) => ({ ...prev, accountId: accountId }));
         }
     };
@@ -109,10 +118,12 @@ export const ModalDetails = () => {
             type: "",
             date: currentDate,
             time: currentTime,
-            account: ""
+            account: "",
+            accountId: "",
+            operation: balanceType
         })
-        if(path.pathname != "/movimiento"){
-            const name = store.userAccounts.find((name)=>name.id == params.id)
+        if (path.pathname != "/movimientos") {
+            const name = store.accounts.find((name) => name.id == params.id)
             setAccountName(name.name)
             setAccountId(name.id)
         }
@@ -149,7 +160,7 @@ export const ModalDetails = () => {
                                 type="radio"
                                 id="btnradio1"
                                 name="btnradio"
-                                checked={balanceType === "egreso"}
+                                checked={balanceType === "egreso" || false}
                                 onChange={() => handleBalanceChange("egreso")}
                                 className="hidden"
                             />
@@ -161,7 +172,7 @@ export const ModalDetails = () => {
                                 type="radio"
                                 id="btnradio2"
                                 name="btnradio"
-                                checked={balanceType === "ingreso"}
+                                checked={balanceType === "ingreso" || false}
                                 onChange={() => handleBalanceChange("ingreso")}
                                 className="hidden"
                             />
@@ -180,7 +191,7 @@ export const ModalDetails = () => {
                                     onChange={handleChange}
                                 >
                                     <option value="">Selecciona una cuenta</option>
-                                    {store.userAccounts.map((i) => {
+                                    {store.accounts.map((i) => {
                                         return (
                                             <option value={i.name}>{i.name}</option>
                                         )
@@ -206,7 +217,7 @@ export const ModalDetails = () => {
                                         type="text"
                                         className="form-control"
                                         placeholder="Detalle"
-                                        value={inputValue.name}
+                                        value={inputValue.detail}
                                         aria-label="Detalle"
                                         name="detail"
                                         required
@@ -292,7 +303,7 @@ export const ModalDetails = () => {
                                         type="text"
                                         className="form-control"
                                         placeholder="Detalle"
-                                        value={inputValue.name}
+                                        value={inputValue.detail}
                                         name="detail"
                                         required
                                         onChange={handleChange}

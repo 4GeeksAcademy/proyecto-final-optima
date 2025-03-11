@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import { ModalDetails } from "./modalDetails";
 
 export const CardMovimientos = (props) => {
     const [showBalance, setShowBalance] = useState(true)
@@ -11,16 +12,19 @@ export const CardMovimientos = (props) => {
         setShowBalance(toggle);
     }
     return (                   
-                <div className="card flex-row mb-3 "  >
+                <div className="card flex-row mb-3 " key={props.id} >
                     <div className="card-body d-flex justify-content-around col-4 align-items-center " >
                         <div className="justify-content-center">
-                            <h5 className="card-title ">{props.name}</h5>
+                            <h5 className="card-title ">Detalle Movimiento</h5>
                             <div className="">
-                                <p>detalle</p>
-                                <p>Egreso o ingreso</p>
-                                <p>monto</p>
-                                <p>fecha</p>
-                                <p>hora</p>
+                                <p>{props.details}</p>
+                                <p>{props.amount}</p>
+                                <p>{props.coin}</p>
+                                <p>{props.date}</p>
+                                <p>{props.time}</p>
+                                <p>{props.type}</p>
+                                <p>{props.operation}</p>
+                                
                             </div>
                         </div>
                     </div>
