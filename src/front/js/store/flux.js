@@ -269,7 +269,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 				try {
 					const response = await fetch(`${process.env.BACKEND_URL}/api/account-detail/${accountId}`, requestOptions);
 					const result = await response.json();
-					setStore({ detailAccounts: result.result });
+					if(response.status === 404){
+						setStore({ detailAccounts: [] });
+					} else{
+						setStore({ detailAccounts: result.result });
+					}
 				} catch (error) {
 					console.error(error);
 				};
@@ -287,8 +291,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 				try {
 					const response = await fetch(`${process.env.BACKEND_URL}/api/all-details-user/${getStore().user.id}`, requestOptions);
 					const result = await response.json();
-					console.log(result)
-					setStore({ detailUser: result.result });
+					if(response.status === 404){
+						setStore({ detailUser: [] });
+					}else{
+						setStore({ detailUser: result.result });
+					}
+
 				} catch (error) {
 					console.error(error);
 				};
