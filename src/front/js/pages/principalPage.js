@@ -4,22 +4,15 @@ import { Card } from "../component/card";
 import { GeneralBalance } from "../component/balanceGeneral";
 import "../../styles/container.css";
 import { Context } from "../store/appContext";
-import { Link, useNavigate, useLocation, useParams } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { Modal } from "../component/modal";
 import { ModalDetails } from "../component/modalDetails";
 import { CardMovimientos } from "../component/cardMovimiento";
-import { Currency } from "../component/currency";
 import { CardDetails } from "../component/cardDetails";
 
 
 export const PrincipalPage = () => {
     const { store, actions } = useContext(Context)
-    const totalBalance = store.accounts.reduce((acc, item) => acc + item.balance, 0);
-    const totalBalanceMovements = store.detailAccounts.reduce((acc, detail) => {
-        return detail.operation === "ingreso"
-            ? acc + detail.amount
-            : acc - detail.amount;
-    }, 0);
 
     const path = useLocation()
     let navigate = useNavigate();
@@ -48,15 +41,12 @@ export const PrincipalPage = () => {
     }
 
     return (
-        <div className="d-flex">
+        <div className="d-flex vh-100">
             <Sidebar />
-            <div className="container">
-                <div className="row d-flex justify-content-center">
-                    <h2>Balance general</h2>
-                    <Currency />
-                    <div className="scrollmenu">
-                        {path.pathname === "/cuentas" ?
-                            <GeneralBalance balance={totalBalance} /> : <GeneralBalance balance={totalBalanceMovements} />}
+            <div className="container-fluid p-4">
+                <div className="row d-flex justify-content-center gap-3">
+                    <div className="col-12 col-md-10 col-lg-8">
+                        <GeneralBalance />
                     </div>
                     <div className="scrollmenu">
                         {path.pathname.startsWith("/cuentas/") ? (

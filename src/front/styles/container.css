@@ -2,13 +2,23 @@
     display: flex;
     overflow-y: auto;
     flex-direction: column;
-    max-height: 80vh;
+    max-height: calc(100vh - 200px); /* Ajusta la altura dinámica */
 }
-.card{
-    min-width: 18rem;
-    min-height: 10rem;  
-}
-.row{
+
+.row {
     padding: 2rem;
-    height: 100vh;
+    min-height: auto; /* Evita que se estire más de lo necesario */
+    height: auto;
+    overflow: hidden; /* Evita el scroll */
+}
+
+.container-fluid {
+    height: 100vh; /* Mantiene el tamaño dentro de la pantalla */
+    overflow: hidden; /* Evita que crezca más de la cuenta */
+    display: flex;
+    flex-direction: column;
+}
+
+.d-flex.vh-100 {
+    overflow: hidden; /* Evita el scroll de toda la página */
 }
