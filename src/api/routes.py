@@ -109,7 +109,9 @@ def get_one_account_to_one_user(user_id):
     try:
         exist = db.session.query(db.select(Accounts).filter_by(user_id=user_id).exists()).scalar()
         if exist:
-            accounts = db.session.execute(db.select(Accounts).filter_by(user_id=user_id)).scalars().all()
+            accounts = db.session.execute(
+                db.select(Accounts).filter_by(user_id=user_id).order_by(Accounts.id)  # Ordenar por ID
+            ).scalars().all()
             if accounts != []:
                 return jsonify({"result": [acc.serialize() for acc in accounts]}), 200
             return jsonify({"msg": "No accounts to show"})
@@ -118,6 +120,7 @@ def get_one_account_to_one_user(user_id):
         
     except Exception as e:
         return jsonify({"msg":"Error", "error": str(e)}), 500
+
 
 # registro usuario
 @api.route("/signup", methods=["POST"])
@@ -152,7 +155,7 @@ def get_accounts_details(accounts_id):
         account_details = db.session.execute(
             db.select(Account_details)
             .filter_by(accounts_id=accounts_id)
-            .order_by(Account_details.date.desc(), Account_details.time.desc())  # Ordenar por fecha y hora descendente
+            .order_by(Account_details.date.desc(), Account_details.time.desc())
         ).scalars().all()
 
         if account_details:
