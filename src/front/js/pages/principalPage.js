@@ -17,6 +17,10 @@ export const PrincipalPage = () => {
     const path = useLocation()
     let navigate = useNavigate();
     const params = useParams();
+    
+    
+
+
     useEffect(() => {
         actions.verifyToken();
         actions.initializeStore();
@@ -63,9 +67,22 @@ export const PrincipalPage = () => {
                             )
                         ) : path.pathname === "/movimientos" ? (
                             store.detailUser.length > 0 ? (
-                                store.detailUser.map((movents) => (
-                                    <CardDetails key={movents.id} amount={movents.amount} coin={movents.coin} date={movents.date} time={movents.time} detail={movents.detail} type={movents.type} operation={movents.operation}/>
-                                ))
+                                store.detailUser.map((movents) => {                                    
+                                    const account = store.accounts.find(account => account.id === movents.accounts_id);
+                                    return (
+                                        <CardDetails 
+                                            key={movents.id} 
+                                            amount={movents.amount} 
+                                            coin={movents.coin} 
+                                            date={movents.date} 
+                                            time={movents.time} 
+                                            detail={movents.detail} 
+                                            type={movents.type} 
+                                            operation={movents.operation} 
+                                            accountName={account ? account.name : "Cuenta desconocida"} 
+                                        />
+                                    );
+                                })
                             ) : (
                                 <p>No hay movimientos en ninguna cuenta.</p>
                             )
