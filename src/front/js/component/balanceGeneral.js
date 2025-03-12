@@ -52,14 +52,14 @@ export const GeneralBalance = () => {
         setAccountBalance(account.balance);
       }
     }
-  }, [currency]);
+  }, [currency, store.accounts]);
   return (
     <div className="balance-box d-flex align-items-center justify-content-between p-3 shadow rounded">
       <h2 className="m-0">Balance general</h2>
 
       <div className="d-flex align-items-center">
-        {path.pathname.startsWith("/cuentas/") ? <h3 className="m-0 fw-bold me-2">{showBalance ? accountBalance : "****"}</h3>:<h3 className="m-0 fw-bold me-2">{showBalance ? totalBalance : "****"}</h3>}
-        <div className="currency-size">
+        {path.pathname.startsWith("/cuentas/") ? <h4 className="m-0 fw-bold me-3">{showBalance ? accountBalance : "****"}</h4>:<h4 className="m-0 fw-bold me-3">{showBalance ? totalBalance : "****"}</h4>}
+        <div className="currency-size ms-2">
           <select
             className="form-select"
             aria-label="Seleccionar moneda"
