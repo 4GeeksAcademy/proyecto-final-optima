@@ -285,7 +285,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				};
 
 				try {
-					const response = await fetch(`${process.env.BACKEND_URL}/api/all-details-user/`, requestOptions);
+					const response = await fetch(`${process.env.BACKEND_URL}/api/all-details-user/1`, requestOptions);
 					const result = await response.json();
 					console.log(result)
 					setStore({ detailUser: result.result });
