@@ -149,12 +149,20 @@ def post_account_detail(accounts_id):
 @api.route('/account-detail/<int:accounts_id>', methods=['GET'])
 def get_accounts_details(accounts_id):
     try:
-        account_details = db.session.execute(db.select(Account_details).filter_by(accounts_id=accounts_id)).scalars().all()
-        if account_details != []:
+        account_details = db.session.execute(
+            db.select(Account_details)
+            .filter_by(accounts_id=accounts_id)
+            .order_by(Account_details.date.desc(), Account_details.time.desc())  # Ordenar por fecha y hora descendente
+        ).scalars().all()
+
+        if account_details:
             return jsonify({"result": [acc.serialize() for acc in account_details]}), 200
-        return jsonify({"msg": "No accounts to show"})
-    except:
-        return jsonify({"msg":"account not found"}), 404
+
+        return jsonify({"msg": "No accounts to show"}), 404
+
+    except Exception as e:
+        return jsonify({"msg": "account not found", "error": str(e)}), 404
+
 
 #endpoint que suma al balance de la cuenta 
 @api.route('/accounts/<int:account_id>/deposit', methods=['PUT'])
@@ -303,8 +311,11 @@ def get_details_user(user_id):
             return jsonify({"msg": "El usuario no tiene cuentas asociadas"}), 404
 
         details = db.session.execute(
-            db.select(Account_details).filter(Account_details.accounts_id.in_(accounts_id))
+            db.select(Account_details)
+            .filter(Account_details.accounts_id.in_(accounts_id))
+            .order_by(Account_details.date.desc(), Account_details.time.desc())  # Orden por fecha y hora descendente
         ).scalars().all()
+        
 
         if details:
             return jsonify({"result": [detail.serialize() for detail in details]}), 200
