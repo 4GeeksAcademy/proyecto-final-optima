@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Sidebar } from "../component/sidebar";
 import { Card } from "../component/card";
-import { GeneralBalance } from "../component/balanceGeneral";
+import { GeneralBalance } from "../component/generalBalance";
 import "../../styles/container.css";
 import { Context } from "../store/appContext";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
@@ -64,7 +64,7 @@ export const PrincipalPage = () => {
                         ) : path.pathname === "/movimientos" ? (
                             store.detailUser.length > 0 ? (
                                 store.detailUser.map((movents) => (
-                                    <CardDetails key={movents.id} amount={movents.amount} coin={movents.coin} date={movents.date} time={movents.time} detail={movents.detail} type={movents.type} operation={movents.operation} name={account} />
+                                    <CardDetails key={movents.id} amount={movents.amount} coin={movents.coin} date={movents.date} time={movents.time} detail={movents.detail} type={movents.type} operation={movents.operation}/>
                                 ))
                             ) : (
                                 <p>No hay movimientos en ninguna cuenta.</p>
