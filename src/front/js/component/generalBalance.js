@@ -11,6 +11,7 @@ export const GeneralBalance = () => {
   const { store, actions } = useContext(Context);
   const uniqueCoins = [...new Set(store.accounts.map((i) => i.coin))];
   const [currency, setCurrency] = useState(uniqueCoins[0] || "EUR");
+  const [exchange, setExchange] = useState("")
   const [accountBalance, setAccountBalance] = useState("")
 
   const totalBalance = useMemo(() => {
@@ -22,7 +23,7 @@ export const GeneralBalance = () => {
   };
 
 
-  async function getExchangeRate(coin) {
+  async function getExchangeRate(currency) {
 
     const requestOptions = {
       method: "GET",
@@ -30,10 +31,11 @@ export const GeneralBalance = () => {
     };
 
     try {
-      const response = await fetch(`https://exchange-rates.abstractapi.com/v1/convert?api_key=5831c21c88c145ecbef4a7cc0f2a4142&base=EUR&target=${coin}`, requestOptions);
+      const response = await fetch(`https://exchange-rates.abstractapi.com/v1/convert?api_key=5831c21c88c145ecbef4a7cc0f2a4142&base=EUR&target=${currency}`, requestOptions);
       const result = await response.json();
       console.log("Tasa de cambio:", result);
-      console.log("Tasa de cambio:", result.exchange_rate);
+      console.log(result.exchange_rate);
+      setExchange(result.exchange_rate)
     } catch (error) {
       console.error("Error obteniendo tasa de cambio:", error);
     }
@@ -52,14 +54,14 @@ export const GeneralBalance = () => {
         setAccountBalance(account.balance);
       }
     }
-  }, [currency]);
+  }, [currency, store.accounts,exchange]);
   return (
     <div className="balance-box d-flex align-items-center justify-content-between p-3 shadow rounded">
       <h2 className="m-0">Balance general</h2>
 
       <div className="d-flex align-items-center">
-        {path.pathname.startsWith("/cuentas/") ? <h3 className="m-0 fw-bold me-2">{showBalance ? accountBalance : "****"}</h3>:<h3 className="m-0 fw-bold me-2">{showBalance ? totalBalance : "****"}</h3>}
-        <div className="currency-size">
+        {path.pathname.startsWith("/cuentas/") ? <h4 className="m-0 fw-bold me-3">{showBalance ? accountBalance : "****"}</h4> : <h4 className="m-0 fw-bold me-3">{showBalance ? totalBalance : "****"}</h4>}
+        <div className="currency-size ms-2">
           <select
             className="form-select"
             aria-label="Seleccionar moneda"

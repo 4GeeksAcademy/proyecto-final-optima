@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Sidebar } from "../component/sidebar";
 import { Card } from "../component/card";
-import { GeneralBalance } from "../component/balanceGeneral";
+import { GeneralBalance } from "../component/generalBalance";
 import "../../styles/container.css";
 import { Context } from "../store/appContext";
 import { useNavigate, useLocation, useParams } from "react-router-dom";

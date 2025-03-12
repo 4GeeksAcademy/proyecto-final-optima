@@ -120,8 +120,10 @@ export const Modal = () => {
 								<option value="">Moneda</option>
 								<option value="EUR">EUR</option>
 								<option value="USD">USD</option>
-								<option value="COP">COP</option>
-								<option value="PER">PER</option>
+								<option value="BTC">BTC</option>
+								<option value="DOGE">DOGE</option>
+								<option value="KRW">KRW</option>
+								<option value="JPY">JPY</option>
 							</select>
 						</div>
 						<div className="px-5 pb-3">
