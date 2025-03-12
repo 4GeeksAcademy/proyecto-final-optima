@@ -36,12 +36,35 @@
 }
 .hr-login{
     margin: 15px 0 5px 0;
+    
 }
-.create-user{
- font-size: 15px;
- width: 60%;
+.create-user {
+    width: 46%; 
+    font-size: 17px; 
+    padding: 10px; 
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 8px;
+    text-align: center;
 }
 .login-user{
     width: 90%;
     font-size: 17px;
+    margin-top: 20px;
+}
+.buttons-container {
+    display: flex;
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    width: 100%;
+    margin-top: 10px; 
+}
+
+.register-text {
+    font-size: 12px;
+    opacity: 0.8;
+    margin-bottom: 5px; 
+    text-align: center;
+    transform: translateX(-70%);
 }
