@@ -330,10 +330,11 @@ return (
                                         aria-label="Default select example"
                                         name="coin"
                                         required
-                                        style={{ width: "30%" }}
                                         value={selectedCurrency} disabled
                                         onChange={handleChange}
+                                        style={{ width: "30%" }}
                                     >
+                                        <option value="">{selectedCurrency || "Moneda"}</option>
                                     </select>
                                 </div>
 
