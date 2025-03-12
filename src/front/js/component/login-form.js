@@ -22,7 +22,7 @@ export const LoginForm = () => {
             setInvalidAccount(false)
         }
     }
-    
+
     useEffect(() => {
         if (store.auth) {
             navigate("/cuentas");
@@ -52,8 +52,8 @@ export const LoginForm = () => {
                     <hr className="hr-login" />
                 </div>
             </form>
-            <div className="buttons">
-                <p>¿Aun no estás registrado?</p>
+            <div className="buttons-container">
+                <p className="register-text">¿Aún no estás registrado?</p>
                 <button className="btn btn-secondary create-user" onClick={handleClick}>Crear usuario</button>
             </div>
         </>
