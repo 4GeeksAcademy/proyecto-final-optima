@@ -301,7 +301,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(error);
 				};
 			},
-			DeleteAccount: async () => {
+			DeleteAccount: async (accountId) => {
 				const myHeaders = new Headers();
 				myHeaders.append("Cookie", ".Tunnels.Relay.WebForwarding.Cookies=CfDJ8Cs4yarcs6pKkdu0hlKHsZvSYfPWBkxG1uAm4mVA7Kzrj3ZVWCO8__RlrXh3GAYOYP60v1Qc9b7TGpa1XgNWgd8W415NnC8GpdC7Xc5MGCF8g1WuD1ANQXhy8XvefAPkOaRIYoANo4q1cGB3UZeiRGv70Cx-3sLfjgfGYEQvXrSM8oQbDcLxAL2dbdoUgOmDHZNBHR_IOIki5cheIuRAutcTglmZ1FTZk3sSbqKZWIklGPs-l8SUEklJ4Cco9JFWSSexleEBIamFx3zRMzjzohwrRd_ZvoX0GCcDM7DV6b7TSeAauinxrg1NGYfR1u9Jg_DJtznD3CbdY2dCv3qaLt46iM2yG69rYJcHGEDa_XLE2PpaoGFvVvjca40ZC_YLFr5H7R-jBlUWwknosbDVyrhB4lUr8z55Q9ozFDRWuDqVHHpn97LKTtSTHjTRGq6M1Ob0e01xACOSjXIzGa4Q3H2cAGIM1EvK9uhTorDWEGMw7YlwY1WR6kL3OyCjYQkuhV61jsR2uHu9oJ4lPsWjwAHsW_5KyBavHQCQ1yhmMCmuvgPUG7RBfn8f9e6qqbbvMfdVarI3KcNqnpA_aJK8LYJpAv8TegQY1R-BhJrsZ4gRbzZDPY1kHP_Qhkf-rmIfn5KkNGgKugjCHTaHbiUGqqqncKdfNIJeeufVSolDtXjH-eAtWZRD7KEWzpa3DQcfmn2AvBkX0ilK1N778dl_qdhYyBEgANw5fkx90lIMulItK-UYaiwLH1xkprzZh3Nzzli1QlrziJYyre1LNHXCa9ru3DnUjMXUy-Raww2j1e17fIWHj_zj9wsZSwFZ1gQ6N3PswEJIoAiNOKfWJUXs-xu7iIDifiVBwK1sflIq76UHgz3Fup9cgva0oIq6Evq5otAB_wMNmBxuhyRcsCJt8ShtruqEPIQiAudQ2aY9T6hq0M0A4ku9CMqZ2HjhjyWxVjxVX471uhzwvv-WKXedAgIh5xz6s2uZCVYlU075Eb2B");
 
@@ -312,14 +312,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 				};
 
 				try {
-					const response = await fetch(`${process.env.BACKEND_URL}/api/delete-account/${getStore().user.id}`, requestOptions);
+					const response = await fetch(`${process.env.BACKEND_URL}/api/delete-account/${accountId}`, requestOptions);
 					const result = await response.json();
-					console.log(result)
+					
 				} catch (error) {
 					console.error(error);
 				};
-			}
-
+			},
 		}
 	};
 };

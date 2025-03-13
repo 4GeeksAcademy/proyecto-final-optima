@@ -29,13 +29,13 @@ export const PrincipalPage = () => {
                 await actions.getDetailsUser();
             })();
         }
-    }, [params.id, path.pathname]);
+    }, [params.id, path.pathname,actions.account]);   
 
     if (!store.auth) {
         actions.logout()
         navigate("/");
     }
-
+    
     return (
         <div className="d-flex vh-100">
             <Sidebar />
@@ -87,7 +87,7 @@ export const PrincipalPage = () => {
                             ) : (
                                 <p>No hay movimientos en ninguna cuenta.</p>
                             )
-                        ) : (                           
+                        ) : (
                             store.accounts.length > 0 ? (
                                 store.accounts.map((item) => (
                                     <Card
@@ -97,6 +97,7 @@ export const PrincipalPage = () => {
                                         balance={item.balance}
                                         coin={item.coin}
                                         type={item.type}
+                                        onDelete={actions.DeleteAccount}
                                     />
                                 ))
                             ) : (
