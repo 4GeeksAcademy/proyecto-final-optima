@@ -224,11 +224,10 @@ def update_account(account_id):
         if "type" in body:
             account.type = body["type"]
         db.session.commit()
-        return jsonify({"msg": "account updated"}), 200
+        return jsonify({"id": account_id, **body}), 200
 
-    except:
-        return jsonify({"msg": "internal server error"}), 500
-
+    except Exception as e:
+        return jsonify({"msg": "internal server error", "error": str(e)}), 500
 
 # endpoint editar movimiento de cuenta
 @api.route('/account-detail/<int:account_detail_id>', methods=['PUT'])
@@ -328,20 +327,30 @@ def get_details_user(user_id):
         return jsonify({"msg": "Error en la consulta"}), 500
     
 @api.route('/account-details/<int:account_id>', methods=['DELETE'])
-def delete_account_movements(account_id):
+def delete_account_and_movements(account_id):
     try:
+        # Buscar y eliminar todos los movimientos asociados a la cuenta
         movements = db.session.execute(
             db.select(Account_details).filter_by(accounts_id=account_id)
         ).scalars().all()
-        
-        if not movements:
-            return jsonify({"msg": "No movements found for this account"}), 404
-        
+
         for movement in movements:
             db.session.delete(movement)
+
+        # Buscar y eliminar la cuenta después de eliminar los movimientos
+        account = db.session.execute(
+            db.select(Accounts).filter_by(id=account_id)
+        ).scalar_one_or_none()
+
+        if not account:
+            return jsonify({"msg": "Account not found"}), 404
         
+        db.session.delete(account)
         db.session.commit()
-        return jsonify({"msg": "All movements deleted successfully"}), 200
+
+        return jsonify({"msg": f"All movements and account {account_id} deleted successfully"}), 200
+    
     except Exception as e:
         db.session.rollback()
-        return jsonify({"msg": "Error deleting movements", "error": str(e)}), 500
+        return jsonify({"msg": "Error deleting movements and account", "error": str(e)}), 500
+
