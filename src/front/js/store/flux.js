@@ -49,7 +49,20 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log("Error loading message from backend", error);
 				}
 			},
-
+			checkEmail: async (email) => {
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/check-email`, {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ email })
+					});
+					const result = await response.json();
+					return result.exists; 
+				} catch (error) {
+					console.error("Error verificando email:", error);
+					return false;
+				}
+			},
 			changeColor: (index, color) => {
 				const store = getStore();
 				const demo = store.demo.map((elm, i) => {
