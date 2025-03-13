@@ -326,3 +326,22 @@ def get_details_user(user_id):
 
     except Exception as e:
         return jsonify({"msg": "Error en la consulta"}), 500
+    
+@api.route('/account-details/<int:account_id>', methods=['DELETE'])
+def delete_account_movements(account_id):
+    try:
+        movements = db.session.execute(
+            db.select(Account_details).filter_by(accounts_id=account_id)
+        ).scalars().all()
+        
+        if not movements:
+            return jsonify({"msg": "No movements found for this account"}), 404
+        
+        for movement in movements:
+            db.session.delete(movement)
+        
+        db.session.commit()
+        return jsonify({"msg": "All movements deleted successfully"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"msg": "Error deleting movements", "error": str(e)}), 500
