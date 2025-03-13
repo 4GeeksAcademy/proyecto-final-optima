@@ -13,13 +13,9 @@ import { CardDetails } from "../component/cardDetails";
 
 export const PrincipalPage = () => {
     const { store, actions } = useContext(Context)
-
     const path = useLocation()
     let navigate = useNavigate();
     const params = useParams();
-
-
-
 
     useEffect(() => {
         actions.verifyToken();
