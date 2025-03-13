@@ -356,6 +356,24 @@ def delete_account_and_movements(account_id):
         return jsonify({"msg": "Error deleting movements and account", "error": str(e)}), 500
 
 
+# endpoint validador de email repetido
+
+@api.route("/check-email", methods=["POST"])
+def check_email():
+    body = request.json
+    email = body.get("email")
+
+    if not email:
+        return jsonify({"msg": "Email requerido"}), 400
+
+    user_exists = db.session.execute(db.select(User).filter_by(email=email)).scalar_one_or_none()
+
+    if user_exists:
+        return jsonify({"exists": True}), 200  # Devuelve True si el email ya está registrado
+    else:
+        return jsonify({"exists": False}), 200  # Devuelve False si el email está disponible
+        
+# fin endpoint validador email repetido
 
 
 
