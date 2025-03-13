@@ -70,17 +70,17 @@ def verify_token():
 def post_account(user_id):
     try:
         request_body = request.json
-
         exist = db.session.query(db.select(Accounts).filter_by(name=request_body["name"]).exists()).scalar()
         if not exist: 
             new_account = Accounts(user_id=user_id, name=request_body["name"], balance=request_body["balance"], coin=request_body["coin"], type=request_body["type"])
             db.session.add(new_account)
             db.session.commit()  
-            return jsonify(request_body), 200
+            account_id = new_account.id
+            return jsonify({"id": account_id, **request_body}), 200
         else:
-            return jsonify({"msg": "Account already exist"}), 404
+            return jsonify({"msg": "Account already exists"}), 404
     except Exception as e:
-        return jsonify({"msg":"Error", "error": str(e)}), 500
+        return jsonify({"msg": "Error", "error": str(e)}), 500
     
         #este endpint muestra todas cuentas en general
 @api.route('/accounts', methods=['GET'])
