@@ -35,6 +35,10 @@ export const CardDetails = (props) => {
                     <p>{props.type}</p>
                     <p>{props.operation}</p>
                 </div>
+                <div className="btn-group-vertical p-3" role="group" aria-label="Vertical button group">
+                    <button type="button" class="btn btn-secondary"><i class="bi bi-pencil-square"></i></button>
+                    <button type="button" class="btn btn-secondary"><i class="bi bi-trash-fill"></i></button>
+                </div>
             </div>
         </>
     )
