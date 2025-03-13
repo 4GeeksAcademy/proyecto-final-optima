@@ -1,29 +1,21 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
-import { useLocation } from "react-router-dom";
 import Swal from 'sweetalert2'
 import "../../styles/modal.css";
 
 export const Modal = () => {
-	const { store, actions } = useContext(Context)
-	const path = useLocation()
-	const [showBalance, setShowBalance] = useState(true)
-
-	const toggleBalance = () => {
-		let toggle = !showBalance
-		setShowBalance(toggle);
-	}
-
+	const { store } = useContext(Context)
+	const [currentDate, setCurrentDate] = useState("");
+	const [currentTime, setCurrentTime] = useState("");
 	const [inputValue, setInputValue] = useState({
 		name: "",
-		balance: 0,
+		balance: "",
 		coin: "",
 		type: ""
 	});
 	async function createAccount(body) {
 		const myHeaders = new Headers();
 		myHeaders.append("Content-Type", "application/json");
-
 		const raw = JSON.stringify({
 			"name": body.name,
 			"balance": body.balance,
@@ -41,6 +33,39 @@ export const Modal = () => {
 		try {
 			const response = await fetch(`${process.env.BACKEND_URL}/api/${store.user.id}/new-account`, requestOptions);
 			const result = await response.json();
+			if (response.status === 200) {
+				const myHeaders = new Headers();
+				myHeaders.append("Content-Type", "application/json");
+				const raw = JSON.stringify({
+					"detail": "PRIMER INGRESO",
+					"amount": result.balance,
+					"coin": result.coin,
+					"type": "Saldo inicial",
+					"date": currentDate,
+					"time": currentTime,
+					"operation": "ingreso"
+				});
+
+				const requestOptions = {
+					method: "POST",
+					headers: myHeaders,
+					body: raw,
+					redirect: "follow"
+				};
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/new-account-detail/${result.id}`, requestOptions);
+					const data = await response.json();
+				} catch (error) {
+					console.error(error);
+				}
+			} else {
+				Swal.fire({
+					title: 'Error!',
+					text: 'Campos incompletos, asegúrate de escribir toda la información',
+					icon: 'error',
+					confirmButtonText: 'Volver'
+				})
+			}
 		} catch (error) {
 			console.error(error);
 		};
@@ -51,7 +76,7 @@ export const Modal = () => {
 			createAccount(inputValue)
 			setInputValue({
 				name: "",
-				balance: 0,
+				balance: "",
 				coin: "",
 				type: ""
 			});
@@ -72,7 +97,18 @@ export const Modal = () => {
 		const { name, value } = e.target;
 		setInputValue({ ...inputValue, [name]: value });
 	};
+	useEffect(() => {
+		const now = new Date();
+		const formattedDate = now.toISOString().split("T")[0];
+		const formattedTime = now.toLocaleTimeString("es-ES", {
+			hour: "2-digit",
+			minute: "2-digit",
+			hour12: false,
+		});
 
+		setCurrentDate(formattedDate);
+		setCurrentTime(formattedTime);
+	}, []);
 	return (
 		<>
 			<button type="button" className="add-item btn btn-secondary btn-modal" data-bs-toggle="modal" data-bs-target="#exampleModal">
@@ -121,7 +157,8 @@ export const Modal = () => {
 								<option value="EUR">EUR</option>
 								<option value="USD">USD</option>
 								<option value="BTC">BTC</option>
-								<option value="DOGE">DOGE</option>
+								<option value="COP">COP</option>
+								<option value="ARS">ARS</option>
 								<option value="KRW">KRW</option>
 								<option value="JPY">JPY</option>
 							</select>

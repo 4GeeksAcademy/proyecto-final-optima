@@ -7,10 +7,10 @@ import { useLocation, useParams } from "react-router-dom";
 
 export const ModalDetails = () => {
     const [currentDate, setCurrentDate] = useState("");
+    const [currentTime, setCurrentTime] = useState("");
     const [accountName, setAccountName] = useState("")
     const [accountId, setAccountId] = useState("")
     const [selectedCurrency, setSelectedCurrency] = useState("");
-    const [currentTime, setCurrentTime] = useState("");
     const { store, actions } = useContext(Context)
     const [balanceType, setBalanceType] = useState("egreso");
     const path = useLocation()
@@ -133,9 +133,6 @@ const handleClick = () => {
             setAccountId(account.id);
             setSelectedCurrency(account.coin)
         }
-    } else {
-        // setSelectedCurrency(account.coin)
-
     }
 }
 useEffect(() => {
