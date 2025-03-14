@@ -1,19 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
-import { useLocation } from "react-router-dom";
-import Swal from "sweetalert2"; // Importar SweetAlert
+import { Context } from "../store/appContext";
+import Swal from "sweetalert2";
+
 
 export const Card = (props) => {
-    const [showBalance, setShowBalance] = useState(true);
-    const path = useLocation();
+    const [showBalance, setShowBalance] = useState(true)
+    const { store, actions } = useContext(Context)
 
-    // Función para alternar la visibilidad del saldo
     const toggleBalance = () => {
         setShowBalance(!showBalance);
     };
 
 
-    const handleDelete = () => {
+    const handleDelete = () => {               
         Swal.fire({
             title: "¿Estás seguro?",
             text: "Esta acción eliminará la cuenta y todos sus movimientos.",
@@ -25,7 +25,7 @@ export const Card = (props) => {
             cancelButtonText: "Cancelar"
         }).then((result) => {
             if (result.isConfirmed) {
-                props.onDelete(props.id);
+                actions.DeleteAccount(props.id);
             }
         });
     };
@@ -60,7 +60,7 @@ export const Card = (props) => {
                     <p className="btn btn-primary">Ver Más</p>
                 </Link>
                 <div className="btn-group-vertical p-3" role="group">
-                    <button type="button" className="btn btn-secondary">
+                    <button type="button" className="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editModal" id={props.id} onClick={() => props.onUpdate()}>
                         <i className="bi bi-pencil-square"></i>
                     </button>
                     <button type="button" className="btn btn-secondary" onClick={handleDelete}>

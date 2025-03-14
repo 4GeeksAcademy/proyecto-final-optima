@@ -9,6 +9,8 @@ import { Modal } from "../component/modal";
 import { ModalDetails } from "../component/modalDetails";
 import { CardMovimientos } from "../component/cardMovimiento";
 import { CardDetails } from "../component/cardDetails";
+import { ModalEdit } from "../component/modalEdit";
+import { Filter } from "../component/filter";
 
 
 export const PrincipalPage = () => {
@@ -16,11 +18,12 @@ export const PrincipalPage = () => {
     const path = useLocation()
     let navigate = useNavigate();
     const params = useParams();
-
+    const [idCard, setIdCard] = useState(null)
+    const [showModal, setShowModal] = useState(false)
     useEffect(() => {
         actions.verifyToken();
         actions.initializeStore();
-        console.log(store.accounts);
+
 
         if (!store.auth) {
             navigate("/");
@@ -93,13 +96,15 @@ export const PrincipalPage = () => {
                             store.accounts.length > 0 ? (
                                 store.accounts.map((item) => (
                                     <Card
-                                        key={item.id}
                                         id={item.id}
                                         name={item.name}
                                         balance={item.balance}
                                         coin={item.coin}
                                         type={item.type}
-                                        onDelete={actions.DeleteAccount}
+                                        onUpdate={() => {
+                                            setIdCard(item.id)
+                                            setShowModal(true)
+                                        }}
                                     />
                                 ))
                             ) : (
@@ -109,6 +114,9 @@ export const PrincipalPage = () => {
                     </div>
                 </div>
                 {path.pathname === "/cuentas" ? <Modal /> : <ModalDetails />}
+                {path.pathname === "/cuentas" ? null : <Filter />}
+
+                <ModalEdit cardId={idCard} show={showModal} onClose={() => setShowModal(false)} />
             </div>
         </div>
     );

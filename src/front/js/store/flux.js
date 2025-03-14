@@ -327,7 +327,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				try {
 					const response = await fetch(`${process.env.BACKEND_URL}/api/delete-account/${accountId}`, requestOptions);
 					const result = await response.json();
-					console.log(result);
+					
 
 
 				} catch (error) {
