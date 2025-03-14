@@ -325,11 +325,14 @@ def get_details_user(user_id):
 
     except Exception as e:
         return jsonify({"msg": "Error en la consulta"}), 500
+    
+    # eliminar cuenta con movimientos
+    
   
 @api.route('/delete-account/<int:account_id>', methods=['DELETE'])
 def delete_account_and_movements(account_id):
     try:
-        # Buscar y eliminar todos los movimientos asociados a la cuenta
+        
         movements = db.session.execute(
             db.select(Account_details).filter_by(accounts_id=account_id)
         ).scalars().all()
@@ -337,7 +340,6 @@ def delete_account_and_movements(account_id):
         for movement in movements:
             db.session.delete(movement)
 
-        # Buscar y eliminar la cuenta después de eliminar los movimientos
         account = db.session.execute(
             db.select(Accounts).filter_by(id=account_id)
         ).scalar_one_or_none()
@@ -371,3 +373,44 @@ def check_email():
         return jsonify({"exists": False}), 200  # Devuelve False si el email está disponible
         
 # fin endpoint validador email repetido
+
+
+# endopoint de filtro por type
+@api.route('/account-detail-filter/<int:accounts_id>', methods=['GET'])
+def get_filtered_account_details(accounts_id):
+    try:
+        movement_type = request.args.get("type")  # Obtiene el parámetro de tipo desde la URL
+
+        query = db.select(Account_details).filter_by(accounts_id=accounts_id)
+
+        if movement_type:
+            query = query.filter(Account_details.type == movement_type)  # Filtra por tipo si se proporciona
+
+        movements = db.session.execute(query).scalars().all()
+
+        if not movements:
+            return jsonify({"msg": "No movements found"}), 404
+
+        result = [
+            {
+                "id": movement.id,
+                "detail": movement.detail,
+                "amount": movement.amount,
+                "coin": movement.coin,
+                "type": movement.type,
+                "date": movement.date,
+                "time": movement.time,
+                "operation": movement.operation
+            }
+            for movement in movements
+        ]
+        return jsonify(result), 200
+
+    except Exception as e:
+        print(e)
+        return jsonify({"msg": "Internal server error"}), 500
+
+
+
+
+

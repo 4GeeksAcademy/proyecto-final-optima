@@ -19,10 +19,12 @@ export const PrincipalPage = () => {
     let navigate = useNavigate();
     const params = useParams();
     const [idCard, setIdCard] = useState(null)
-
+    const [showModal, setShowModal] = useState(false)
     useEffect(() => {
         actions.verifyToken();
         actions.initializeStore();
+
+
         if (!store.auth) {
             navigate("/");
         }
@@ -32,7 +34,7 @@ export const PrincipalPage = () => {
                 await actions.getDetailsUser();
             })();
         }
-    }, [params.id, path.pathname]);
+    }, [params.id, path.pathname, actions.account]);
 
     if (!store.auth) {
         actions.logout()
@@ -54,7 +56,7 @@ export const PrincipalPage = () => {
                                     const account = store.accounts.find(account => account.id === details.accounts_id);
                                     return (
                                         <CardMovimientos
-                                            key={details.id}
+                                            id={details.id}
                                             amount={details.amount}
                                             coin={details.coin}
                                             date={details.date}
@@ -75,7 +77,7 @@ export const PrincipalPage = () => {
                                     const account = store.accounts.find(account => account.id === movents.accounts_id);
                                     return (
                                         <CardDetails
-                                            key={movents.id}
+                                            id={movents.id}
                                             amount={movents.amount}
                                             coin={movents.coin}
                                             date={movents.date}
@@ -90,17 +92,16 @@ export const PrincipalPage = () => {
                             ) : (
                                 <p>No hay movimientos en ninguna cuenta.</p>
                             )
-                        ) : (                           
+                        ) : (
                             store.accounts.length > 0 ? (
                                 store.accounts.map((item) => (
                                     <Card
-                                        key={item.id}
                                         id={item.id}
                                         name={item.name}
                                         balance={item.balance}
                                         coin={item.coin}
                                         type={item.type}
-                                        onUpdate={()=>{
+                                        onUpdate={() => {
                                             setIdCard(item.id)
                                             setShowModal(true)
                                         }}
@@ -115,7 +116,7 @@ export const PrincipalPage = () => {
                 {path.pathname === "/cuentas" ? <Modal /> : <ModalDetails />}
                 {path.pathname === "/cuentas" ? null : <Filter />}
 
-                <ModalEdit cardId={idCard} show={showModal} onClose={()=>setShowModal(false)}/>
+                <ModalEdit cardId={idCard} show={showModal} onClose={() => setShowModal(false)} />
             </div>
         </div>
     );
