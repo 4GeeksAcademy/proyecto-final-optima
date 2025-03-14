@@ -4,121 +4,101 @@ import Swal from 'sweetalert2'
 import "../../styles/modal.css";
 
 export const ModalEdit = (props) => {
-    const { store } = useContext(Context)
-    const [cardId, setCardId] = useState("")
     const [currentDate, setCurrentDate] = useState("");
     const [currentTime, setCurrentTime] = useState("");
-    const [idCard, setIdCard] = useState("")
     const [inputValue, setInputValue] = useState({
         name: "",
         balance: "",
         coin: "",
         type: ""
     })
-console.log(props.cardId);
 
     async function putAccount(body) {
-        // const myHeaders = new Headers();
-        // myHeaders.append("Content-Type", "application/json");
+        const myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
 
-        // const raw = JSON.stringify({
-        //     "name": body.name,
-        //     "balance": body.balance,
-        //     "coin": body.coin,
-        //     "type": body.type
-        // });
+        const raw = JSON.stringify({
+            "name": body.name,
+            "balance": body.balance,
+            "coin": body.coin,
+            "type": body.type
+        });
 
-        // const requestOptions = {
-        //     method: "PUT",
-        //     headers: myHeaders,
-        //     body: raw,
-        //     redirect: "follow"
-        // };
+        const requestOptions = {
+            method: "PUT",
+            headers: myHeaders,
+            body: raw,
+            redirect: "follow"
+        };
 
-        // try {
-        //     const response = await fetch(`${process.env.BACKEND_URL}/api/accounts/${idCard}`, requestOptions);
-        //     const result = await response.json();
-        //     console.log(result);
-        //     console.log(props.cardId);
-        //     console.log(cardId);
+        try {
+            const response = await fetch(`${process.env.BACKEND_URL}/api/accounts/${props.cardId}`, requestOptions);
+            const result = await response.json();
+            if (response.status === 200) {
+                const myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
+                const raw = JSON.stringify({
+                    "detail": "CUENTA EDITADA",
+                    "amount": result.balance,
+                    "coin": result.coin,
+                    "type": "Nuevo saldo",
+                    "date": currentDate,
+                    "time": currentTime,
+                    "operation": "ingreso"
+                });
 
-
-        //     if (response.status === 200) {
-        //         const myHeaders = new Headers();
-        //         myHeaders.append("Content-Type", "application/json");
-        //         const raw = JSON.stringify({
-        //             "detail": "CUENTA EDITADA",
-        //             "amount": result.balance,
-        //             "coin": result.coin,
-        //             "type": "Nuevo saldo",
-        //             "date": currentDate,
-        //             "time": currentTime,
-        //             "operation": "ingreso"
-        //         });
-
-        //         const requestOptions = {
-        //             method: "POST",
-        //             headers: myHeaders,
-        //             body: raw,
-        //             redirect: "follow"
-        //         };
-        //         try {
-        //             const response = await fetch(`${process.env.BACKEND_URL}/api/new-account-detail/${result.id}`, requestOptions);
-        //             const data = await response.json();
-        //             console.log(data);
-
-        //         } catch (error) {
-        //             console.error(error);
-        //         }
-        //     } else {
-        //         Swal.fire({
-        //             title: 'Error!',
-        //             text: 'Campos incompletos, asegúrate de escribir toda la información',
-        //             icon: 'error',
-        //             confirmButtonText: 'Volver'
-        //         })
-        //     }
-        // } catch (error) {
-        //     console.error(error);
-        // };
+                const requestOptions = {
+                    method: "POST",
+                    headers: myHeaders,
+                    body: raw,
+                    redirect: "follow"
+                };
+                try {
+                    const response = await fetch(`${process.env.BACKEND_URL}/api/new-account-detail/${result.id}`, requestOptions);
+                    const data = await response.json();
+                } catch (error) {
+                    console.error(error);
+                }
+            } else {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Campos incompletos, asegúrate de escribir toda la información',
+                    icon: 'error',
+                    confirmButtonText: 'Volver'
+                })
+            }
+        } catch (error) {
+            console.error(error);
+        };
     }
     const editAccount = () => {
-        // console.log("ID almacenado en ref:", idCard);
-        console.log("probando", props.cardId);
-        // if (inputValue.name.length !== 0 && inputValue.type !== "") {
-        //     console.log("probando", idCard);
-        //     console.log(e);
-        //     putAccount(inputValue)
-        //     Swal.fire({
-        //         title: "Movimiento registrado con éxito",
-        //         icon: "success"
-        //     });
+        if (inputValue.name.length !== 0 && inputValue.type !== "") {
+            putAccount(inputValue)
+            Swal.fire({
+                title: "Movimiento registrado con éxito",
+                icon: "success"
+            });
 
-        //     setInputValue({
-        //         name: "",
-        //         balance: "",
-        //         coin: "",
-        //         type: ""
-        //     });
-        // } else {
-        //     Swal.fire({
-        //         title: 'Error!',
-        //         text: 'Campos incompletos, asegúrate de escribir toda la información',
-        //         icon: 'error',
-        //         confirmButtonText: 'Volver'
-        //     });
-        // }
+            setInputValue({
+                name: "",
+                balance: "",
+                coin: "",
+                type: ""
+            });
+        } else {
+            Swal.fire({
+                title: 'Error!',
+                text: 'Campos incompletos, asegúrate de escribir toda la información',
+                icon: 'error',
+                confirmButtonText: 'Volver'
+            });
+        }
     };
     const handleChange = (e) => {
         const { name, value } = e.target;
         setInputValue({ ...inputValue, [name]: value });
-        setInputValue((prev) => ({ ...prev, idCard: idCard }));
     };
-    const handleClick = (id) => {
-        console.log(id);
-        setIdCard(id)
-    };
-    
+
     useEffect(() => {
         const now = new Date();
         const formattedDate = now.toISOString().split("T")[0];
@@ -134,15 +114,14 @@ console.log(props.cardId);
 
     return (
         <>
-            {/* <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editModal" id={props.cardId} onClick={()=>handleClick(props.cardId)}><i class="bi bi-pencil-square"></i></button> */}
-            <div className="modal fade" id="" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style={{display: props.show?"block":"none"}}>
+            <div className="modal" id="editModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style={{display: props.show ? "block" : "none"}} >
                 <div className="modal-dialog">
                     <div className="modal-content">
                         <div className="modal-header">
                             <h1 className="modal-title fs-5" id="exampleModalLabel">
                                 Editar Espacio
                             </h1>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button type="button" className="btn-close" onClick={()=>props.onClose()}></button>
                         </div>
                         <div className="modal-body d-flex gap-5">
                             <input
@@ -203,7 +182,7 @@ console.log(props.cardId);
                             </select>
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-primary" onClick={editAccount} >
+                            <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={editAccount} >
                                 Agregar
                             </button>
                             <button type="button" className="btn btn-danger" data-bs-dismiss="modal" >

@@ -1,24 +1,11 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { useLocation } from "react-router-dom";
-import { ModalEdit } from "./modalEdit";
 
 export const Card = (props) => {
     const [showBalance, setShowBalance] = useState(true)
-    const path = useLocation()
-    const [idCard, setIdCard] = useState(null)
-    const [showModal, setShowModal] = useState(false)
-
-    function handleState() {
-        setIdCard(props.id)
-        setShowModal(true)
-    }
-
     const toggleBalance = () => {
         setShowBalance(!showBalance)
     }
-    console.log(idCard);
-
     return (
         <>
             <div className="card flex-row mb-3 " key={props.id} >
@@ -48,8 +35,7 @@ export const Card = (props) => {
                         <p href="#" className="btn btn-primary  ">Ver Mas</p>
                     </Link>
                     <div className="btn-group-vertical p-3" role="group" aria-label="Vertical button group">
-                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editModal" id={props.id} onClick={() => handleState()}><i class="bi bi-pencil-square"></i></button>
-                        <ModalEdit cardId={idCard} show={showModal} />
+                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editModal" id={props.id} onClick={() => props.onUpdate()}><i class="bi bi-pencil-square"></i></button>
                         <button type="button" class="btn btn-secondary"><i class="bi bi-trash-fill"></i></button>
                     </div>
                 </div>
