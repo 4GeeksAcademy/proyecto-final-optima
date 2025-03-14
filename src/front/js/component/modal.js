@@ -69,7 +69,6 @@ export const Modal = () => {
 		} catch (error) {
 			console.error(error);
 		};
-
 	}
 	const addAccount = () => {
 		if (inputValue.name.length != 0 && inputValue.type != "") {
@@ -111,10 +110,10 @@ export const Modal = () => {
 	}, []);
 	return (
 		<>
-			<button type="button" className="add-item btn btn-secondary btn-modal" data-bs-toggle="modal" data-bs-target="#exampleModal">
+			<button type="button" className="add-item btn btn-secondary btn-modal" data-bs-toggle="modal" data-bs-target="#createModal">
 				<i className="bi bi-plus-lg"></i>
 			</button>
-			<div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div className="modal fade" id="createModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 				<div className="modal-dialog">
 					<div className="modal-content">
 						<div className="modal-header">

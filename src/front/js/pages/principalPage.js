@@ -9,6 +9,8 @@ import { Modal } from "../component/modal";
 import { ModalDetails } from "../component/modalDetails";
 import { CardMovimientos } from "../component/cardMovimiento";
 import { CardDetails } from "../component/cardDetails";
+import { ModalEdit } from "../component/modalEdit";
+import { Filter } from "../component/filter";
 
 
 export const PrincipalPage = () => {
@@ -16,6 +18,7 @@ export const PrincipalPage = () => {
     const path = useLocation()
     let navigate = useNavigate();
     const params = useParams();
+    const [idCard, setIdCard] = useState(null)
 
     useEffect(() => {
         actions.verifyToken();
@@ -97,6 +100,10 @@ export const PrincipalPage = () => {
                                         balance={item.balance}
                                         coin={item.coin}
                                         type={item.type}
+                                        onUpdate={()=>{
+                                            setIdCard(item.id)
+                                            setShowModal(true)
+                                        }}
                                     />
                                 ))
                             ) : (
@@ -106,6 +113,9 @@ export const PrincipalPage = () => {
                     </div>
                 </div>
                 {path.pathname === "/cuentas" ? <Modal /> : <ModalDetails />}
+                {path.pathname === "/cuentas" ? null : <Filter />}
+
+                <ModalEdit cardId={idCard} show={showModal} onClose={()=>setShowModal(false)}/>
             </div>
         </div>
     );

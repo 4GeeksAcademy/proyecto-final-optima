@@ -224,11 +224,10 @@ def update_account(account_id):
         if "type" in body:
             account.type = body["type"]
         db.session.commit()
-        return jsonify({"msg": "account updated"}), 200
+        return jsonify({"id": account_id, **body}), 200
 
-    except:
-        return jsonify({"msg": "internal server error"}), 500
-
+    except Exception as e:
+        return jsonify({"msg": "internal server error", "error": str(e)}), 500
 
 # endpoint editar movimiento de cuenta
 @api.route('/account-detail/<int:account_detail_id>', methods=['PUT'])
@@ -326,7 +325,7 @@ def get_details_user(user_id):
 
     except Exception as e:
         return jsonify({"msg": "Error en la consulta"}), 500
-    
+  
 @api.route('/delete-account/<int:account_id>', methods=['DELETE'])
 def delete_account_and_movements(account_id):
     try:
@@ -354,8 +353,6 @@ def delete_account_and_movements(account_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"msg": "Error deleting movements and account", "error": str(e)}), 500
-
-
 # endpoint validador de email repetido
 
 @api.route("/check-email", methods=["POST"])
@@ -374,7 +371,3 @@ def check_email():
         return jsonify({"exists": False}), 200  # Devuelve False si el email está disponible
         
 # fin endpoint validador email repetido
-
-
-
-
