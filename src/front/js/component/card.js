@@ -12,7 +12,7 @@ export const Card = (props) => {
     }
     return (
         <>
-            <div className="card flex-row mb-3 " key={props.id} >
+            <div className="card flex-row mb-3  " key={props.id} >
                 <div className="card-body d-flex justify-content-around col-4 align-items-center " >
                     <div className="justify-content-center">
                         <h4 className="card-title ">{props.name}</h4>
@@ -40,7 +40,7 @@ export const Card = (props) => {
                     </Link>
                     <div className="btn-group-vertical p-3" role="group" aria-label="Vertical button group">
                         <button type="button" class="btn btn-secondary"><i class="bi bi-pencil-square"></i></button>
-                        <button type="button" class="btn btn-secondary" onClick={handleDelete}><i class="bi bi-trash-fill"></i></button>
+                        <button type="button" class="btn btn-secondary" ><i class="bi bi-trash-fill"></i></button>
                     </div>
                 </div>
             </div>
