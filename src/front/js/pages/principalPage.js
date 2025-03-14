@@ -20,6 +20,8 @@ export const PrincipalPage = () => {
     useEffect(() => {
         actions.verifyToken();
         actions.initializeStore();
+        console.log(store.accounts);
+
         if (!store.auth) {
             navigate("/");
         }
@@ -29,13 +31,13 @@ export const PrincipalPage = () => {
                 await actions.getDetailsUser();
             })();
         }
-    }, [params.id, path.pathname,actions.account]);   
+    }, [params.id, path.pathname, actions.account]);
 
     if (!store.auth) {
         actions.logout()
         navigate("/");
     }
-    
+
     return (
         <div className="d-flex vh-100">
             <Sidebar />
@@ -51,7 +53,7 @@ export const PrincipalPage = () => {
                                     const account = store.accounts.find(account => account.id === details.accounts_id);
                                     return (
                                         <CardMovimientos
-                                            key={details.id}
+                                            id={details.id}
                                             amount={details.amount}
                                             coin={details.coin}
                                             date={details.date}
@@ -72,7 +74,7 @@ export const PrincipalPage = () => {
                                     const account = store.accounts.find(account => account.id === movents.accounts_id);
                                     return (
                                         <CardDetails
-                                            key={movents.id}
+                                            id={movents.id}
                                             amount={movents.amount}
                                             coin={movents.coin}
                                             date={movents.date}
