@@ -36,7 +36,9 @@ export const CardMovimientos = (props) => {
                     <p>{props.operation}</p>
                 </div>
                 <div className="btn-group-vertical p-3" role="group" aria-label="Vertical button group">
-                    <button type="button" className="btn btn-secondary"><i className="bi bi-pencil-square"></i></button>
+                    <button type="button" className="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editModalDetail" id={props.id} onClick={() => props.onUpdate()}>
+                        <i className="bi bi-pencil-square"></i>
+                    </button>
                     <button type="button" className="btn btn-secondary"><i className="bi bi-trash-fill"></i></button>
                 </div>
             </div>

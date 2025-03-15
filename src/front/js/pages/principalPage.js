@@ -12,6 +12,7 @@ import { CardDetails } from "../component/cardDetails";
 import { ModalEditAccount } from "../component/modalEditAccount";
 import { Filter } from "../component/filter";
 import { EmptyComponet } from "../component/emptyComponet";
+import { ModalEditDetail } from "../component/modalEditDetail";
 
 
 export const PrincipalPage = () => {
@@ -21,11 +22,11 @@ export const PrincipalPage = () => {
     const params = useParams();
     const [cardId, setCardId] = useState(null)
     const [showModal, setShowModal] = useState(false)
+    const [showModalDetail, setShowModalDetail] = useState(false)
+    const [accountId, setAccountId] = useState(null)
     useEffect(() => {
         actions.verifyToken();
         actions.initializeStore();
-
-
         if (!store.auth) {
             navigate("/");
         }
@@ -34,7 +35,7 @@ export const PrincipalPage = () => {
                 await actions.getAccountsDetail(params.id)
             })();
         }
-        if (path.pathname === "/cuentas" || path.pathname === "/movimientos" ) {
+        if (path.pathname === "/cuentas" || path.pathname === "/movimientos") {
             (async () => {
                 await actions.getDetailsUser();
             })()
@@ -70,11 +71,15 @@ export const PrincipalPage = () => {
                                             type={details.type}
                                             operation={details.operation}
                                             accountName={account ? account.name : "Cuenta desconocida"}
+                                            onUpdate={() => {
+                                                setCardId(details.id)
+                                                setShowModalDetail(true)
+                                            }}
                                         />
                                     );
                                 })
                             ) : (
-                                <EmptyComponet/>
+                                <EmptyComponet />
                             )
                         ) : path.pathname === "/movimientos" ? (
                             store.detailUser.length > 0 ? (
@@ -91,11 +96,19 @@ export const PrincipalPage = () => {
                                             type={movents.type}
                                             operation={movents.operation}
                                             accountName={account ? account.name : "Cuenta desconocida"}
+                                            onUpdate={() => {
+                                                setCardId(movents.id)
+                                                setShowModalDetail(true)
+                                                const account = store.detailUser.find(account => account.id === movents.id)
+                                                if (account) {
+                                                    setAccountId(account);
+                                                }
+                                            }}
                                         />
                                     );
                                 })
                             ) : (
-                                <EmptyComponet/>
+                                <EmptyComponet />
                             )
                         ) : (
                             store.accounts.length > 0 ? (
@@ -113,7 +126,7 @@ export const PrincipalPage = () => {
                                     />
                                 ))
                             ) : (
-                                <EmptyComponet/>
+                                <EmptyComponet />
                             )
                         )}
                     </div>
@@ -121,6 +134,7 @@ export const PrincipalPage = () => {
                 {path.pathname === "/cuentas" ? <Modal /> : <ModalDetails />}
                 {path.pathname === "/cuentas" ? null : <Filter />}
                 <ModalEditAccount cardId={cardId} show={showModal} onClose={() => setShowModal(false)} />
+                <ModalEditDetail cardId={cardId} accountId={accountId} show={showModalDetail} onClose={() => setShowModalDetail(false)} />
             </div>
         </div>
     );

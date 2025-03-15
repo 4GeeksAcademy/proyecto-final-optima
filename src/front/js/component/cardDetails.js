@@ -5,21 +5,6 @@ import { ModalDetails } from "./modalDetails";
 
 
 export const CardDetails = (props) => {
-    const [showBalance, setShowBalance] = useState(true)
-    const path = useLocation()
-
-
-
-    const handelClick = (e) => {
-
-        console.log("pablo");
-        console.log(e.currentTarget);
-
-
-    }
-
-
-
     return (
         <>
 
@@ -46,8 +31,10 @@ export const CardDetails = (props) => {
                     <p>{props.operation}</p>
                 </div>
                 <div className="btn-group-vertical p-3" role="group" aria-label="Vertical button group">
-                    <button type="button" className="btn btn-secondary"><i className="bi bi-pencil-square"></i></button>
-                    <button type="button" className="btn btn-secondary" id={props.id} onClick={handelClick}><i className="bi bi-trash-fill"></i></button>
+                    <button type="button" className="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editModalDetail" id={props.id} onClick={() => props.onUpdate()}>
+                        <i className="bi bi-pencil-square"></i>
+                    </button>
+                    <button type="button" className="btn btn-secondary" id={props.id}><i className="bi bi-trash-fill"></i></button>
                 </div>
             </div>
         </>
