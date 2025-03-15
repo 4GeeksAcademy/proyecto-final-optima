@@ -19,6 +19,8 @@ export const PrincipalPage = () => {
     let navigate = useNavigate();
     const params = useParams();
     const [idCard, setIdCard] = useState(null)
+    const [showModal, setShowModal] = useState(false)
+
 
     useEffect(() => {
         actions.verifyToken();
