@@ -324,6 +324,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					if (response.status === 200) {
 						localStorage.removeItem("userAccounts")
 						getActions().getAccountsUser();
+						getActions().getDetailsUser()
 					}
 				} catch (error) {
 					console.error(error);

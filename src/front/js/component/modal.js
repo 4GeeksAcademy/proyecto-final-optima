@@ -58,6 +58,7 @@ export const Modal = () => {
 					if (response.status === 200) {
 						localStorage.removeItem("userAccounts")
 						actions.getAccountsUser();
+						actions.getDetailsUser()
 					}
 				} catch (error) {
 					console.error(error);

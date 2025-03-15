@@ -95,7 +95,7 @@ export const PrincipalPage = () => {
                                     );
                                 })
                             ) : (
-                                <p>No hay movimientos en ninguna cuenta.</p>
+                                <EmptyComponet/>
                             )
                         ) : (
                             store.accounts.length > 0 ? (
