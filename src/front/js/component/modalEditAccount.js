@@ -3,7 +3,7 @@ import { Context } from "../store/appContext";
 import Swal from 'sweetalert2'
 import "../../styles/modal.css";
 
-export const ModalEdit = (props) => {
+export const ModalEditAccount = (props) => {
     const {actions} = useContext(Context)
     const [currentDate, setCurrentDate] = useState("");
     const [currentTime, setCurrentTime] = useState("");
