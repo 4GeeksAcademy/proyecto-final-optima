@@ -4,7 +4,7 @@ import Swal from 'sweetalert2'
 import "../../styles/modal.css";
 
 export const Modal = () => {
-	const { store } = useContext(Context)
+	const { store,actions } = useContext(Context)
 	const [currentDate, setCurrentDate] = useState("");
 	const [currentTime, setCurrentTime] = useState("");
 	const [inputValue, setInputValue] = useState({
@@ -55,6 +55,10 @@ export const Modal = () => {
 				try {
 					const response = await fetch(`${process.env.BACKEND_URL}/api/new-account-detail/${result.id}`, requestOptions);
 					const data = await response.json();
+					if (response.status === 200) {
+						localStorage.removeItem("userAccounts")
+						actions.getAccountsUser();
+					}
 				} catch (error) {
 					console.error(error);
 				}
@@ -63,7 +67,8 @@ export const Modal = () => {
 					title: 'Error!',
 					text: 'Campos incompletos, asegúrate de escribir toda la información',
 					icon: 'error',
-					confirmButtonText: 'Volver'
+					confirmButtonText: 'Volver',
+					confirmButtonColor: "#010D87"
 				})
 			}
 		} catch (error) {
@@ -88,7 +93,8 @@ export const Modal = () => {
 				title: 'Error!',
 				text: 'Campos incompletos, asegúrate de escribir toda la información',
 				icon: 'error',
-				confirmButtonText: 'Volver'
+				confirmButtonText: 'Volver',
+				confirmButtonColor: "#010D87"
 			})
 		}
 	};

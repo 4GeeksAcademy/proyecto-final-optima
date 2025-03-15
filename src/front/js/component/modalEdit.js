@@ -4,6 +4,7 @@ import Swal from 'sweetalert2'
 import "../../styles/modal.css";
 
 export const ModalEdit = (props) => {
+    const {actions} = useContext(Context)
     const [currentDate, setCurrentDate] = useState("");
     const [currentTime, setCurrentTime] = useState("");
     const [inputValue, setInputValue] = useState({
@@ -56,6 +57,10 @@ export const ModalEdit = (props) => {
                 try {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/new-account-detail/${result.id}`, requestOptions);
                     const data = await response.json();
+                    if (response.status === 200) {
+						localStorage.removeItem("userAccounts")
+						actions.getAccountsUser();
+					}
                 } catch (error) {
                     console.error(error);
                 }

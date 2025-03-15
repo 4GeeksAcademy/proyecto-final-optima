@@ -89,7 +89,8 @@ export const ModalDetails = () => {
                 title: 'Error!',
                 text: 'Campos incompletos, asegúrate de escribir toda la información',
                 icon: 'error',
-                confirmButtonText: 'Volver'
+                confirmButtonText: 'Volver',
+                confirmButtonColor: "#010D87"
             })
         }
     };

@@ -13,9 +13,24 @@ const validationSchema = Yup.object().shape({
     last_name: Yup.string()
         .min(2, "El apellido debe tener al menos 2 caracteres")
         .required("El apellido es obligatorio"),
-    email: Yup.string()
+     email: Yup.string()
         .email("Formato de email inválido")
-        .required("El email es obligatorio"),
+        .required("El email es obligatorio")
+        .test("checkEmailExists", "Este email ya está registrado", async (value) => { // NUEVO
+            if (!value) return false;
+            try {
+                const response = await fetch(`${process.env.BACKEND_URL}/api/check-email`, { // NUEVO
+                    method: "POST", // NUEVO
+                    headers: { "Content-Type": "application/json" }, // NUEVO
+                    body: JSON.stringify({ email: value }) // NUEVO
+                }); // NUEVO
+                const data = await response.json(); // NUEVO
+                return !data.exists; // NUEVO -> Si `exists: true`, devuelve false y muestra error
+            } catch (error) {
+                console.error("Error verificando email:", error); // NUEVO
+                return true; // NUEVO -> Si hay un error, permite continuar (para no bloquear el registro)
+            }
+       }),
     password: Yup.string()
         .min(8, "La contraseña debe tener al menos 8 caracteres")
         .matches(/[A-Z]/, "Debe contener al menos una letra mayúscula")

@@ -27,7 +27,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				document.documentElement.setAttribute("data-theme", savedTheme);
 				setStore({ theme: savedTheme });
 			},
-		
+
 			toggleTheme: () => { //cambia el tema y lo guarda en local storage
 				const currentTheme = getStore().theme;
 				const newTheme = currentTheme === "light" ? "dark" : "light";
@@ -49,7 +49,20 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log("Error loading message from backend", error);
 				}
 			},
-
+			checkEmail: async (email) => {
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/check-email`, {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ email })
+					});
+					const result = await response.json();
+					return result.exists;
+				} catch (error) {
+					console.error("Error verificando email:", error);
+					return false;
+				}
+			},
 			changeColor: (index, color) => {
 				const store = getStore();
 				const demo = store.demo.map((elm, i) => {
@@ -269,9 +282,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 				try {
 					const response = await fetch(`${process.env.BACKEND_URL}/api/account-detail/${accountId}`, requestOptions);
 					const result = await response.json();
-					if(response.status === 404){
+					if (response.status === 404) {
 						setStore({ detailAccounts: [] });
-					} else{
+					} else {
 						setStore({ detailAccounts: result.result });
 					}
 				} catch (error) {
@@ -291,9 +304,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 				try {
 					const response = await fetch(`${process.env.BACKEND_URL}/api/all-details-user/${getStore().user.id}`, requestOptions);
 					const result = await response.json();
-					if(response.status === 404){
+					if (response.status === 404) {
 						setStore({ detailUser: [] });
-					}else{
+					} else {
 						setStore({ detailUser: result.result });
 					}
 
@@ -301,7 +314,45 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(error);
 				};
 			},
+			DeleteAccount: async (accountId) => {
+				const myHeaders = new Headers();
+				myHeaders.append("Cookie", ".Tunnels.Relay.WebForwarding.Cookies=CfDJ8Cs4yarcs6pKkdu0hlKHsZvSYfPWBkxG1uAm4mVA7Kzrj3ZVWCO8__RlrXh3GAYOYP60v1Qc9b7TGpa1XgNWgd8W415NnC8GpdC7Xc5MGCF8g1WuD1ANQXhy8XvefAPkOaRIYoANo4q1cGB3UZeiRGv70Cx-3sLfjgfGYEQvXrSM8oQbDcLxAL2dbdoUgOmDHZNBHR_IOIki5cheIuRAutcTglmZ1FTZk3sSbqKZWIklGPs-l8SUEklJ4Cco9JFWSSexleEBIamFx3zRMzjzohwrRd_ZvoX0GCcDM7DV6b7TSeAauinxrg1NGYfR1u9Jg_DJtznD3CbdY2dCv3qaLt46iM2yG69rYJcHGEDa_XLE2PpaoGFvVvjca40ZC_YLFr5H7R-jBlUWwknosbDVyrhB4lUr8z55Q9ozFDRWuDqVHHpn97LKTtSTHjTRGq6M1Ob0e01xACOSjXIzGa4Q3H2cAGIM1EvK9uhTorDWEGMw7YlwY1WR6kL3OyCjYQkuhV61jsR2uHu9oJ4lPsWjwAHsW_5KyBavHQCQ1yhmMCmuvgPUG7RBfn8f9e6qqbbvMfdVarI3KcNqnpA_aJK8LYJpAv8TegQY1R-BhJrsZ4gRbzZDPY1kHP_Qhkf-rmIfn5KkNGgKugjCHTaHbiUGqqqncKdfNIJeeufVSolDtXjH-eAtWZRD7KEWzpa3DQcfmn2AvBkX0ilK1N778dl_qdhYyBEgANw5fkx90lIMulItK-UYaiwLH1xkprzZh3Nzzli1QlrziJYyre1LNHXCa9ru3DnUjMXUy-Raww2j1e17fIWHj_zj9wsZSwFZ1gQ6N3PswEJIoAiNOKfWJUXs-xu7iIDifiVBwK1sflIq76UHgz3Fup9cgva0oIq6Evq5otAB_wMNmBxuhyRcsCJt8ShtruqEPIQiAudQ2aY9T6hq0M0A4ku9CMqZ2HjhjyWxVjxVX471uhzwvv-WKXedAgIh5xz6s2uZCVYlU075Eb2B");
 
+				const requestOptions = {
+					method: "DELETE",
+					headers: myHeaders,
+					redirect: "follow"
+				};
+
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/delete-account/${accountId}`, requestOptions);
+					const result = await response.json();
+					if(response.status === 200){
+						localStorage.removeItem("userAccounts")
+						getActions().getAccountsUser();
+					}
+				} catch (error) {
+					console.error(error);
+				};
+			},
+			filterPerType: async () => {
+				const myHeaders = new Headers();
+				myHeaders.append("Cookie", ".Tunnels.Relay.WebForwarding.Cookies=CfDJ8Cs4yarcs6pKkdu0hlKHsZs4QIjnH5XwZc8r4EV9eZWrSae0Zb1F4WdnE7Ev9oY4WsQBWsicWZUNpx6ZWsGv-Wn3x_D_8Smp803mzklASXl2lEA7pd1-gKaWYVpJqV89E3xDpwb9emCOmfyGyT0wu23zONmmNe8tjf9JQD1ZEQjLeZuA3oWO6SxQTY1Upd-3O9zUY604pNU5_4BWprsnN66EnjeUG5GjHH5uEJIhJwstjSS5BvVukVWrNwfj1DEH69Tz_4I_0JhOtqVwAfb_Bh5YBmLWH3ESGNgzKOzfckF5kWvsYcMLi_kj2UJYxgsfBWrSgkymz1mVgf8gKukkwmR678lWfuJDVrq7ZGN64ZNiK8OUH1cRbN8ehT1xMG-XFCi7XR6fKyJgQKGPBH4sB8koBIzHQxd2RqazUx3sbvYxv4_3PhX6Z0j6Yj5klQadzS1qPqK8FVHqMIdmwPZ0S9PIlD0hDcz1e0gmHVDuk7BTH8W52Ftn5VlS0RB9Ge7hD24-3fytorvEZ6sFVE27xBPv5m7hk2EeCVa6UUQR7rRlFRVHn94C9joOncvUJpfZ7jcNDsK1PQ9tkGUt0HP86D5qdcFENkZraEEmTVU2fcpQ98gG_prmadxOyijK09ccnN917DenzVFaJjId_AK--54GW_tJg_iMoTA-LjuCo-fRRyTWBnV4_5RfsDg3BC8HTCPe7rBNUbCRTr8YemjlYKzREfH4jvwpoKKgaVpNH_SNdqCg7ZFmS4u6DPV71LczGyfFHMD2SCd8LDFhVe7m-0fpWXuDFGsF1zEJWnIwHn-wUWdO6A63QHqSL5V6F7-D0doiUy3j9-Ad3P3e_Z3ImcecNahAqh6YuF3wtg7ePacPp2becXJ4IONIoYuf_ZTKI3r8nfV6LEl0p4LWvBRc4AFGZ88ioPBEJ8HCfPGVU_NjLp6nwH1kDSNfGxTc8UFAV4pemvQ8xV7YVMma5KgdIhn2FFSD6FiKiwQLKvk0UP4OFgtd4y8B0PKJmGXy1phdXg");
+
+				const requestOptions = {
+					method: "GET",
+					headers: myHeaders,
+					redirect: "follow"
+				};
+
+				try {
+					const response = await fetch("https://super-duper-space-bassoon-jp9w74x6j5xcprq7-3001.app.github.dev/api/account-detail-filter/1", requestOptions);
+					const result = await response.text();
+					console.log(result)
+				} catch (error) {
+					console.error(error);
+				};
+			},
 		}
 	};
 };
