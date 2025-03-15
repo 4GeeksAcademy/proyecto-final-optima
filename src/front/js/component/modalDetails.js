@@ -23,7 +23,6 @@ export const ModalDetails = () => {
     const [inputValue, setInputValue] = useState({
         detail: "",
         amount: "",
-        coin: "",
         type: "",
         date: "",
         time: "",
@@ -56,10 +55,19 @@ export const ModalDetails = () => {
         try {
             const response = await fetch(`${process.env.BACKEND_URL}/api/new-account-detail/${body.accountId}`, requestOptions);
             const result = await response.json();
-            if (balanceType === "egreso") {
-                actions.debit(parseInt(result.amount), body.accountId)
-            } else if ((balanceType === "ingreso")) {
-                actions.deposit(parseInt(result.amount), body.accountId)
+            console.log(result);
+            
+            if (response.status === 200) {
+                if (balanceType === "egreso") {
+                    actions.debit(parseInt(result.amount), body.accountId)
+                } else if ((balanceType === "ingreso")) {
+                    actions.deposit(parseInt(result.amount), body.accountId)
+                }
+                if (path.pathname === "/movimientos") {
+                    await actions.getDetailsUser()
+                } else{
+                    await actions.getAccountsDetail(body.accountId)
+                }
             }
         } catch (error) {
             console.error(error);
@@ -67,7 +75,7 @@ export const ModalDetails = () => {
 
     }
     const addAccountDetail = () => {
-        if (inputValue.detail.length != 0 && inputValue.type != "" && inputValue.amount != 0 && inputValue.coin != "") {
+        if (inputValue.detail.length != 0 && inputValue.type != "" && inputValue.amount != 0) {
             createAccount(inputValue)
             setInputValue({
                 detail: "",
@@ -102,290 +110,291 @@ export const ModalDetails = () => {
         if (name === "account") {
             const accountIdFilter = store.accounts.find((account) => account.name === value);
             setSelectedCurrency(accountIdFilter.coin)
-        if (accountIdFilter) {
+            if (accountIdFilter) {
+                console.log(accountIdFilter);
+                console.log(accountIdFilter.coin);
+                setInputValue((prev) => ({
+                    ...prev,
+                    accountId: accountIdFilter.id,
+                    operation: balanceType, coin: accountIdFilter.coin
+                }));
+            }
+        } else if (path.pathname != "/movimientos") {
             setInputValue((prev) => ({
-                ...prev,
-                accountId: accountIdFilter.id,
-                operation: balanceType, coin: selectedCurrency
+                ...prev, accountId: accountId, operation: balanceType, coin: selectedCurrency
             }));
         }
-    } else if (path.pathname != "/movimientos") {
-        setInputValue((prev) => ({
-            ...prev, accountId: accountId, operation: balanceType, coin: selectedCurrency
-        }));
-    }
-};
-const handleClick = () => {
-    setInputValue({
-        detail: "",
-        amount: "",
-        coin: "",
-        type: "",
-        date: currentDate,
-        time: currentTime,
-        account: "",
-        accountId: "",
-        operation: balanceType
-    })
-    if (path.pathname != "/movimientos") {
-        const account = store.accounts.find((acc) => acc.id == params.id);
-        if (account) {
-            setAccountName(account.name);
-            setAccountId(account.id);
-            setSelectedCurrency(account.coin)
+    };
+    const handleClick = () => {
+        setInputValue({
+            detail: "",
+            amount: "",
+            type: "",
+            date: currentDate,
+            time: currentTime,
+            account: "",
+            accountId: "",
+            operation: balanceType
+        })
+        if (path.pathname != "/movimientos") {
+            const account = store.accounts.find((acc) => acc.id == params.id);
+            if (account) {
+                setAccountName(account.name);
+                setAccountId(account.id);
+                setSelectedCurrency(account.coin)
+            }
         }
     }
-}
-useEffect(() => {
-    const now = new Date();
-    const formattedDate = now.toISOString().split("T")[0];
-    const formattedTime = now.toLocaleTimeString("es-ES", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-    });
+    useEffect(() => {
+        const now = new Date();
+        const formattedDate = now.toISOString().split("T")[0];
+        const formattedTime = now.toLocaleTimeString("es-ES", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+        });
 
-    setCurrentDate(formattedDate);
-    setCurrentTime(formattedTime);
-}, []);
-return (
-    <>
-        <button type="button" className="add-item btn btn-secondary btn-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" onClick={handleClick}>
-            <i className="bi bi-plus-lg"></i>
-        </button>
-        <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div className="modal-dialog">
-                <div className="modal-content">
-                    <div className="modal-header">
-                        <h1 className="modal-title fs-5" id="exampleModalLabel">
-                            Añadir Movimiento
-                        </h1>
-                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div className="toggle-container mt-2">
-                        <input
-                            type="radio"
-                            id="btnradio1"
-                            name="btnradio"
-                            checked={balanceType === "egreso" || false}
-                            onChange={() => handleBalanceChange("egreso")}
-                            className="hidden"
-                        />
-                        <label htmlFor="btnradio1" className={`toggle-option ${balanceType === "egreso" ? "active" : ""}`}>
-                            Egreso
-                        </label>
-
-                        <input
-                            type="radio"
-                            id="btnradio2"
-                            name="btnradio"
-                            checked={balanceType === "ingreso" || false}
-                            onChange={() => handleBalanceChange("ingreso")}
-                            className="hidden"
-                        />
-                        <label htmlFor="btnradio2" className={`toggle-option ${balanceType === "ingreso" ? "active" : ""}`}>
-                            Ingreso
-                        </label>
-                    </div>
-                    {path.pathname === "/movimientos" ?
-                        <div className="modal-body d-flex flex-column gap-3 px-4">
-                            <select
-                                className="form-select"
-                                aria-label="Default select example"
-                                name="account"
-                                required
-                                value={inputValue.account}
-                                onChange={handleChange}
-                            >
-                                <option value="">Selecciona una cuenta</option>
-                                {store.accounts.map((i) => {
-                                    return (
-                                        <option key={i.id} value={i.name}>{i.name}</option>
-                                    )
-                                })}
-                            </select>
+        setCurrentDate(formattedDate);
+        setCurrentTime(formattedTime);
+    }, []);
+    return (
+        <>
+            <button type="button" className="add-item btn btn-secondary btn-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" onClick={handleClick}>
+                <i className="bi bi-plus-lg"></i>
+            </button>
+            <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h1 className="modal-title fs-5" id="exampleModalLabel">
+                                Añadir Movimiento
+                            </h1>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        : <div className="modal-body d-flex flex-column gap-3 px-4">
+                        <div className="toggle-container mt-2">
                             <input
-                                className="form-input"
-                                aria-label="Default select example"
-                                name="account"
-                                required
-                                value={accountName}
-                                onChange={handleChange}
-                                disabled
+                                type="radio"
+                                id="btnradio1"
+                                name="btnradio"
+                                checked={balanceType === "egreso" || false}
+                                onChange={() => handleBalanceChange("egreso")}
+                                className="hidden"
                             />
+                            <label htmlFor="btnradio1" className={`toggle-option ${balanceType === "egreso" ? "active" : ""}`}>
+                                Egreso
+                            </label>
+
+                            <input
+                                type="radio"
+                                id="btnradio2"
+                                name="btnradio"
+                                checked={balanceType === "ingreso" || false}
+                                onChange={() => handleBalanceChange("ingreso")}
+                                className="hidden"
+                            />
+                            <label htmlFor="btnradio2" className={`toggle-option ${balanceType === "ingreso" ? "active" : ""}`}>
+                                Ingreso
+                            </label>
                         </div>
-                    }
-                    {balanceType === "egreso" ?
-                        <>
+                        {path.pathname === "/movimientos" ?
                             <div className="modal-body d-flex flex-column gap-3 px-4">
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    placeholder="Detalle"
-                                    value={inputValue.detail}
-                                    aria-label="Detalle"
-                                    name="detail"
-                                    required
-                                    onChange={handleChange}
-                                />
-
-                                <div className="d-flex gap-3">
-                                    <input
-                                        type="text"
-                                        className="form-control flex-grow-1"
-                                        placeholder="Monto"
-                                        value={inputValue.amount}
-                                        aria-label="Amount"
-                                        name="amount"
-                                        required
-                                        onChange={handleChange}
-                                    />
-                                    <select
-                                        className="form-select"
-                                        aria-label="Default select example"
-                                        name="coin"
-                                        required
-                                        value={selectedCurrency} disabled
-                                        onChange={handleChange}
-                                        style={{ width: "30%" }}
-                                    >
-                                        <option value="">{selectedCurrency || "Moneda"}</option>
-                                    </select>
-                                </div>
-
                                 <select
                                     className="form-select"
                                     aria-label="Default select example"
-                                    name="type"
+                                    name="account"
                                     required
-                                    value={inputValue.type}
+                                    value={inputValue.account}
                                     onChange={handleChange}
                                 >
-                                    <option value="">Tipo de Gasto</option>
-                                    <option value="gastos hormiga">Gastos Hormiga</option>
-                                    <option value="servicios">Servicios</option>
-                                    <option value="alquiler">Alquiler</option>
-                                    <option value="transporte">Transporte</option>
-                                    <option value="ocio">Ocio</option>
-                                    <option value="ropa y complementos">Ropa y Complementos</option>
-                                    <option value="alimentacion">Alimentación</option>
-                                    <option value="mascota">Mascota</option>
-                                    <option value="otros">Otros</option>
+                                    <option value="">Selecciona una cuenta</option>
+                                    {store.accounts.map((i) => {
+                                        return (
+                                            <option key={i.id} value={i.name}>{i.name}</option>
+                                        )
+                                    })}
                                 </select>
-
-                                <form className="d-flex gap-3" noValidate>
-                                    <TextField
-                                        id="date"
-                                        name="date"
-                                        label="Fecha"
-                                        type="date"
-                                        value={currentDate}
-                                        onChange={handleChange}
-                                        InputLabelProps={{ shrink: true }}
-                                        className="flex-grow-1"
-                                    />
-                                    <TextField
-                                        id="time"
-                                        name="time"
-                                        label="Hora"
-                                        type="time"
-                                        value={currentTime}
-                                        onChange={handleChange}
-                                        InputLabelProps={{ shrink: true }}
-                                        className="flex-grow-1"
-                                    />
-                                </form>
                             </div>
-                        </>
-                        :
-                        <>
-                            <div className="modal-body d-flex flex-column gap-3 px-4">
+                            : <div className="modal-body d-flex flex-column gap-3 px-4">
                                 <input
-                                    type="text"
-                                    className="form-control"
-                                    placeholder="Detalle"
-                                    value={inputValue.detail}
-                                    name="detail"
+                                    className="form-input"
+                                    aria-label="Default select example"
+                                    name="account"
                                     required
+                                    value={accountName}
                                     onChange={handleChange}
+                                    disabled
                                 />
-
-                                <div className="d-flex gap-3">
+                            </div>
+                        }
+                        {balanceType === "egreso" ?
+                            <>
+                                <div className="modal-body d-flex flex-column gap-3 px-4">
                                     <input
                                         type="text"
-                                        className="form-control flex-grow-1"
-                                        placeholder="Monto"
-                                        value={inputValue.balance}
-                                        aria-label="Amount"
-                                        name="amount"
+                                        className="form-control"
+                                        placeholder="Detalle"
+                                        value={inputValue.detail}
+                                        aria-label="Detalle"
+                                        name="detail"
                                         required
                                         onChange={handleChange}
                                     />
+
+                                    <div className="d-flex gap-3">
+                                        <input
+                                            type="number"
+                                            className="form-control flex-grow-1 input-balance"
+                                            placeholder="Monto"
+                                            value={inputValue.amount}
+                                            aria-label="Amount"
+                                            name="amount"
+                                            required
+                                            onChange={handleChange}
+                                        />
+                                        <select
+                                            className="form-select"
+                                            aria-label="Default select example"
+                                            name="coin"
+                                            required
+                                            value={selectedCurrency} disabled
+                                            onChange={handleChange}
+                                            style={{ width: "30%" }}
+                                        >
+                                            <option value="">{selectedCurrency || "Moneda"}</option>
+                                        </select>
+                                    </div>
+
                                     <select
                                         className="form-select"
                                         aria-label="Default select example"
-                                        name="coin"
+                                        name="type"
                                         required
-                                        value={selectedCurrency} disabled
+                                        value={inputValue.type}
                                         onChange={handleChange}
-                                        style={{ width: "30%" }}
                                     >
-                                        <option value="">{selectedCurrency || "Moneda"}</option>
+                                        <option value="">Tipo de Gasto</option>
+                                        <option value="gastos hormiga">Gastos Hormiga</option>
+                                        <option value="servicios">Servicios</option>
+                                        <option value="alquiler">Alquiler</option>
+                                        <option value="transporte">Transporte</option>
+                                        <option value="ocio">Ocio</option>
+                                        <option value="ropa y complementos">Ropa y Complementos</option>
+                                        <option value="alimentacion">Alimentación</option>
+                                        <option value="mascota">Mascota</option>
+                                        <option value="otros">Otros</option>
                                     </select>
+
+                                    <form className="d-flex gap-3" noValidate>
+                                        <TextField
+                                            id="date"
+                                            name="date"
+                                            label="Fecha"
+                                            type="date"
+                                            value={currentDate}
+                                            onChange={handleChange}
+                                            InputLabelProps={{ shrink: true }}
+                                            className="flex-grow-1"
+                                        />
+                                        <TextField
+                                            id="time"
+                                            name="time"
+                                            label="Hora"
+                                            type="time"
+                                            value={currentTime}
+                                            onChange={handleChange}
+                                            InputLabelProps={{ shrink: true }}
+                                            className="flex-grow-1"
+                                        />
+                                    </form>
                                 </div>
-
-                                <select
-                                    className="form-select"
-                                    aria-label="Default select example"
-                                    name="type"
-                                    required
-                                    value={inputValue.type}
-                                    onChange={handleChange}
-                                >
-                                    <option value="">Tipo de Ingreso</option>
-                                    <option value="sueldos y salarios">Sueldos y Salarios</option>
-                                    <option value="inversiones">Inversiones</option>
-                                    <option value="transferencia">Transferencia</option>
-                                    <option value="otros">Otros</option>
-                                </select>
-
-                                <form className="d-flex gap-3" noValidate>
-                                    <TextField
-                                        id="date"
-                                        name="date"
-                                        label="Fecha"
-                                        type="date"
-                                        value={currentDate}
+                            </>
+                            :
+                            <>
+                                <div className="modal-body d-flex flex-column gap-3 px-4">
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        placeholder="Detalle"
+                                        value={inputValue.detail}
+                                        name="detail"
+                                        required
                                         onChange={handleChange}
-                                        InputLabelProps={{ shrink: true }}
-                                        className="flex-grow-1"
                                     />
-                                    <TextField
-                                        id="time"
-                                        name="time"
-                                        label="Hora"
-                                        type="time"
-                                        value={currentTime}
+
+                                    <div className="d-flex gap-3">
+                                        <input
+                                            type="number"
+                                            className="form-control flex-grow-1 input-balance"
+                                            placeholder="Monto"
+                                            value={inputValue.balance}
+                                            aria-label="Amount"
+                                            name="amount"
+                                            required
+                                            onChange={handleChange}
+                                        />
+                                        <select
+                                            className="form-select"
+                                            aria-label="Default select example"
+                                            name="coin"
+                                            required
+                                            value={selectedCurrency} disabled
+                                            onChange={handleChange}
+                                            style={{ width: "30%" }}
+                                        >
+                                            <option value="">{selectedCurrency || "Moneda"}</option>
+                                        </select>
+                                    </div>
+
+                                    <select
+                                        className="form-select"
+                                        aria-label="Default select example"
+                                        name="type"
+                                        required
+                                        value={inputValue.type}
                                         onChange={handleChange}
-                                        InputLabelProps={{ shrink: true }}
-                                        className="flex-grow-1"
-                                    />
-                                </form>
-                            </div>
-                        </>}
-                    <div className="modal-footer">
-                        <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={addAccountDetail}>
-                            Agregar
-                        </button>
-                        <button type="button" className="btn btn-danger" data-bs-dismiss="modal">
-                            Cancelar
-                        </button>
+                                    >
+                                        <option value="">Tipo de Ingreso</option>
+                                        <option value="sueldos y salarios">Sueldos y Salarios</option>
+                                        <option value="inversiones">Inversiones</option>
+                                        <option value="transferencia">Transferencia</option>
+                                        <option value="otros">Otros</option>
+                                    </select>
+
+                                    <form className="d-flex gap-3" noValidate>
+                                        <TextField
+                                            id="date"
+                                            name="date"
+                                            label="Fecha"
+                                            type="date"
+                                            value={currentDate}
+                                            onChange={handleChange}
+                                            InputLabelProps={{ shrink: true }}
+                                            className="flex-grow-1"
+                                        />
+                                        <TextField
+                                            id="time"
+                                            name="time"
+                                            label="Hora"
+                                            type="time"
+                                            value={currentTime}
+                                            onChange={handleChange}
+                                            InputLabelProps={{ shrink: true }}
+                                            className="flex-grow-1"
+                                        />
+                                    </form>
+                                </div>
+                            </>}
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={addAccountDetail}>
+                                Agregar
+                            </button>
+                            <button type="button" className="btn btn-danger" data-bs-dismiss="modal">
+                                Cancelar
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </>
-)
+        </>
+    )
 }

@@ -34,7 +34,7 @@ export const PrincipalPage = () => {
                 await actions.getAccountsDetail(params.id)
             })();
         }
-        if (path.pathname === "/cuentas") {
+        if (path.pathname === "/cuentas" || path.pathname === "/movimientos" ) {
             (async () => {
                 await actions.getDetailsUser();
             })()
@@ -74,7 +74,7 @@ export const PrincipalPage = () => {
                                     );
                                 })
                             ) : (
-                                <p>No hay movimientos en esta cuenta.</p>
+                                <EmptyComponet/>
                             )
                         ) : path.pathname === "/movimientos" ? (
                             store.detailUser.length > 0 ? (

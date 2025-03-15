@@ -4,7 +4,7 @@ import Swal from 'sweetalert2'
 import "../../styles/modal.css";
 
 export const Modal = () => {
-	const { store,actions } = useContext(Context)
+	const { store, actions } = useContext(Context)
 	const [currentDate, setCurrentDate] = useState("");
 	const [currentTime, setCurrentTime] = useState("");
 	const [inputValue, setInputValue] = useState({
@@ -129,10 +129,10 @@ export const Modal = () => {
 							</h1>
 							<button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 						</div>
-						<div className="modal-body d-flex gap-5">
+						<div className="modal-body d-flex gap-2">
 							<input
 								type="text"
-								className="form-control"
+								className="form-control input-name"
 								placeholder="Nombre"
 								value={inputValue.name}
 								aria-label="Nombre"
@@ -141,8 +141,8 @@ export const Modal = () => {
 								onChange={handleChange}
 							/>
 							<input
-								type="text"
-								className="form-control w-25"
+								type="number"
+								className="form-control input-balance"
 								placeholder="Balance"
 								value={inputValue.balance}
 								aria-label="Balance"
@@ -153,8 +153,8 @@ export const Modal = () => {
 						</div>
 						<div className="px-5 pb-3">
 							<select
-								className="form-select mr-5 "
-								aria-label="Default select example"
+								className="form-select"
+								aria-label="Moneda"
 								name="coin"
 								required
 								value={inputValue.coin}
@@ -171,8 +171,8 @@ export const Modal = () => {
 						</div>
 						<div className="px-5 pb-3">
 							<select
-								className="form-select mr-5 "
-								aria-label="Default select example"
+								className="form-select"
+								aria-label="Tipo de Espacio"
 								name="type"
 								required
 								value={inputValue.type}
