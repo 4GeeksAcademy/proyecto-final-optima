@@ -11,13 +11,13 @@ export const GeneralBalance = () => {
   const [showBalance, setShowBalance] = useState(true);
   const [currency, setCurrency] = useState("EUR");
   const [exchangeRates, setExchangeRates] = useState({ EUR: 1 });
-  const [accountBalance, setAccountBalance] = useState(0);
   const [coin, setCoin] = useState("");
+  const [accountBalance,setAccountBalance] = useState(null)
 
   async function getExchangeRates(baseCurrency = "EUR") {
     try {
       const response = await fetch(
-        `https://api.currencyapi.com/v3/latest?apikey=cur_live_SoRvnM1p18PwNQdUYppAQX8SqMPxeYZMsYWDDIDe&base_currency=${baseCurrency}`
+        `https://api.currencyapi.com/v3/latest?apikey=cur_live_rBDoEYoqkDbh6yb8S2y7qp12aRvw5BmlKtuxszIX&base_currency=${baseCurrency}`
       );
       const data = await response.json();
 
@@ -45,6 +45,8 @@ export const GeneralBalance = () => {
     }).format(balance);
   }, [store.accounts, exchangeRates, currency]);
 
+
+
   const toggleBalance = () => {
     setShowBalance((prev) => !prev);
   };
@@ -53,16 +55,23 @@ export const GeneralBalance = () => {
     if (path.pathname.startsWith("/cuentas/")) {
       const account = store.accounts.find((acc) => acc.id == params.id);
       if (account) {
-        setAccountBalance(Number(account.balance))
         setCoin(account.coin);
         setCurrency(account.coin);
-        getExchangeRates(account.coin);
+        // getExchangeRates(account.coin);
+        setAccountBalance(account.balance)
+        // Busca los movimientos correspondientes en store.detailUser o store.detailAccounts
+        const accountMovements = store.detailAccounts.find(
+          (detail) => detail.accounts_id === account.id
+        );
+        console.log(accountMovements);
+        console.log(account)
       }
     } else {
       setCurrency("EUR");
-      getExchangeRates("EUR");
+      // getExchangeRates("EUR");
     }
-  }, [path.pathname, store.accounts]);
+  }, [path.pathname, store.accounts, store.detailUser, store.detailAccounts, params.id, accountBalance]); // Ahora observamos más dependencias
+  
 
   const handleChange = (event) => {
     setCurrency(event.target.value);
@@ -75,11 +84,7 @@ export const GeneralBalance = () => {
         {path.pathname.startsWith("/cuentas/") ? (
           <h4 className="m-0 fw-bold me-3">
             {showBalance
-              ? new Intl.NumberFormat("es-ES", {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                }).format(accountBalance)
-              : "****"}
+              ? accountBalance: "****"}
           </h4>
         ) : (
           <h4 className="m-0 fw-bold me-3">{showBalance ? totalBalance : "****"}</h4>
