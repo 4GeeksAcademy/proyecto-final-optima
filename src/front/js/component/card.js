@@ -36,7 +36,7 @@ export const Card = (props) => {
                 <div className="justify-content-center">
                     <h4 className="card-title">{props.name}</h4>
                     <div>
-                        <p>Último movimiento</p>
+                        <p className="last-movement">Último movimiento</p>
                         <p>{props.detail}</p>
                         <p>{props.amount}</p>
                         <p>{props.date}</p>
@@ -45,7 +45,7 @@ export const Card = (props) => {
             </div>
             <div className="card-body d-flex justify-content-around col-4 align-items-center">
                 <div className="justify-content-center">
-                    <div className="d-flex">
+                    <div className="balance">
                         <p className="card-text">{showBalance ? props.balance : "****"}</p>
                         <i
                             className={`bi ${showBalance ? "bi-eye-fill" : "bi-eye-slash-fill"}`}
@@ -55,15 +55,15 @@ export const Card = (props) => {
                     </div>
                 </div>
             </div>
-            <div className="card-body d-flex justify-content-around col-4 align-items-center">
+            <div className="card-buttons d-flex justify-content-around col-4 align-items-center">
                 <Link to={`/cuentas/${props.id}`}>
-                    <p className="btn btn-primary">Ver Más</p>
+                    <p className="button-more-info btn btn-primary">Ver Más</p>
                 </Link>
-                <div className="btn-group-vertical p-3" role="group">
-                    <button type="button" className="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editModal" id={props.id} onClick={() => props.onUpdate()}>
+                <div className="buttons-edit-delete btn-group-vertical p-3" role="group">
+                    <button type="button" className="button-edit btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editModal" id={props.id} onClick={() => props.onUpdate()}>
                         <i className="bi bi-pencil-square"></i>
                     </button>
-                    <button type="button" className="btn btn-secondary" onClick={handleDelete}>
+                    <button type="button" className="button-delete btn btn-secondary" onClick={handleDelete}>
                         <i className="bi bi-trash-fill"></i>
                     </button>
                 </div>

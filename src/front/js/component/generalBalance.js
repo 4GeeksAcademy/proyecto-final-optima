@@ -79,7 +79,7 @@ export const GeneralBalance = () => {
 
   return (
     <div className="balance-box d-flex align-items-center justify-content-between p-3 shadow rounded">
-      <h2 className="m-0">Balance general</h2>
+      <h2 className="balance-title m-0">Balance general</h2>
       <div className="d-flex align-items-center">
         {path.pathname.startsWith("/cuentas/") ? (
           <h4 className="m-0 fw-bold me-3">
@@ -87,8 +87,12 @@ export const GeneralBalance = () => {
               ? accountBalance: "****"}
           </h4>
         ) : (
-          <h4 className="m-0 fw-bold me-3">{showBalance ? totalBalance : "****"}</h4>
-        )}
+          <h4 className="total-balance m-0 fw-bold me-3">{showBalance ? totalBalance : "****"}</h4>
+        )}  
+        <i
+        className={`bi ${showBalance ? "hide-balance bi-eye-fill" : "bi-eye-slash-fill"}  fs-4 cursor-pointer`}
+        onClick={toggleBalance}
+      ></i>
         <div className="currency-size ms-2">
           <select
             className="form-select"
@@ -119,10 +123,7 @@ export const GeneralBalance = () => {
           </select>
         </div>
       </div>
-      <i
-        className={`bi ${showBalance ? "bi-eye-fill" : "bi-eye-slash-fill"} fs-4 cursor-pointer`}
-        onClick={toggleBalance}
-      ></i>
+    
     </div>
   );
 };
