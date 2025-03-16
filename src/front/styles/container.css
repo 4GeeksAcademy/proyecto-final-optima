@@ -18,7 +18,6 @@
     display: flex;
     flex-direction: column;
 }
-
 .d-flex.vh-100 {
     overflow: hidden; /* Evita el scroll de toda la página */
 }

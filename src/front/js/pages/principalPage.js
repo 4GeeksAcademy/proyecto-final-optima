@@ -9,8 +9,10 @@ import { Modal } from "../component/modal";
 import { ModalDetails } from "../component/modalDetails";
 import { CardMovimientos } from "../component/cardMovimiento";
 import { CardDetails } from "../component/cardDetails";
-import { ModalEdit } from "../component/modalEdit";
+import { ModalEditAccount } from "../component/modalEditAccount";
 import { Filter } from "../component/filter";
+import { EmptyComponet } from "../component/emptyComponet";
+import { ModalEditDetail } from "../component/modalEditDetail";
 
 
 export const PrincipalPage = () => {
@@ -18,23 +20,27 @@ export const PrincipalPage = () => {
     const path = useLocation()
     let navigate = useNavigate();
     const params = useParams();
-    const [idCard, setIdCard] = useState(null)
+    const [cardId, setCardId] = useState(null)
     const [showModal, setShowModal] = useState(false)
+    const [showModalDetail, setShowModalDetail] = useState(false)
+    const [accountId, setAccountId] = useState(null)
     useEffect(() => {
         actions.verifyToken();
         actions.initializeStore();
-
-
         if (!store.auth) {
             navigate("/");
         }
         if (path.pathname !== "/cuentas" && params.id) {
             (async () => {
-                await actions.getAccountsDetail(params.id);
-                await actions.getDetailsUser();
+                await actions.getAccountsDetail(params.id)
             })();
         }
-    }, [params.id, path.pathname, actions.account]);
+        if (path.pathname === "/cuentas" || path.pathname === "/movimientos") {
+            (async () => {
+                await actions.getDetailsUser();
+            })()
+        }
+    }, [params.id, path.pathname, store.account]);
 
     if (!store.auth) {
         actions.logout()
@@ -65,11 +71,15 @@ export const PrincipalPage = () => {
                                             type={details.type}
                                             operation={details.operation}
                                             accountName={account ? account.name : "Cuenta desconocida"}
+                                            onUpdate={() => {
+                                                setCardId(details.id)
+                                                setShowModalDetail(true)
+                                            }}
                                         />
                                     );
                                 })
                             ) : (
-                                <p>No hay movimientos en esta cuenta.</p>
+                                <EmptyComponet />
                             )
                         ) : path.pathname === "/movimientos" ? (
                             store.detailUser.length > 0 ? (
@@ -86,11 +96,19 @@ export const PrincipalPage = () => {
                                             type={movents.type}
                                             operation={movents.operation}
                                             accountName={account ? account.name : "Cuenta desconocida"}
+                                            onUpdate={() => {
+                                                setCardId(movents.id)
+                                                setShowModalDetail(true)
+                                                const account = store.detailUser.find(account => account.id === movents.id)
+                                                if (account) {
+                                                    setAccountId(account);
+                                                }
+                                            }}
                                         />
                                     );
                                 })
                             ) : (
-                                <p>No hay movimientos en ninguna cuenta.</p>
+                                <EmptyComponet />
                             )
                         ) : (
                             store.accounts.length > 0 ? (
@@ -102,21 +120,21 @@ export const PrincipalPage = () => {
                                         coin={item.coin}
                                         type={item.type}
                                         onUpdate={() => {
-                                            setIdCard(item.id)
+                                            setCardId(item.id)
                                             setShowModal(true)
                                         }}
                                     />
                                 ))
                             ) : (
-                                <p>No hay cuentas disponibles.</p>
+                                <EmptyComponet />
                             )
                         )}
                     </div>
                 </div>
                 {path.pathname === "/cuentas" ? <Modal /> : <ModalDetails />}
                 {path.pathname === "/cuentas" ? null : <Filter />}
-
-                <ModalEdit cardId={idCard} show={showModal} onClose={() => setShowModal(false)} />
+                <ModalEditAccount cardId={cardId} show={showModal} onClose={() => setShowModal(false)} />
+                <ModalEditDetail cardId={cardId} accountId={accountId} show={showModalDetail} onClose={() => setShowModalDetail(false)} />
             </div>
         </div>
     );
