@@ -53,7 +53,7 @@ export const PrincipalPage = () => {
             <div className="container-fluid p-4">
                 <div className="card-box row d-flex justify-content-center gap-3">
                     <div className="col-12 col-md-10 col-lg-8">
-                        {/* <GeneralBalance /> */}
+                        <GeneralBalance />
                     </div>
                     <div className="scrollmenu">
                         {path.pathname.startsWith("/cuentas/") ? (
