@@ -8,10 +8,10 @@ export const Login = () => {
         <div className="container-login">
             <div className="login w-75">
                 <div className="w-50 login-left">
-                    <h1>OPTIMA</h1>
+                    <h1 className="optima-title" >OPTIMA</h1>
                     <p>"Tu dinero bajo tu control, de la mejor manera posible"</p>
                 </div>
-                <div className="login-righ tw-50 ">
+                <div className="login-right w-50 ">
                     <LoginForm />
                 </div>
             </div>

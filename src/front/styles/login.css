@@ -91,35 +91,18 @@
     font-size: 4rem;  
 }
 
-@media (max-width: 992px) {  
-    .optima-title {
-        font-size: 2.5rem;
-    }
-}
-
 @media (max-width: 768px) {  
     .optima-title {
-        font-size: 2rem;
+        font-size: 4rem;
     }
 
     .login {
         flex-direction: column;
+        width: 100% !important
+         
         
     }
 
-    .login-left {
-        order: -1;
-        width: 100%;
-    }
-
-    .login-right {
-        width: 100%;
-    }
-
-    .form-container {
-        width: 100%;
-        padding: 15px;
-    }
 
     .login-user, .create-user {
         font-size: 15px;
@@ -138,5 +121,22 @@
 
     .register-text {
         font-size: 11px;
+    }
+
+   .form-container {
+        width: 75% !important;
+        padding: 15px;
+    }
+
+    .optima-title {
+        font-size: 3rem
+    }
+
+    .login-right {
+        width: 100% !important;
+    }
+    
+    .login-left {
+        width: 100% !important;
     }
 }

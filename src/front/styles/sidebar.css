@@ -98,3 +98,51 @@
 .logout-btn:hover {
     background: #BDBDBD;
 }
+
+.toggle-theme{
+    padding: 10px;
+    justify-content: center;
+    align-items: center;}
+.dark-mode {
+    margin: 0;
+    margin-left: 5px;
+}
+.icon-theme {
+    margin: 0;
+}
+
+@media (max-width: 768px) {  
+ 
+
+}
+
+@media (max-width: 480px) {
+    .sidebar{
+       padding: 30px 5px;
+       display: flex;
+       flex-direction: column;
+       justify-content: center;
+       align-items: center;
+       gap: 2rem;
+
+    }
+    .sidebar-slogan {
+   display: none;
+    }
+    .name{
+       display: none;
+    }
+    .dark-mode{
+    display: none;
+    }
+    .icon-name{
+        display: none;
+    }
+    .title-sidebar {
+        font-size: 1.25rem !important;
+    }
+    .icons-sidebar{
+        font-size: large;
+    }
+    
+   }
