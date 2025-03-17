@@ -47,14 +47,12 @@ export const PrincipalPage = () => {
         navigate("/");
     }
 
-    // 🔍 Aplica el filtro a los movimientos según la categoría seleccionada
     const filteredMovements =
         store.selectedCategory === "MOSTRAR TODO"
             ? store.detailUser
             : store.detailUser.filter((movent) =>
                 movent.type?.trim().toLowerCase() === store.selectedCategory?.trim().toLowerCase()
             );
-
 
     return (
         <div className="d-flex vh-100">
@@ -85,6 +83,7 @@ export const PrincipalPage = () => {
                                                 setCardId(details.id);
                                                 setShowModalDetail(true);
                                             }}
+                                            onDelete={actions.deleteMovement}
                                         />
                                     );
                                 })
@@ -115,6 +114,7 @@ export const PrincipalPage = () => {
                                                     setAccountId(account);
                                                 }
                                             }}
+                                            onDelete={actions.deleteMovement}
                                         />
                                     );
                                 })

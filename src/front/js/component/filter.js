@@ -1,18 +1,25 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import "../../styles/filter.css";
 import { Context } from "../store/appContext";
 
 export const Filter = () => {
 	const { store, actions } = useContext(Context);
+	const location = useLocation();
 
-	const handleFilterClick = (category) => {
+	useEffect(() => {
+		actions.setSelectedCategory("MOSTRAR TODO");
+	}, [location.pathname]);
+
+	const handleFilterClick = (e, category) => {
+		e.preventDefault();
 		actions.setSelectedCategory(category);
 	};
 
 	return (
 		<div className="dropdown">
 			<button className="btn btn-secondary dropdown-toggle btn-modal" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-				<i className="bi bi-funnel "></i>
+				<i className="bi bi-funnel"></i>
 			</button>
 			<ul className="dropdown-menu">
 				{[
@@ -31,7 +38,7 @@ export const Filter = () => {
 					"Transferencia"
 				].map((category) => (
 					<li key={category}>
-						<a className="dropdown-item" href="#" onClick={() => handleFilterClick(category)}>
+						<a className="dropdown-item" href="#" onClick={(e) => handleFilterClick(e, category)}>
 							{category}
 						</a>
 					</li>
