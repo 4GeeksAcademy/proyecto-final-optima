@@ -327,7 +327,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				try {
 					const response = await fetch(`${process.env.BACKEND_URL}/api/delete-account/${accountId}`, requestOptions);
 					const result = await response.json();
-					
+
 
 
 				} catch (error) {
@@ -352,7 +352,25 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error(error);
 				};
 
-			}
+			},
+			filterPerType: async (type) => {
+				const myHeaders = new Headers();
+				myHeaders.append("Cookie", ".Tunnels.Relay.WebForwarding.Cookies=CfDJ8Cs4yarcs6pKkdu0hlKHsZs4QIjnH5XwZc8r4EV9eZWrSae0Zb1F4WdnE7Ev9oY4WsQBWsicWZUNpx6ZWsGv-Wn3x_D_8Smp803mzklASXl2lEA7pd1-gKaWYVpJqV89E3xDpwb9emCOmfyGyT0wu23zONmmNe8tjf9JQD1ZEQjLeZuA3oWO6SxQTY1Upd-3O9zUY604pNU5_4BWprsnN66EnjeUG5GjHH5uEJIhJwstjSS5BvVukVWrNwfj1DEH69Tz_4I_0JhOtqVwAfb_Bh5YBmLWH3ESGNgzKOzfckF5kWvsYcMLi_kj2UJYxgsfBWrSgkymz1mVgf8gKukkwmR678lWfuJDVrq7ZGN64ZNiK8OUH1cRbN8ehT1xMG-XFCi7XR6fKyJgQKGPBH4sB8koBIzHQxd2RqazUx3sbvYxv4_3PhX6Z0j6Yj5klQadzS1qPqK8FVHqMIdmwPZ0S9PIlD0hDcz1e0gmHVDuk7BTH8W52Ftn5VlS0RB9Ge7hD24-3fytorvEZ6sFVE27xBPv5m7hk2EeCVa6UUQR7rRlFRVHn94C9joOncvUJpfZ7jcNDsK1PQ9tkGUt0HP86D5qdcFENkZraEEmTVU2fcpQ98gG_prmadxOyijK09ccnN917DenzVFaJjId_AK--54GW_tJg_iMoTA-LjuCo-fRRyTWBnV4_5RfsDg3BC8HTCPe7rBNUbCRTr8YemjlYKzREfH4jvwpoKKgaVpNH_SNdqCg7ZFmS4u6DPV71LczGyfFHMD2SCd8LDFhVe7m-0fpWXuDFGsF1zEJWnIwHn-wUWdO6A63QHqSL5V6F7-D0doiUy3j9-Ad3P3e_Z3ImcecNahAqh6YuF3wtg7ePacPp2becXJ4IONIoYuf_ZTKI3r8nfV6LEl0p4LWvBRc4AFGZ88ioPBEJ8HCfPGVU_NjLp6nwH1kDSNfGxTc8UFAV4pemvQ8xV7YVMma5KgdIhn2FFSD6FiKiwQLKvk0UP4OFgtd4y8B0PKJmGXy1phdXg");
+
+				const requestOptions = {
+					method: "GET",
+					headers: myHeaders,
+					redirect: "follow"
+				};
+
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/account-detail-filter/${type}`, requestOptions);
+					const result = await response.json();
+					setStore({ movimientosFiltrados: result });
+				} catch (error) {
+					console.error("Error en la petición:", error);
+				}
+			},
 
 		}
 	};
