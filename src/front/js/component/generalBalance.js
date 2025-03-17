@@ -34,11 +34,11 @@ export const GeneralBalance = () => {
       const account = store.accounts.find((acc) => acc.id == params.id);
       if (account) {
         setCurrency(account.coin);
-        getExchangeRates(account.coin);
+        // getExchangeRates(account.coin);
       }
     } else {
       setCurrency("EUR");
-      getExchangeRates("EUR");
+      // getExchangeRates("EUR");
     }
   }, [path.pathname, store.accounts, params.id, store.detailAccounts, store.detailUser]);
 
