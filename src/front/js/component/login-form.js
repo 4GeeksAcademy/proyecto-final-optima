@@ -36,7 +36,7 @@ export const LoginForm = () => {
 
     return (
         <>
-            <form onSubmit={handleSubmit} className="mx-auto w-50">
+            <form onSubmit={handleSubmit} className="form-container mx-auto w-50">
                 <div className="input-container">
                     <label htmlFor="exampleInputEmail1" className="form-label">Correo</label>
                     <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" onChange={(e) => setEmail(e.target.value)} value={email} />

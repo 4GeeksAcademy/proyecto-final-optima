@@ -115,3 +115,20 @@
     background-color: var(--gray-dark);
     color: white;
 }
+.modal-body {
+    display: flex;
+    gap: 10px;
+  }
+  .input-name {
+    flex: 7;
+  }
+  
+  .input-balance {
+    flex: 3;
+  }
+  
+  .input-balance::-webkit-outer-spin-button,
+  .input-balance::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }

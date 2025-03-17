@@ -5,19 +5,20 @@ import "../../styles/modal.css";
 import TextField from '@material-ui/core/TextField';
 import { useLocation, useParams } from "react-router-dom";
 
-export const ModalDetails = () => {
+export const ModalEditDetail = (props) => {
     const [currentDate, setCurrentDate] = useState("");
     const [currentTime, setCurrentTime] = useState("");
-    const [accountName, setAccountName] = useState("")
+    const [accountName, setAccountName] = useState("SE RELLENA DE MANERA AUTOMÁTICA")
     const [accountId, setAccountId] = useState("")
     const [selectedCurrency, setSelectedCurrency] = useState("");
     const { store, actions } = useContext(Context)
-    const [balanceType, setBalanceType] = useState("egreso");
+    const [operationType, setOperationType] = useState("egreso");
     const path = useLocation()
     const params = useParams()
+    const [specificAccount, setSpecificAccount] = useState("SE RELLENA DE MANERA AUTOMÁTICA")
 
-    const handleBalanceChange = (type) => {
-        setBalanceType(type);
+    const handleOperationChange = (operation) => {
+        setOperationType(operation);
     };
 
     const [inputValue, setInputValue] = useState({
@@ -28,16 +29,16 @@ export const ModalDetails = () => {
         time: "",
         account: "",
         accountId: "",
-        operation: balanceType
+        operation: operationType
     });
-
-    async function createAccount(body) {
+    const putAccountDetail = async (body) => {
         const myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
+        myHeaders.append("Cookie", ".Tunnels.Relay.WebForwarding.Cookies=CfDJ8Cs4yarcs6pKkdu0hlKHsZsKEREV4kMOBRo-CxzQ6kntelwR0-qb1Egr2gDlYPIUZ0RE_w2u_TxY48lNU-Rqhe7MT4jjdYtY4tulhHFY-V086Yn1yYxcg8B-gUJym1qhW3LTozPej70PbW-JginHqEEU-i-rJkzRnJL6iYwGByN5k4D6Qhj75eRVaEaRPpphQnF4mGfLeGTM7fXhagHj-C6GrTUXDh3RilRIHuoP68ay_zzV3oPaGpRHU4FU3IZi4FqFMQXrehEL_GwdRikomjhOUgNfmMYWgGWTm7wHHn0HDFYBNWmBcHUzlsANo-zDMYFu_CK-7RGSYtUA_j84_MfhKsxTncWmoBIvJB1TvPlV7naCMqtJeArlxSdsdW1VNOaLT925K6VtZqCsyuN_-rZ7hJNEG3h8eps9zujsmy79UJ_oFIKhtdzL9zuPyc94g6euTIQ95UaAjNLZjkUlclkW9xYgkNie-d2ebgpIUfSMmVpix2p3liUKcj9DK0iZkOW4sgjSRSZzMoaJR75caHs8BVIneW-9B_Olzb3_T0GaFnGiBr5mgKuweTvJ8Y7M_H2TBYqfrGrhbX48vUf3wnqoKrA9cI9MrP75Ebipe0_toljBXGdi_cCiYRhB3qubIfC7xnLSwFbOhCqh5xeJznnjgL0nkI1ZM1QTQafROkv9VMR5NMoFLLG8uK6GUZU7uPYBfUosCUzN_KsubjSKFUa_jIMYtO-zd_OLG-neRA7inMhc85IRVACYNtgVfQBuxo2fVhMo4q3wMNQYY6sgm1LHgXX1ykG1R9MjIJsblPV8Pka1NL2pzCeW02RZjUKnM1Msec_SWJofOXqOn8XmU9gWwQJRS1y-qjjW8-4VZeqVkD0bkYiBDPTwLmH9fnb0Vts6cIqowBWgR4sGQfwyEzE1FTMJVCu28W_djxElvCyloiT2HKgB3hgncMeAAzOMkQJe4vYc7JrW1W-oJWa_k3JWncMvt3wUBEWbSxs7cuu1");
 
         const raw = JSON.stringify({
             "detail": body.detail,
-            "amount": body.amount,
+            "amount": parseInt(body.amount),
             "coin": body.coin,
             "type": body.type,
             "date": body.date,
@@ -46,42 +47,33 @@ export const ModalDetails = () => {
         });
 
         const requestOptions = {
-            method: "POST",
+            method: "PUT",
             headers: myHeaders,
             body: raw,
             redirect: "follow"
         };
 
         try {
-            const response = await fetch(`${process.env.BACKEND_URL}/api/new-account-detail/${body.accountId}`, requestOptions);
+            const response = await fetch(`${process.env.BACKEND_URL}/api/account-detail/${props.cardId}`, requestOptions);
             const result = await response.json();
-            console.log(result);
-            
-            if (response.status === 200) {
-                if (balanceType === "egreso") {
-                    actions.debit(parseInt(result.amount), body.accountId)
-                } else if ((balanceType === "ingreso")) {
-                    actions.deposit(parseInt(result.amount), body.accountId)
-                }
+            if (response.status == 200) {
                 if (path.pathname === "/movimientos") {
                     localStorage.removeItem("userAccounts")
+                    await actions.getAccountsUser()
                     await actions.getDetailsUser()
-                    await actions.getAccountsUser()
-                } else{
+                } else {
                     localStorage.removeItem("userAccounts")
-                    await actions.getAccountsDetail(body.accountId)
                     await actions.getAccountsUser()
-
+                    await actions.getAccountsDetail(body.accountId)
                 }
             }
         } catch (error) {
             console.error(error);
         };
-
     }
-    const addAccountDetail = () => {
+    const editAccountDetail = () => {
         if (inputValue.detail.length != 0 && inputValue.type != "" && inputValue.amount != 0) {
-            createAccount(inputValue)
+            putAccountDetail(inputValue)
             setInputValue({
                 detail: "",
                 amount: "",
@@ -91,8 +83,14 @@ export const ModalDetails = () => {
                 time: currentTime,
                 account: "",
                 accountId: "",
-                operation: balanceType
+                operation: operationType
             });
+
+            setSpecificAccount("SE RELLENA DE MANERA AUTOMÁTICA")
+            setSelectedCurrency("Moneda")
+            setAccountName("");
+            setAccountId("");
+            setSelectedCurrency("")
             Swal.fire({
                 title: "Movimiento registrado con éxito",
                 icon: "success"
@@ -109,45 +107,35 @@ export const ModalDetails = () => {
     };
     const handleChange = (e) => {
         const { name, value } = e.target;
+
+
         setInputValue({ ...inputValue, [name]: value });
         if (name === "date") setCurrentDate(value);
         if (name === "time") setCurrentTime(value);
-        if (name === "account") {
-            const accountIdFilter = store.accounts.find((account) => account.name === value);
-            setSelectedCurrency(accountIdFilter.coin)
-            if (accountIdFilter) {
+        if (path.pathname === "/movimientos") {
+            const account = store.accounts.find((acc) => acc.id == props.accountId.accounts_id)
+            setSpecificAccount(account.name)
+            setAccountName(account.name);
+            setAccountId(account.id);
+            setSelectedCurrency(account.coin)
+            if (account) {
                 setInputValue((prev) => ({
-                    ...prev,
-                    accountId: accountIdFilter.id,
-                    operation: balanceType, coin: accountIdFilter.coin
+                    ...prev, accountId: accountId, operation: operationType, coin: selectedCurrency, date: currentDate, time: currentTime
                 }));
             }
-        } else if (path.pathname != "/movimientos") {
-            setInputValue((prev) => ({
-                ...prev, accountId: accountId, operation: balanceType, coin: selectedCurrency
-            }));
-        }
-    };
-    const handleClick = () => {
-        setInputValue({
-            detail: "",
-            amount: "",
-            type: "",
-            date: currentDate,
-            time: currentTime,
-            account: "",
-            accountId: "",
-            operation: balanceType
-        })
-        if (path.pathname != "/movimientos") {
+        } else {
             const account = store.accounts.find((acc) => acc.id == params.id);
             if (account) {
                 setAccountName(account.name);
                 setAccountId(account.id);
                 setSelectedCurrency(account.coin)
             }
+            setInputValue((prev) => ({
+                ...prev, accountId: params.id, operation: operationType, coin: selectedCurrency, date: currentDate, time: currentTime
+            }));
         }
-    }
+    };
+
     useEffect(() => {
         const now = new Date();
         const formattedDate = now.toISOString().split("T")[0];
@@ -156,66 +144,56 @@ export const ModalDetails = () => {
             minute: "2-digit",
             hour12: false,
         });
-
         setCurrentDate(formattedDate);
         setCurrentTime(formattedTime);
-    }, []);
+    }, [store.detailUser]);
     return (
         <>
-            <button type="button" className="add-item btn btn-secondary btn-modal" data-bs-toggle="modal" data-bs-target="#exampleModal" onClick={handleClick}>
-                <i className="bi bi-plus-lg"></i>
-            </button>
-            <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div className="modal fade" id="editModalDetail" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style={{ display: props.show ? "block" : "none" }}>
                 <div className="modal-dialog">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h1 className="modal-title fs-5" id="exampleModalLabel">
-                                Añadir Movimiento
+                            <h1 className="modal-title fs-5" id="editModalDetail">
+                                Editar movimiento
                             </h1>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={() => props.onClose()}></button>
                         </div>
                         <div className="toggle-container mt-2">
                             <input
                                 type="radio"
-                                id="btnradio1"
+                                id="editbtnradio1"
                                 name="btnradio"
-                                checked={balanceType === "egreso" || false}
-                                onChange={() => handleBalanceChange("egreso")}
+                                checked={operationType === "egreso" || false}
+                                onChange={() => handleOperationChange("egreso")}
                                 className="hidden"
                             />
-                            <label htmlFor="btnradio1" className={`toggle-option ${balanceType === "egreso" ? "active" : ""}`}>
+                            <label htmlFor="editbtnradio1" className={`toggle-option ${operationType === "egreso" ? "active" : ""}`}>
                                 Egreso
                             </label>
 
                             <input
                                 type="radio"
-                                id="btnradio2"
+                                id="editbtnradio2"
                                 name="btnradio"
-                                checked={balanceType === "ingreso" || false}
-                                onChange={() => handleBalanceChange("ingreso")}
+                                checked={operationType === "ingreso" || false}
+                                onChange={() => handleOperationChange("ingreso")}
                                 className="hidden"
                             />
-                            <label htmlFor="btnradio2" className={`toggle-option ${balanceType === "ingreso" ? "active" : ""}`}>
+                            <label htmlFor="editbtnradio2" className={`toggle-option ${operationType === "ingreso" ? "active" : ""}`}>
                                 Ingreso
                             </label>
                         </div>
                         {path.pathname === "/movimientos" ?
                             <div className="modal-body d-flex flex-column gap-3 px-4">
-                                <select
-                                    className="form-select"
+                                <input
+                                    className="form-input"
                                     aria-label="Default select example"
                                     name="account"
                                     required
-                                    value={inputValue.account}
+                                    value={specificAccount}
                                     onChange={handleChange}
-                                >
-                                    <option value="">Selecciona una cuenta</option>
-                                    {store.accounts.map((i) => {
-                                        return (
-                                            <option key={i.id} value={i.name}>{i.name}</option>
-                                        )
-                                    })}
-                                </select>
+                                    disabled
+                                />
                             </div>
                             : <div className="modal-body d-flex flex-column gap-3 px-4">
                                 <input
@@ -229,7 +207,7 @@ export const ModalDetails = () => {
                                 />
                             </div>
                         }
-                        {balanceType === "egreso" ?
+                        {operationType === "egreso" ?
                             <>
                                 <div className="modal-body d-flex flex-column gap-3 px-4">
                                     <input
@@ -388,7 +366,7 @@ export const ModalDetails = () => {
                                 </div>
                             </>}
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={addAccountDetail}>
+                            <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={editAccountDetail}>
                                 Agregar
                             </button>
                             <button type="button" className="btn btn-danger" data-bs-dismiss="modal">

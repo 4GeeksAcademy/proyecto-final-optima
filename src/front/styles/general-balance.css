@@ -22,3 +22,24 @@
     flex-grow: 1;
     text-align: center
 }
+
+@media (max-width: 768px) {  
+.balance-title{
+font-size: larger;
+}
+  }
+
+@media (max-width: 480px) {  
+    .total-balance{
+      padding-left: 10px !important;
+      font-size: medium;
+      margin: 0 !important;
+    }
+    .form-select{
+      padding-left:1.8rem ;
+      padding-right:.61rem ;
+      padding-top:.325rem ;
+      padding-bottom:.35rem ;
+    }
+    
+       }

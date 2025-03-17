@@ -144,8 +144,8 @@ def post_account_detail(accounts_id):
         new_account_detail = Account_details(accounts_id=accounts_id, detail=request_body["detail"], amount=request_body["amount"], coin=request_body["coin"], type=request_body["type"],date=request_body["date"],time=request_body["time"],operation=request_body["operation"])
         db.session.add(new_account_detail)
         db.session.commit()  
-        return jsonify(request_body), 200
-    
+        account_detail_id = new_account_detail.id
+        return jsonify({"id": account_detail_id, **request_body}), 200
     except:
         return jsonify({"msg":"miss information"}), 400
 #endpoint que muestra uno o varios detalles de una cuenta especifica
@@ -182,7 +182,7 @@ def deposit(account_id):
 
 #endpoint que resta del balance de la cuenta 
 @api.route('/accounts/<int:account_id>/debit', methods=['PUT'])
-def Debit(account_id):
+def debit(account_id):
     try:
         body = request.json
         account = db.session.execute(db.select(Accounts).filter_by(id=account_id)).scalar_one()
@@ -242,10 +242,10 @@ def update_account_detail(account_detail_id):
             return jsonify({"msg": "Account not found"}), 404
 
         # Esto es para que el balance no sume dos veces, primero se borra lo anterior
-        if movement.type == "deposit":
+        if movement.operation == "ingreso":
             account.balance = account.balance - movement.amount
         else:
-            if movement.type == "debit":
+            if movement.operation == "egreso":
                 account.balance = account.balance + movement.amount
         # Se cambia lo que llega en el body
         if "detail" in body:
@@ -260,11 +260,13 @@ def update_account_detail(account_detail_id):
             movement.date = body["date"]
         if "time" in body:
             movement.time = body["time"]
+        if "operation" in body:
+            movement.operation = body["operation"]
         # Ahora se vuelve a hacer la operación con los datos nuevos
-        if movement.type == "deposit":
+        if movement.operation == "ingreso":
             account.balance = account.balance + movement.amount
         else:
-            if movement.type == "debit":
+            if movement.operation == "egreso":
                 account.balance = account.balance - movement.amount
         db.session.commit()
         return jsonify({"msg": "Movement updated and balance adjusted"}), 200

@@ -9,53 +9,69 @@ import { Modal } from "../component/modal";
 import { ModalDetails } from "../component/modalDetails";
 import { CardMovimientos } from "../component/cardMovimiento";
 import { CardDetails } from "../component/cardDetails";
-import { ModalEdit } from "../component/modalEdit";
+import { ModalEditAccount } from "../component/modalEditAccount";
 import { Filter } from "../component/filter";
-
+import { EmptyComponet } from "../component/emptyComponet";
+import { ModalEditDetail } from "../component/modalEditDetail";
 
 export const PrincipalPage = () => {
-    const { store, actions } = useContext(Context)
-    const path = useLocation()
+    const { store, actions } = useContext(Context);
+    const path = useLocation();
     let navigate = useNavigate();
     const params = useParams();
-    const [idCard, setIdCard] = useState(null)
-    const [showModal, setShowModal] = useState(false)
+    const [cardId, setCardId] = useState(null);
+    const [showModal, setShowModal] = useState(false);
+    const [showModalDetail, setShowModalDetail] = useState(false);
+    const [accountId, setAccountId] = useState(null);
+
     useEffect(() => {
         actions.verifyToken();
         actions.initializeStore();
-
-
         if (!store.auth) {
             navigate("/");
         }
         if (path.pathname !== "/cuentas" && params.id) {
             (async () => {
                 await actions.getAccountsDetail(params.id);
+            })();
+        }
+        if (path.pathname === "/cuentas" || path.pathname === "/movimientos") {
+            (async () => {
                 await actions.getDetailsUser();
             })();
         }
-    }, [params.id, path.pathname, actions.account]);
+    }, [params.id, path.pathname, store.account]);
 
     if (!store.auth) {
-        actions.logout()
+        actions.logout();
         navigate("/");
     }
+
+    // 🔍 Aplica el filtro a los movimientos según la categoría seleccionada
+    const filteredMovements =
+        store.selectedCategory === "MOSTRAR TODO"
+            ? store.detailUser
+            : store.detailUser.filter((movent) =>
+                movent.type?.trim().toLowerCase() === store.selectedCategory?.trim().toLowerCase()
+            );
+
 
     return (
         <div className="d-flex vh-100">
             <Sidebar />
             <div className="container-fluid p-4">
-                <div className="row d-flex justify-content-center gap-3">
+                <div className="card-box row d-flex justify-content-center gap-3">
                     <div className="col-12 col-md-10 col-lg-8">
-                        {/* <GeneralBalance /> */}
+                        <GeneralBalance />
                     </div>
                     <div className="scrollmenu">
                         {path.pathname.startsWith("/cuentas/") ? (
-                            store.detailAccounts.length > 0 ? (
-                                store.detailAccounts.map((details) => {
+                            filteredMovements.length > 0 ? (
+                                filteredMovements.map((details) => {
                                     const account = store.accounts.find(account => account.id === details.accounts_id);
                                     return (
                                         <CardMovimientos
+                                            key={details.id}
                                             id={details.id}
                                             amount={details.amount}
                                             coin={details.coin}
@@ -65,18 +81,23 @@ export const PrincipalPage = () => {
                                             type={details.type}
                                             operation={details.operation}
                                             accountName={account ? account.name : "Cuenta desconocida"}
+                                            onUpdate={() => {
+                                                setCardId(details.id);
+                                                setShowModalDetail(true);
+                                            }}
                                         />
                                     );
                                 })
                             ) : (
-                                <p>No hay movimientos en esta cuenta.</p>
+                                <EmptyComponet />
                             )
                         ) : path.pathname === "/movimientos" ? (
-                            store.detailUser.length > 0 ? (
-                                store.detailUser.map((movents) => {
+                            filteredMovements.length > 0 ? (
+                                filteredMovements.map((movents) => {
                                     const account = store.accounts.find(account => account.id === movents.accounts_id);
                                     return (
                                         <CardDetails
+                                            key={movents.id}
                                             id={movents.id}
                                             amount={movents.amount}
                                             coin={movents.coin}
@@ -86,38 +107,47 @@ export const PrincipalPage = () => {
                                             type={movents.type}
                                             operation={movents.operation}
                                             accountName={account ? account.name : "Cuenta desconocida"}
+                                            onUpdate={() => {
+                                                setCardId(movents.id);
+                                                setShowModalDetail(true);
+                                                const account = store.detailUser.find(account => account.id === movents.id);
+                                                if (account) {
+                                                    setAccountId(account);
+                                                }
+                                            }}
                                         />
                                     );
                                 })
                             ) : (
-                                <p>No hay movimientos en ninguna cuenta.</p>
+                                <EmptyComponet />
                             )
                         ) : (
                             store.accounts.length > 0 ? (
                                 store.accounts.map((item) => (
                                     <Card
+                                        key={item.id}
                                         id={item.id}
                                         name={item.name}
                                         balance={item.balance}
                                         coin={item.coin}
                                         type={item.type}
                                         onUpdate={() => {
-                                            setIdCard(item.id)
-                                            setShowModal(true)
+                                            setCardId(item.id);
+                                            setShowModal(true);
                                         }}
                                     />
                                 ))
                             ) : (
-                                <p>No hay cuentas disponibles.</p>
+                                <EmptyComponet />
                             )
                         )}
                     </div>
                 </div>
                 {path.pathname === "/cuentas" ? <Modal /> : <ModalDetails />}
                 {path.pathname === "/cuentas" ? null : <Filter />}
-
-                <ModalEdit cardId={idCard} show={showModal} onClose={() => setShowModal(false)} />
+                <ModalEditAccount cardId={cardId} show={showModal} onClose={() => setShowModal(false)} />
+                <ModalEditDetail cardId={cardId} accountId={accountId} show={showModalDetail} onClose={() => setShowModalDetail(false)} />
             </div>
         </div>
     );
-}
+};
