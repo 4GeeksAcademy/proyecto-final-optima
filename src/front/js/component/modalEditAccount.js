@@ -58,7 +58,9 @@ export const ModalEditAccount = (props) => {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/new-account-detail/${result.id}`, requestOptions);
                     const data = await response.json();
                     if (response.status === 200) {
-						localStorage.removeItem("userAccounts")
+                        (async () => {
+                            localStorage.removeItem("userAccounts")
+                        })()
 						actions.getAccountsUser();
 					}
                 } catch (error) {

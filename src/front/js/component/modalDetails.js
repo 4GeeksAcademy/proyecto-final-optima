@@ -64,14 +64,19 @@ export const ModalDetails = () => {
                     actions.deposit(parseInt(result.amount), body.accountId)
                 }
                 if (path.pathname === "/movimientos") {
-                    localStorage.removeItem("userAccounts")
+                    (async () => {
+                        localStorage.removeItem("userAccounts")
+                    })()
+                    await actions.getAccountsUser()
                     await actions.getDetailsUser()
-                    await actions.getAccountsUser()
+                    console.log("dio un 200");
+                    
                 } else{
-                    localStorage.removeItem("userAccounts")
-                    await actions.getAccountsDetail(body.accountId)
+                    (async () => {
+                        localStorage.removeItem("userAccounts")
+                    })()
                     await actions.getAccountsUser()
-
+                    await actions.getAccountsDetail(body.accountId)
                 }
             }
         } catch (error) {
