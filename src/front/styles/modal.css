@@ -132,3 +132,10 @@
     -webkit-appearance: none;
     margin: 0;
   }
+
+  @media (max-width: 480px){
+    .modal-footer{
+        display: flex;
+        flex-wrap: unset;
+    }
+  }

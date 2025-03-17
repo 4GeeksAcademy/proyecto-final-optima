@@ -3,11 +3,11 @@ import "../../styles/card.css";
 
 export const CardDetails = (props) => {
     return (
-        <div className="card mb-3 p-3" key={props.id}>
-            <div className="row g-0 align-items-center w-100">
+        <div className="card-details card mb-3 p-3" key={props.id}>
+            <div className="card-details-2 row g-0 align-items-center w-100">
                 <div className="col-md-4 text-center">
                 <h4 className="mb-1"><strong>{props.accountName}</strong></h4>
-                    <h5 className="card-title">Detalle Movimiento</h5>
+                    <h5 className="card-title-detail">Detalle Movimiento</h5>
                     <p className="mb-1">{props.detail}</p>
                 </div>
                 <div className="col-md-3 text-center">
