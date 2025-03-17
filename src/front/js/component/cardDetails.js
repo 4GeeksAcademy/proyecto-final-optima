@@ -1,7 +1,26 @@
 import React from "react";
+import Swal from "sweetalert2";
 import "../../styles/card.css";
 
 export const CardDetails = (props) => {
+    const handleDelete = () => {
+        Swal.fire({
+            title: "¿Estás seguro?",
+            text: "Esta acción eliminará el movimiento permanentemente.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#6c757d",
+            confirmButtonText: "Sí, eliminar",
+            cancelButtonText: "Cancelar"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                console.log("ID del movimiento a eliminar:", props.id);
+                props.onDelete(props.id);
+            }
+        });
+    };
+
     return (
         <div className="card-details card mb-3 p-3" key={props.id}>
             <div className="card-details-2 row g-0 align-items-center w-100">
@@ -21,23 +40,24 @@ export const CardDetails = (props) => {
                     <p className="mb-1">{props.operation}</p>
                 </div>
                 <div className="col-md-2 d-flex flex-column gap-2">
-                    <button 
-                        type="button" 
-                        className="btn btn-secondary" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#editModalDetail" 
-                        id={props.id} 
+                    <button
+                        type="button"
+                        className="btn btn-secondary"
+                        data-bs-toggle="modal"
+                        data-bs-target="#editModalDetail"
+                        id={props.id}
                         onClick={props.onUpdate}
                     >
                         <i className="bi bi-pencil-square"></i>
                     </button>
-                    {/* <button 
-                        type="button" 
-                        className="btn btn-danger" 
+                    <button
+                        type="button"
+                        className="btn btn-danger"
                         id={props.id}
+                        onClick={handleDelete} 
                     >
                         <i className="bi bi-trash-fill"></i>
-                    </button> */}
+                    </button>
                 </div>
             </div>
         </div>

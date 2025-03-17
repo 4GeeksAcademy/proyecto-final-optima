@@ -14,16 +14,16 @@ import { Filter } from "../component/filter";
 import { EmptyComponet } from "../component/emptyComponet";
 import { ModalEditDetail } from "../component/modalEditDetail";
 
-
 export const PrincipalPage = () => {
-    const { store, actions } = useContext(Context)
-    const path = useLocation()
+    const { store, actions } = useContext(Context);
+    const path = useLocation();
     let navigate = useNavigate();
     const params = useParams();
-    const [cardId, setCardId] = useState(null)
-    const [showModal, setShowModal] = useState(false)
-    const [showModalDetail, setShowModalDetail] = useState(false)
-    const [accountId, setAccountId] = useState(null)
+    const [cardId, setCardId] = useState(null);
+    const [showModal, setShowModal] = useState(false);
+    const [showModalDetail, setShowModalDetail] = useState(false);
+    const [accountId, setAccountId] = useState(null);
+
     useEffect(() => {
         actions.verifyToken();
         actions.initializeStore();
@@ -32,20 +32,27 @@ export const PrincipalPage = () => {
         }
         if (path.pathname !== "/cuentas" && params.id) {
             (async () => {
-                await actions.getAccountsDetail(params.id)
+                await actions.getAccountsDetail(params.id);
             })();
         }
         if (path.pathname === "/cuentas" || path.pathname === "/movimientos") {
             (async () => {
                 await actions.getDetailsUser();
-            })()
+            })();
         }
     }, [params.id, path.pathname, store.account]);
 
     if (!store.auth) {
-        actions.logout()
+        actions.logout();
         navigate("/");
     }
+
+    const filteredMovements =
+        store.selectedCategory === "MOSTRAR TODO"
+            ? store.detailUser
+            : store.detailUser.filter((movent) =>
+                movent.type?.trim().toLowerCase() === store.selectedCategory?.trim().toLowerCase()
+            );
 
     return (
         <div className="d-flex vh-100">
@@ -57,11 +64,12 @@ export const PrincipalPage = () => {
                     </div>
                     <div className="scrollmenu">
                         {path.pathname.startsWith("/cuentas/") ? (
-                            store.detailAccounts.length > 0 ? (
-                                store.detailAccounts.map((details) => {
+                            filteredMovements.length > 0 ? (
+                                filteredMovements.map((details) => {
                                     const account = store.accounts.find(account => account.id === details.accounts_id);
                                     return (
                                         <CardMovimientos
+                                            key={details.id}
                                             id={details.id}
                                             amount={details.amount}
                                             coin={details.coin}
@@ -72,9 +80,10 @@ export const PrincipalPage = () => {
                                             operation={details.operation}
                                             accountName={account ? account.name : "Cuenta desconocida"}
                                             onUpdate={() => {
-                                                setCardId(details.id)
-                                                setShowModalDetail(true)
+                                                setCardId(details.id);
+                                                setShowModalDetail(true);
                                             }}
+                                            onDelete={actions.deleteMovement}
                                         />
                                     );
                                 })
@@ -82,11 +91,12 @@ export const PrincipalPage = () => {
                                 <EmptyComponet />
                             )
                         ) : path.pathname === "/movimientos" ? (
-                            store.detailUser.length > 0 ? (
-                                store.detailUser.map((movents) => {
+                            filteredMovements.length > 0 ? (
+                                filteredMovements.map((movents) => {
                                     const account = store.accounts.find(account => account.id === movents.accounts_id);
                                     return (
                                         <CardDetails
+                                            key={movents.id}
                                             id={movents.id}
                                             amount={movents.amount}
                                             coin={movents.coin}
@@ -97,13 +107,14 @@ export const PrincipalPage = () => {
                                             operation={movents.operation}
                                             accountName={account ? account.name : "Cuenta desconocida"}
                                             onUpdate={() => {
-                                                setCardId(movents.id)
-                                                setShowModalDetail(true)
-                                                const account = store.detailUser.find(account => account.id === movents.id)
+                                                setCardId(movents.id);
+                                                setShowModalDetail(true);
+                                                const account = store.detailUser.find(account => account.id === movents.id);
                                                 if (account) {
                                                     setAccountId(account);
                                                 }
                                             }}
+                                            onDelete={actions.deleteMovement}
                                         />
                                     );
                                 })
@@ -114,14 +125,15 @@ export const PrincipalPage = () => {
                             store.accounts.length > 0 ? (
                                 store.accounts.map((item) => (
                                     <Card
+                                        key={item.id}
                                         id={item.id}
                                         name={item.name}
                                         balance={item.balance}
                                         coin={item.coin}
                                         type={item.type}
                                         onUpdate={() => {
-                                            setCardId(item.id)
-                                            setShowModal(true)
+                                            setCardId(item.id);
+                                            setShowModal(true);
                                         }}
                                     />
                                 ))
@@ -132,10 +144,10 @@ export const PrincipalPage = () => {
                     </div>
                 </div>
                 {path.pathname === "/cuentas" ? <Modal /> : <ModalDetails />}
-                {/* {path.pathname === "/cuentas" ? null : <Filter />} */}
+                {path.pathname === "/cuentas" ? null : <Filter />}
                 <ModalEditAccount cardId={cardId} show={showModal} onClose={() => setShowModal(false)} />
                 <ModalEditDetail cardId={cardId} accountId={accountId} show={showModalDetail} onClose={() => setShowModalDetail(false)} />
             </div>
         </div>
     );
-}
+};
