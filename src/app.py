@@ -13,6 +13,8 @@ from api.commands import setup_commands
 from flask_jwt_extended import JWTManager
 from flask_bcrypt import Bcrypt
 from datetime import timedelta
+from flask_mail import Mail
+
 
 
 
@@ -23,6 +25,22 @@ static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../public/')
 app = Flask(__name__)
 app.url_map.strict_slashes = False
+
+#CONFIGURACION EMAIL
+mail_settings = {
+    "MAIL_SERVER": 'smtp.gmail.com',
+    "MAIL_PORT":  465,
+    "MAIL_USE_TLS": False,
+    "MAIL_USE_SSL": True,
+    "MAIL_USERNAME":  'smtp@mailtrap.io', #ACA COLOQUEN EL CORREO DE LA APP DEL ALUMN
+    "MAIL_PASSWORD": '********43ec', #PASSWORD DEL CORREO DE LA APP DEL ALUMNO
+}
+
+app.config.update(mail_settings)
+mail = Mail(app)
+#agregan mail a la app y se va llamar en routes.py como current_app
+app.mail= mail
+#FIN CONFIGURACION EMAIL
 
 # database condiguration
 db_url = os.getenv("DATABASE_URL")

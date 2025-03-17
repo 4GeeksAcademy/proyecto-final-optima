@@ -1,18 +1,55 @@
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
-from flask import Flask, request, jsonify, url_for, Blueprint
+from flask import Flask, request, jsonify, url_for, Blueprint, current_app
 from api.models import db, User, Accounts, Account_details
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required,verify_jwt_in_request, decode_token
 from flask_jwt_extended.exceptions import NoAuthorizationError
 from flask_bcrypt import Bcrypt
+from flask_mail import Message #importamos Message() de flask_mail
+import random #importamos ramdom y string para generar una clave aleatoria nueva
+import string
+
 
 api = Blueprint('api', __name__)
 bcrypt = Bcrypt()
 
 CORS(api)
+
+#RECUPERACION CONTRASEÑA OLVIDADA 
+@api.route("/forgotpassword", methods=["POST"])
+def forgotpassword():
+    data = request.json
+    recover_email = data.get("email", None)
+
+    if not recover_email:
+        return jsonify({"msg": "Debe ingresar un correo válido"}), 400
+
+    # Buscar si el correo existe en la base de datos
+    user = User.query.filter_by(email=recover_email).first()
+
+    if not user:
+        return jsonify({"msg": "El correo ingresado no existe en nuestros registros"}), 404
+
+    # Generar una nueva contraseña aleatoria
+    recover_password = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(8))
+
+    # Hashear la nueva contraseña antes de guardarla en la base de datos
+    hashed_password = bcrypt.generate_password_hash(recover_password).decode("utf-8")
+    user.password = hashed_password
+    db.session.commit()
+
+    # Enviar la nueva contraseña al correo del usuario
+    msg = Message("Recuperación de contraseña", recipients=[recover_email])
+    msg.html = f"""<h1>Su nueva contraseña es: {recover_password}</h1>"""
+    print("llegué al final")
+    try:
+        current_app.mail.send(msg)
+        return jsonify({"msg": "Su nueva clave ha sido enviada al correo electrónico ingresado"}), 200
+    except Exception as e:
+        return jsonify({"msg": "Error al enviar el correo", "error": str(e)}), 500
 
         #este endpoint busca y muestra a todos los usuarios registrados
 @api.route('/users', methods=['GET'])
