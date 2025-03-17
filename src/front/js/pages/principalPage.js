@@ -132,7 +132,7 @@ export const PrincipalPage = () => {
                     </div>
                 </div>
                 {path.pathname === "/cuentas" ? <Modal /> : <ModalDetails />}
-                {path.pathname === "/cuentas" ? null : <Filter />}
+                {/* {path.pathname === "/cuentas" ? null : <Filter />} */}
                 <ModalEditAccount cardId={cardId} show={showModal} onClose={() => setShowModal(false)} />
                 <ModalEditDetail cardId={cardId} accountId={accountId} show={showModalDetail} onClose={() => setShowModalDetail(false)} />
             </div>

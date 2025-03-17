@@ -58,8 +58,12 @@ export const ModalEditDetail = (props) => {
             const result = await response.json();
             if (response.status == 200) {
                 if (path.pathname === "/movimientos") {
+                    localStorage.removeItem("userAccounts")
+                    await actions.getAccountsUser()
                     await actions.getDetailsUser()
                 } else {
+                    localStorage.removeItem("userAccounts")
+                    await actions.getAccountsUser()
                     await actions.getAccountsDetail(body.accountId)
                 }
             }

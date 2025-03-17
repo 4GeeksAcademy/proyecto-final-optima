@@ -64,9 +64,14 @@ export const ModalDetails = () => {
                     actions.deposit(parseInt(result.amount), body.accountId)
                 }
                 if (path.pathname === "/movimientos") {
+                    localStorage.removeItem("userAccounts")
                     await actions.getDetailsUser()
+                    await actions.getAccountsUser()
                 } else{
+                    localStorage.removeItem("userAccounts")
                     await actions.getAccountsDetail(body.accountId)
+                    await actions.getAccountsUser()
+
                 }
             }
         } catch (error) {
@@ -324,7 +329,7 @@ export const ModalDetails = () => {
                                             type="number"
                                             className="form-control flex-grow-1 input-balance"
                                             placeholder="Monto"
-                                            value={inputValue.balance}
+                                            value={inputValue.amount}
                                             aria-label="Amount"
                                             name="amount"
                                             required

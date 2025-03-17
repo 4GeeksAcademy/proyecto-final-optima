@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { Context } from "../store/appContext";
 import Swal from "sweetalert2";
+import "../../styles/card.css";
 
 
 export const Card = (props) => {
@@ -34,7 +35,7 @@ export const Card = (props) => {
         <div className="card flex-row mb-3">
             <div className="card-body d-flex justify-content-around col-4 align-items-center">
                 <div className="justify-content-center">
-                    <h4 className="card-title">{props.name}</h4>
+                    <h3 className="card-title">{props.name}</h3>
                     <div>
                         <p className="last-movement">Último movimiento</p>
                         <p>{props.detail}</p>

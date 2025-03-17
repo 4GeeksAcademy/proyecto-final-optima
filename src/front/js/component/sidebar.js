@@ -37,11 +37,6 @@ export const Sidebar = () => {
                         <i className="icons-sidebar bi bi-graph-up"></i> <span className="icon-name">Movimientos</span>
                     </Link>
                 </li>
-                <li>
-                    <Link to="/faqs" className="nav-link">
-                        <i className="icons-sidebar bi bi-question-circle"></i> <span className="icon-name">FAQs</span>
-                    </Link>
-                </li>
             </ul>
             {/* boton modo oscuro */}
             <div className="theme-toggle-container">
