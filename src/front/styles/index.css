@@ -2,11 +2,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Roboto:wght@300;400;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
 
-/* variables de color */
+/* colores */
 :root {
     --primary: #010D87;
     --background-light: #f5f5f5;
-    --background-dark: #424242;
+    --background-dark: #757575;
     --text-light: #010D87;
     --text-dark: #f5f5f5;
     --gray-light: #e0e0e0;
@@ -15,47 +15,133 @@
 
 /* modo oscuro */
 [data-theme="dark"] {
-    --background-light: #212121; 
-    --background-dark: linear-gradient(to bottom, #545454, #000000); 
-    --text-light: #010D87;
-    --text-dark: #010D87;
-    --gray-light: #424242;
-    --gray-dark: #bdbdbd;
+    --background-light: #202020; 
+    --background-dark: #3c3c3c; 
+    --text-light: #ffffff; 
+    --text-dark: #ffffff; 
+    --gray-light: #6f6f6f; 
+    --gray-dark: #2e2e2e; 
+    
+}
+/* fondo del modal */
+[data-theme="dark"] .modal-content {
+    background: linear-gradient(to bottom, #3c3c3c, #2e2e2e);
+    color: var(--text-light);
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.7);
+    border-radius: 10px;
 }
 
-/* modal en modo oscuro */
+/* titulo del modal */
 [data-theme="dark"] .modal-title {
-    font-family: "Anton", sans-serif;
-    color: white !important; 
+    color: var(--text-light) !important;
 }
 
-/* detalle de movimientos en modo oscuro */
+/* botones del modal */
+[data-theme="dark"] .modal-footer .btn {
+    border-radius: 8px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+/* botón agregar (gris como los otros botones secundarios) */
+[data-theme="dark"] .modal-footer .btn-secondary {
+    background-color: var(--gray-light);
+    color: var(--text-dark);
+}
+
+[data-theme="dark"] .modal-footer .btn-secondary:hover {
+    background-color: var(--gray-dark);
+}
+
+/* botón cancelar (manteniendo rojo pero mejorando el contraste) */
+[data-theme="dark"] .modal-footer .btn-danger {
+    background-color: #c62828;
+    color: white;
+}
+
+[data-theme="dark"] .modal-footer .btn-danger:hover {
+    background-color: #b71c1c;
+}
+
+/* inputs dentro del modal */
+[data-theme="dark"] .modal-content input,
+[data-theme="dark"] .modal-content select {
+    background-color: var(--background-dark);
+    color: var(--text-light);
+    border: 1px solid var(--gray-light);
+}
+
+[data-theme="dark"] .modal-content input::placeholder,
+[data-theme="dark"] .modal-content select {
+    color: var(--gray-light);
+}
+
+/* botones egreso/ingreso */
+[data-theme="dark"] .toggle-buttons .btn {
+    background-color: var(--gray-dark);
+    color: var(--text-light);
+    border: none;
+}
+
+[data-theme="dark"] .toggle-buttons .btn.active {
+    background-color: var(--primary);
+    color: white;
+}
+
+[data-theme="dark"] .toggle-buttons .btn:hover {
+    background-color: var(--gray-light);
+}
+
+/* aplica fondo y texto general */
+[data-theme="dark"] body {
+    background-color: var(--background-light);
+    color: var(--text-light);
+}
+
+/* estilos de las cajas en modo oscuro */
+[data-theme="dark"] .card, 
+[data-theme="dark"] .balance-box {
+    background-color: var(--background-dark) !important;
+    background: linear-gradient(to bottom, #3c3c3c, #2e2e2e);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* efecto hover */
+[data-theme="dark"] .card:hover, 
+[data-theme="dark"] .balance-box:hover {
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.7);
+}
+
+/* detalles de moviemntos */
 [data-theme="dark"] .detalle-movimiento {
-    background-color: #bdbdbd !important;
-    color: var(--text-dark) !important;
+    background-color: var(--gray-dark);
+    color: var(--text-light);
     border-radius: 8px;
     padding: 15px;
-    font-family: "Roboto", sans-serif !important;
 }
 
-/* botones y cajas en modo oscuro */
+/* botoness en modo oscuro */
 [data-theme="dark"] .btn-primary, 
 [data-theme="dark"] .icon-box {
-    background-color: #757575 !important;
-    color: #f5f5f5 !important;
-    border-radius: 8px;
-    padding: 10px;
-    text-align: center;
-    transition: background 0.3s;
+    background-color: var(--gray-light);
+    color: var(--text-dark);
 }
 
-/* hover en modo oscuro */
 [data-theme="dark"] .btn-primary:hover, 
 [data-theme="dark"] .icon-box:hover {
-    background-color: #616161 !important;
+    background-color: var(--gray-dark);
 }
 
-/* aplicación global */
+/* asegurr que titulos sean blancos */
+[data-theme="dark"] h1, 
+[data-theme="dark"] h2, 
+[data-theme="dark"] h3,
+[data-theme="dark"] .balance,
+[data-theme="dark"] .card-title {
+    color: var(--text-light) !important;
+}
+
+/* estilos globales */
 body {
     font-family: 'Roboto', sans-serif;
     background-color: var(--background-light);
@@ -63,13 +149,13 @@ body {
     transition: background 0.3s, color 0.3s;
 }
 
-/* estilos para los títulos */
+/* titulos con la fuente grande */
 h1, h2, h3 {
     font-family: 'Anton', sans-serif;
     color: var(--primary);
 }
 
-/* botón de cambio de tema */
+/* boton cambio de tema */
 .toggle-theme {
     position: fixed;
     top: 20px;
@@ -88,7 +174,7 @@ h1, h2, h3 {
     background: var(--gray-dark);
 }
 
-/* estilos para botones */
+/* botonos */
 .btn {
     padding: 10px 20px;
     border-radius: 10px;
@@ -132,16 +218,7 @@ h1, h2, h3 {
     color: white;
 }
 
-/* estilos para el modo oscuro */
-[data-theme="dark"] .btn-primary {
-    background-color: white;
-    color: var(--primary);
-    box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.3);
-    padding: 10px 20px !important; 
-    font-size: 16px !important; 
-    border-radius: 10px !important; 
-}
-
+/* botons en modo oscuro */
 [data-theme="dark"] .btn-primary:hover {
     background-color: var(--gray-light);
     box-shadow: 0px 6px 15px rgba(255, 255, 255, 0.5);
@@ -157,6 +234,14 @@ h1, h2, h3 {
     color: var(--primary);
 }
 
+/* boton confirmacion sweet alert */
+.swal-confirm-btn {
+    background-color: #010D87 !important;
+    color: white !important;
+    border-radius: 8px;
+    padding: 10px 20px;
+    transition: background 0.3s ease-in-out;
+}
 
 .swal-confirm-btn:hover {
     background-color: #0026ff !important; 

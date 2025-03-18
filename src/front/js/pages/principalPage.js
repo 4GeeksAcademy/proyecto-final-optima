@@ -9,6 +9,10 @@ import { Modal } from "../component/modal";
 import { ModalDetails } from "../component/modalDetails";
 import { CardMovimientos } from "../component/cardMovimiento";
 import { CardDetails } from "../component/cardDetails";
+import { ModalEditAccount } from "../component/modalEditAccount";
+import { Filter } from "../component/filter";
+import { EmptyComponet } from "../component/emptyComponet";
+import { ModalEditDetail } from "../component/modalEditDetail";
 
 
 export const PrincipalPage = () => {
@@ -16,7 +20,10 @@ export const PrincipalPage = () => {
     const path = useLocation()
     let navigate = useNavigate();
     const params = useParams();
-
+    const [cardId, setCardId] = useState(null)
+    const [showModal, setShowModal] = useState(false)
+    const [showModalDetail, setShowModalDetail] = useState(false)
+    const [accountId, setAccountId] = useState(null)
     useEffect(() => {
         actions.verifyToken();
         actions.initializeStore();
@@ -25,11 +32,15 @@ export const PrincipalPage = () => {
         }
         if (path.pathname !== "/cuentas" && params.id) {
             (async () => {
-                await actions.getAccountsDetail(params.id);
-                await actions.getDetailsUser();
+                await actions.getAccountsDetail(params.id)
             })();
         }
-    }, [params.id, path.pathname]);
+        if (path.pathname === "/cuentas" || path.pathname === "/movimientos") {
+            (async () => {
+                await actions.getDetailsUser();
+            })()
+        }
+    }, [params.id, path.pathname, store.account]);
 
     if (!store.auth) {
         actions.logout()
@@ -40,9 +51,9 @@ export const PrincipalPage = () => {
         <div className="d-flex vh-100">
             <Sidebar />
             <div className="container-fluid p-4">
-                <div className="row d-flex justify-content-center gap-3">
+                <div className="card-box row d-flex justify-content-center gap-3">
                     <div className="col-12 col-md-10 col-lg-8">
-                        {/* <GeneralBalance /> */}
+                        <GeneralBalance />
                     </div>
                     <div className="scrollmenu">
                         {path.pathname.startsWith("/cuentas/") ? (
@@ -51,7 +62,7 @@ export const PrincipalPage = () => {
                                     const account = store.accounts.find(account => account.id === details.accounts_id);
                                     return (
                                         <CardMovimientos
-                                            key={details.id}
+                                            id={details.id}
                                             amount={details.amount}
                                             coin={details.coin}
                                             date={details.date}
@@ -60,11 +71,15 @@ export const PrincipalPage = () => {
                                             type={details.type}
                                             operation={details.operation}
                                             accountName={account ? account.name : "Cuenta desconocida"}
+                                            onUpdate={() => {
+                                                setCardId(details.id)
+                                                setShowModalDetail(true)
+                                            }}
                                         />
                                     );
                                 })
                             ) : (
-                                <p>No hay movimientos en esta cuenta.</p>
+                                <EmptyComponet />
                             )
                         ) : path.pathname === "/movimientos" ? (
                             store.detailUser.length > 0 ? (
@@ -72,7 +87,7 @@ export const PrincipalPage = () => {
                                     const account = store.accounts.find(account => account.id === movents.accounts_id);
                                     return (
                                         <CardDetails
-                                            key={movents.id}
+                                            id={movents.id}
                                             amount={movents.amount}
                                             coin={movents.coin}
                                             date={movents.date}
@@ -81,31 +96,45 @@ export const PrincipalPage = () => {
                                             type={movents.type}
                                             operation={movents.operation}
                                             accountName={account ? account.name : "Cuenta desconocida"}
+                                            onUpdate={() => {
+                                                setCardId(movents.id)
+                                                setShowModalDetail(true)
+                                                const account = store.detailUser.find(account => account.id === movents.id)
+                                                if (account) {
+                                                    setAccountId(account);
+                                                }
+                                            }}
                                         />
                                     );
                                 })
                             ) : (
-                                <p>No hay movimientos en ninguna cuenta.</p>
+                                <EmptyComponet />
                             )
-                        ) : (                           
+                        ) : (
                             store.accounts.length > 0 ? (
                                 store.accounts.map((item) => (
                                     <Card
-                                        key={item.id}
                                         id={item.id}
                                         name={item.name}
                                         balance={item.balance}
                                         coin={item.coin}
                                         type={item.type}
+                                        onUpdate={() => {
+                                            setCardId(item.id)
+                                            setShowModal(true)
+                                        }}
                                     />
                                 ))
                             ) : (
-                                <p>No hay cuentas disponibles.</p>
+                                <EmptyComponet />
                             )
                         )}
                     </div>
                 </div>
                 {path.pathname === "/cuentas" ? <Modal /> : <ModalDetails />}
+                {/* {path.pathname === "/cuentas" ? null : <Filter />} */}
+                <ModalEditAccount cardId={cardId} show={showModal} onClose={() => setShowModal(false)} />
+                <ModalEditDetail cardId={cardId} accountId={accountId} show={showModalDetail} onClose={() => setShowModalDetail(false)} />
             </div>
         </div>
     );

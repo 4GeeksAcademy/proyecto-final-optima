@@ -144,8 +144,8 @@ def post_account_detail(accounts_id):
         new_account_detail = Account_details(accounts_id=accounts_id, detail=request_body["detail"], amount=request_body["amount"], coin=request_body["coin"], type=request_body["type"],date=request_body["date"],time=request_body["time"],operation=request_body["operation"])
         db.session.add(new_account_detail)
         db.session.commit()  
-        return jsonify(request_body), 200
-    
+        account_detail_id = new_account_detail.id
+        return jsonify({"id": account_detail_id, **request_body}), 200
     except:
         return jsonify({"msg":"miss information"}), 400
 #endpoint que muestra uno o varios detalles de una cuenta especifica
@@ -182,7 +182,7 @@ def deposit(account_id):
 
 #endpoint que resta del balance de la cuenta 
 @api.route('/accounts/<int:account_id>/debit', methods=['PUT'])
-def Debit(account_id):
+def debit(account_id):
     try:
         body = request.json
         account = db.session.execute(db.select(Accounts).filter_by(id=account_id)).scalar_one()
@@ -224,11 +224,10 @@ def update_account(account_id):
         if "type" in body:
             account.type = body["type"]
         db.session.commit()
-        return jsonify({"msg": "account updated"}), 200
+        return jsonify({"id": account_id, **body}), 200
 
-    except:
-        return jsonify({"msg": "internal server error"}), 500
-
+    except Exception as e:
+        return jsonify({"msg": "internal server error", "error": str(e)}), 500
 
 # endpoint editar movimiento de cuenta
 @api.route('/account-detail/<int:account_detail_id>', methods=['PUT'])
@@ -243,10 +242,10 @@ def update_account_detail(account_detail_id):
             return jsonify({"msg": "Account not found"}), 404
 
         # Esto es para que el balance no sume dos veces, primero se borra lo anterior
-        if movement.type == "deposit":
+        if movement.operation == "ingreso":
             account.balance = account.balance - movement.amount
         else:
-            if movement.type == "debit":
+            if movement.operation == "egreso":
                 account.balance = account.balance + movement.amount
         # Se cambia lo que llega en el body
         if "detail" in body:
@@ -261,11 +260,13 @@ def update_account_detail(account_detail_id):
             movement.date = body["date"]
         if "time" in body:
             movement.time = body["time"]
+        if "operation" in body:
+            movement.operation = body["operation"]
         # Ahora se vuelve a hacer la operación con los datos nuevos
-        if movement.type == "deposit":
+        if movement.operation == "ingreso":
             account.balance = account.balance + movement.amount
         else:
-            if movement.type == "debit":
+            if movement.operation == "egreso":
                 account.balance = account.balance - movement.amount
         db.session.commit()
         return jsonify({"msg": "Movement updated and balance adjusted"}), 200
@@ -327,10 +328,13 @@ def get_details_user(user_id):
     except Exception as e:
         return jsonify({"msg": "Error en la consulta"}), 500
     
+    # eliminar cuenta con movimientos
+    
+  
 @api.route('/delete-account/<int:account_id>', methods=['DELETE'])
 def delete_account_and_movements(account_id):
     try:
-        # Buscar y eliminar todos los movimientos asociados a la cuenta
+        
         movements = db.session.execute(
             db.select(Account_details).filter_by(accounts_id=account_id)
         ).scalars().all()
@@ -338,7 +342,6 @@ def delete_account_and_movements(account_id):
         for movement in movements:
             db.session.delete(movement)
 
-        # Buscar y eliminar la cuenta después de eliminar los movimientos
         account = db.session.execute(
             db.select(Accounts).filter_by(id=account_id)
         ).scalar_one_or_none()
@@ -354,8 +357,6 @@ def delete_account_and_movements(account_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"msg": "Error deleting movements and account", "error": str(e)}), 500
-
-
 # endpoint validador de email repetido
 
 @api.route("/check-email", methods=["POST"])
@@ -374,6 +375,43 @@ def check_email():
         return jsonify({"exists": False}), 200  # Devuelve False si el email está disponible
         
 # fin endpoint validador email repetido
+
+
+# endopoint de filtro por type
+@api.route('/account-detail-filter/<int:accounts_id>', methods=['GET'])
+def get_filtered_account_details(accounts_id):
+    try:
+        movement_type = request.args.get("type")  # Obtiene el parámetro de tipo desde la URL
+
+        query = db.select(Account_details).filter_by(accounts_id=accounts_id)
+
+        if movement_type:
+            query = query.filter(Account_details.type == movement_type)  # Filtra por tipo si se proporciona
+
+        movements = db.session.execute(query).scalars().all()
+
+        if not movements:
+            return jsonify({"msg": "No movements found"}), 404
+
+        result = [
+            {
+                "id": movement.id,
+                "detail": movement.detail,
+                "amount": movement.amount,
+                "coin": movement.coin,
+                "type": movement.type,
+                "date": movement.date,
+                "time": movement.time,
+                "operation": movement.operation
+            }
+            for movement in movements
+        ]
+        return jsonify(result), 200
+
+    except Exception as e:
+        print(e)
+        return jsonify({"msg": "Internal server error"}), 500
+
 
 
 

@@ -1,7 +1,7 @@
 import React from "react";
 import "../../styles/not-found.css";
 import { Link } from "react-router-dom";
-import errorImage from "../../img/404.png"; // Asegúrate de tener esta imagen en tu proyecto
+import errorImage from "../../img/404.png";
 
 export const NotFound = () => {
     return (

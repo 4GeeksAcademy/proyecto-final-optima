@@ -1,3 +1,58 @@
 .balance {
     transition: all 0.3s ease-in-out;
 }
+.card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    background-color: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+
+.card:hover {
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.card-body {
+    flex: 1;
+    text-align: center;
+}
+
+.balance {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.card-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.buttons-edit-delete {
+    display: flex;
+}
+
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .card {
+        flex-direction: column;
+        text-align: center;
+        padding: 10px;
+    }
+
+    .balance {
+        justify-content: center;
+    }
+
+    .buttons-edit-delete {
+        flex-direction: row;
+    }
+}
