@@ -1,24 +1,7 @@
-import React from "react";
-import Swal from "sweetalert2";
+import React, { useState } from "react";
 import "../../styles/card.css";
 
 export const CardMovimientos = (props) => {
-    const handleDelete = () => {
-        Swal.fire({
-            title: "¿Estás seguro?",
-            text: "Esta acción eliminará el movimiento permanentemente.",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#d33",
-            cancelButtonColor: "#6c757d",
-            confirmButtonText: "Sí, eliminar",
-            cancelButtonText: "Cancelar"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                props.onDelete(props.id);
-            }
-        });
-    };
 
     return (
         <div className="card mb-3 p-3" key={props.id}>
@@ -38,22 +21,18 @@ export const CardMovimientos = (props) => {
                     <p className="mb-1">{props.operation}</p>
                 </div>
                 <div className="btn-group-vertical col-md-2 d-flex flex-column col-lg-2" role="group" aria-label="Vertical button group">
-                    <button
-                        type="button"
-                        className="btn btn-secondary"
-                        data-bs-toggle="modal"
-                        data-bs-target="#editModalDetail"
+                    <button 
+                        type="button" 
+                        className="btn btn-secondary" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#editModalDetail" 
                         onClick={props.onUpdate}
                     >
                         <i className="bi bi-pencil-square"></i> Editar
                     </button>
-                    <button
-                        type="button"
-                        className="btn btn-secondary"
-                        onClick={handleDelete} 
-                    >
+                    {/* <button type="button" className="btn btn-secondary">
                         <i className="bi bi-trash-fill"></i> Eliminar
-                    </button>
+                    </button> */}
                 </div>
             </div>
         </div>
