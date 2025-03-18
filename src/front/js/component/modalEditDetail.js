@@ -58,31 +58,13 @@ export const ModalEditDetail = (props) => {
             const result = await response.json();
             if (response.status == 200) {
                 if (path.pathname === "/movimientos") {
-                    (async () => {
-                        localStorage.removeItem("userAccounts")
-                    })()
+                    localStorage.removeItem("userAccounts")
                     await actions.getAccountsUser()
                     await actions.getDetailsUser()
                 } else {
-                    (async () => {
-                        localStorage.removeItem("userAccounts")
-                    })()
+                    localStorage.removeItem("userAccounts")
                     await actions.getAccountsUser()
                     await actions.getAccountsDetail(body.accountId)
-                }
-                if (path.pathname === "/movimientos") {
-                    (async () => {
-                        localStorage.removeItem("userAccounts")
-                    })()
-                    await actions.getDetailsUser()
-                    await actions.getAccountsUser()
-                } else{
-                    (async () => {
-                        localStorage.removeItem("userAccounts")
-                    })()
-                    await actions.getAccountsDetail(body.accountId)
-                    await actions.getAccountsUser()
-
                 }
             }
         } catch (error) {

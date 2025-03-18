@@ -69,8 +69,6 @@ export const ModalDetails = () => {
                     })()
                     await actions.getAccountsUser()
                     await actions.getDetailsUser()
-                    console.log("dio un 200");
-                    
                 } else{
                     (async () => {
                         localStorage.removeItem("userAccounts")

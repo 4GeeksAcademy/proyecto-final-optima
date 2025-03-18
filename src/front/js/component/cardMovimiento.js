@@ -1,8 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import Swal from "sweetalert2";
 import "../../styles/card.css";
+import { Context } from "../store/appContext";
+import { useParams } from "react-router-dom";
+
 
 export const CardMovimientos = (props) => {
+    const params = useParams()
+    const { store, actions } = useContext(Context)
     const handleDelete = () => {
         Swal.fire({
             title: "¿Estás seguro?",
@@ -15,7 +20,9 @@ export const CardMovimientos = (props) => {
             cancelButtonText: "Cancelar"
         }).then((result) => {
             if (result.isConfirmed) {
-                props.onDelete(props.id);
+                console.log("ID del movimiento a eliminar:", props.id);
+                console.log(params);
+                actions.deleteMovement(props.id);
             }
         });
     };
@@ -50,7 +57,7 @@ export const CardMovimientos = (props) => {
                     <button
                         type="button"
                         className="btn btn-secondary"
-                        onClick={handleDelete} 
+                        onClick={handleDelete}
                     >
                         <i className="bi bi-trash-fill"></i> Eliminar
                     </button>

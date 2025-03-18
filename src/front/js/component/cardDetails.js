@@ -1,8 +1,11 @@
-import React from "react";
+import React, {useContext} from "react";
 import Swal from "sweetalert2";
 import "../../styles/card.css";
+import { Context } from "../store/appContext";
 
 export const CardDetails = (props) => {
+    const {store, actions} = useContext(Context)
+
     const handleDelete = () => {
         Swal.fire({
             title: "¿Estás seguro?",
@@ -16,7 +19,7 @@ export const CardDetails = (props) => {
         }).then((result) => {
             if (result.isConfirmed) {
                 console.log("ID del movimiento a eliminar:", props.id);
-                props.onDelete(props.id);
+                actions.deleteMovement(props.id);
             }
         });
     };
@@ -25,7 +28,7 @@ export const CardDetails = (props) => {
         <div className="card-details card mb-3 p-3" key={props.id}>
             <div className="card-details-2 row g-0 align-items-center w-100">
                 <div className="col-md-4 text-center">
-                <h4 className="mb-1"><strong>{props.accountName}</strong></h4>
+                    <h4 className="mb-1"><strong>{props.accountName}</strong></h4>
                     <h5 className="card-title-detail">Detalle Movimiento</h5>
                     <p className="mb-1">{props.detail}</p>
                 </div>
@@ -39,24 +42,23 @@ export const CardDetails = (props) => {
                     <p className="mb-1">{props.type}</p>
                     <p className="mb-1">{props.operation}</p>
                 </div>
-                <div className="col-md-2 d-flex flex-column gap-2">
+                <div className="btn-group-vertical col-md-2 d-flex flex-column col-lg-2" role="group" aria-label="Vertical button group">                    <button
+                    type="button"
+                    className="btn btn-secondary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#editModalDetail"
+                    id={props.id}
+                    onClick={props.onUpdate}
+                >
+                    <i className="bi bi-pencil-square"></i> Editar
+                </button>
                     <button
                         type="button"
                         className="btn btn-secondary"
-                        data-bs-toggle="modal"
-                        data-bs-target="#editModalDetail"
                         id={props.id}
-                        onClick={props.onUpdate}
+                        onClick={handleDelete}
                     >
-                        <i className="bi bi-pencil-square"></i>
-                    </button>
-                    <button
-                        type="button"
-                        className="btn btn-danger"
-                        id={props.id}
-                        onClick={handleDelete} 
-                    >
-                        <i className="bi bi-trash-fill"></i>
+                        <i className="bi bi-trash-fill"></i> Eliminar
                     </button>
                 </div>
             </div>

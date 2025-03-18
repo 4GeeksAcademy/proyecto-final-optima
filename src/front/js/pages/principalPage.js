@@ -24,15 +24,24 @@ export const PrincipalPage = () => {
     const [showModalDetail, setShowModalDetail] = useState(false);
     const [accountId, setAccountId] = useState(null);
 
+        const filteredMovements =
+        store.selectedCategory === "MOSTRAR TODO"
+            ? store.detailUser
+            : store.detailUser.filter((movent) =>
+                movent.type?.trim().toLowerCase() === store.selectedCategory?.trim().toLowerCase()
+            );
+
     useEffect(() => {
         actions.verifyToken();
         actions.initializeStore();
         if (!store.auth) {
             navigate("/");
         }
-        if (path.pathname !== "/cuentas" && params.id) {
+        if (path.pathname.startsWith("/cuentas/")) {
             (async () => {
                 await actions.getAccountsDetail(params.id);
+                console.log("estoy probando");
+                
             })();
         }
         if (path.pathname === "/cuentas" || path.pathname === "/movimientos") {
@@ -40,19 +49,12 @@ export const PrincipalPage = () => {
                 await actions.getDetailsUser();
             })();
         }
-    }, [params.id, path.pathname, store.account]);
+    }, [params.id, path.pathname, store.account, store.selectedCategory]);
 
     if (!store.auth) {
         actions.logout();
         navigate("/");
     }
-
-    const filteredMovements =
-        store.selectedCategory === "MOSTRAR TODO"
-            ? store.detailUser
-            : store.detailUser.filter((movent) =>
-                movent.type?.trim().toLowerCase() === store.selectedCategory?.trim().toLowerCase()
-            );
 
     return (
         <div className="d-flex vh-100">
@@ -83,7 +85,6 @@ export const PrincipalPage = () => {
                                                 setCardId(details.id);
                                                 setShowModalDetail(true);
                                             }}
-                                            onDelete={actions.deleteMovement}
                                         />
                                     );
                                 })
@@ -114,7 +115,6 @@ export const PrincipalPage = () => {
                                                     setAccountId(account);
                                                 }
                                             }}
-                                            onDelete={actions.deleteMovement}
                                         />
                                     );
                                 })
