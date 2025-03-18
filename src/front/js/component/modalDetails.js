@@ -98,7 +98,10 @@ export const ModalDetails = () => {
             });
             Swal.fire({
                 title: "Movimiento registrado con éxito",
-                icon: "success"
+                icon: "success",
+                customClass: {
+                    confirmButton: "swal-confirm-btn",
+                }
             });
         } else {
             Swal.fire({
@@ -106,7 +109,9 @@ export const ModalDetails = () => {
                 text: 'Campos incompletos, asegúrate de escribir toda la información',
                 icon: 'error',
                 confirmButtonText: 'Volver',
-                confirmButtonColor: "#010D87"
+                customClass: {
+                    confirmButton: "swal-confirm-btn"
+                }
             })
         }
     };
