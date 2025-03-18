@@ -69,7 +69,11 @@ export const ModalEditAccount = (props) => {
                     title: 'Error!',
                     text: 'Campos incompletos, asegúrate de escribir toda la información',
                     icon: 'error',
-                    confirmButtonText: 'Volver'
+                    confirmButtonText: 'Volver',
+                    confirmButtonColor: "#010D87",
+                    customClass: {
+                        confirmButton: "swal-confirm-btn"
+                    }
                 })
             }
         } catch (error) {
@@ -81,7 +85,10 @@ export const ModalEditAccount = (props) => {
             putAccount(inputValue)
             Swal.fire({
                 title: "Movimiento registrado con éxito",
-                icon: "success"
+                icon: "success",
+                customClass: {
+                    confirmButton: "swal-confirm-btn"
+                }
             });
 
             setInputValue({
@@ -95,7 +102,10 @@ export const ModalEditAccount = (props) => {
                 title: 'Error!',
                 text: 'Campos incompletos, asegúrate de escribir toda la información',
                 icon: 'error',
-                confirmButtonText: 'Volver'
+                confirmButtonText: 'Volver',
+                customClass: {
+                    confirmButton: "swal-confirm-btn"
+                }
             });
         }
     };

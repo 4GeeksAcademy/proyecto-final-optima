@@ -61,7 +61,11 @@ export const SignupForm = () => {
                                 if (response) {
                                     Swal.fire({
                                         title: "Usuario registrado con éxito",
-                                        icon: "success"
+                                        icon: "success",
+                                        confirmButtonColor: "#010D87",
+                                        customClass: {
+                                            confirmButton: "swal-confirm-btn"
+                                        }
                                     });
                                     resetForm();
                                     navigate("/"); 
