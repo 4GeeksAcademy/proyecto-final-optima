@@ -1,7 +1,7 @@
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
-from flask import Flask, request, jsonify, url_for, Blueprint, current_app
+from flask import Flask, request, jsonify, url_for, Blueprint, current_app 
 from api.models import db, User, Accounts, Account_details
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
@@ -17,40 +17,7 @@ api = Blueprint('api', __name__)
 bcrypt = Bcrypt()
 
 CORS(api)
-
-#RECUPERACION CONTRASEÑA OLVIDADA 
-@api.route("/forgotpassword", methods=["POST"])
-def forgotpassword():
-    data = request.json
-    recover_email = data.get("email", None)
-
-    if not recover_email:
-        return jsonify({"msg": "Debe ingresar un correo válido"}), 400
-
-    # Buscar si el correo existe en la base de datos
-    user = User.query.filter_by(email=recover_email).first()
-
-    if not user:
-        return jsonify({"msg": "El correo ingresado no existe en nuestros registros"}), 404
-
-    # Generar una nueva contraseña aleatoria
-    recover_password = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(8))
-
-    # Hashear la nueva contraseña antes de guardarla en la base de datos
-    hashed_password = bcrypt.generate_password_hash(recover_password).decode("utf-8")
-    user.password = hashed_password
-    db.session.commit()
-
-    # Enviar la nueva contraseña al correo del usuario
-    msg = Message("Recuperación de contraseña", recipients=[recover_email])
-    msg.html = f"""<h1>Su nueva contraseña es: {recover_password}</h1>"""
-    print("llegué al final")
-    try:
-        current_app.mail.send(msg)
-        return jsonify({"msg": "Su nueva clave ha sido enviada al correo electrónico ingresado"}), 200
-    except Exception as e:
-        return jsonify({"msg": "Error al enviar el correo", "error": str(e)}), 500
-
+        
         #este endpoint busca y muestra a todos los usuarios registrados
 @api.route('/users', methods=['GET'])
 def get_users():
@@ -449,6 +416,38 @@ def get_filtered_account_details(accounts_id):
         print(e)
         return jsonify({"msg": "Internal server error"}), 500
 
+@api.route('/recover-password', methods=['POST'])
+def recover_password():
+    email = request.json.get('email')
+
+    if not email:
+        return jsonify({"error": "Email is required"}), 400
+
+    # Buscar el usuario por el correo electrónico
+    user = User.query.filter_by(email=email).first()
+
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    # Generar una nueva contraseña aleatoria
+    recover_password = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(8)) #clave aleatoria nueva
+
+    # Hash de la nueva contraseña
+    hashed_password = bcrypt.generate_password_hash(recover_password).decode("utf-8")
+
+    # Actualizar la contraseña en la base de datos
+    user.password = hashed_password
+    db.session.commit()
+
+    # Enviar la nueva contraseña por correo electrónico
+    msg = Message('Nueva contraseña', recipients=[email])
+    msg.body = f'Tu nueva contraseña es: {recover_password}'
+
+    try:
+        current_app.mail.send(msg)
+        return jsonify({"message": "New password sent successfully!"}), 200
+    except Exception as e:
+        return jsonify({"error": f"Error sending email: {str(e)}"}), 500
 
 
 
