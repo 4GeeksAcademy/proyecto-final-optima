@@ -440,8 +440,8 @@ def recover_password():
     db.session.commit()
 
     # Enviar la nueva contraseña por correo electrónico
-    msg = Message('Nueva contraseña', recipients=[email])
-    msg.body = f'Tu nueva contraseña es: {recover_password}'
+    msg = Message("Recuperación de contraseña", recipients=[email])
+    msg.html = f"""<h1>Su nueva contraseña es: {recover_password}</h1>"""
 
     try:
         current_app.mail.send(msg)

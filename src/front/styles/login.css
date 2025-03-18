@@ -90,6 +90,20 @@
 .optima-title {
     font-size: 4rem;  
 }
+.highlight-text {
+    font-weight: bold;
+    color: var(--primary);
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color 0.3s, transform 0.2s;
+}
+
+.highlight-text:hover {
+    color: #0026ff;
+    transform: scale(1.05);
+    text-decoration: none;
+}
+
 
 @media (max-width: 768px) {  
     .optima-title {

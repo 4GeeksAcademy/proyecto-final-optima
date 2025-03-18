@@ -49,6 +49,9 @@ export const LoginForm = () => {
                 </div>
                 <div className="buttons">
                     <button type="submit" className="btn btn-primary login-user">INICIAR SESION</button>
+                    <div className="form-text register-text highlight-text" onClick={() => { navigate("/recuperar-contrasena") }}>
+                        ¿Olvidaste tu contraseña?
+                    </div>
                     <hr className="hr-login" />
                 </div>
             </form>

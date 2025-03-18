@@ -26,27 +26,13 @@ static_file_dir = os.path.join(os.path.dirname(
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 
-# ✅ CONFIGURACIÓN CORRECTA DE EMAIL
-# app.config.update({
-#     "MAIL_SERVER": 'smtp.gmail.com',
-#     "MAIL_PORT": 587,  # ✅ STARTTLS (Si usas SSL, cambia a 465 y activa MAIL_USE_SSL)
-#     "MAIL_USE_TLS": True,  # ✅ Activado
-#     "MAIL_USE_SSL": False,  # ✅ Desactivado para evitar conflicto
-#     "MAIL_USERNAME": 'optima21app@gmail.com',
-#     "MAIL_PASSWORD": 'tu-contraseña-de-aplicacion'  # ⚠️ DEBE SER UNA CONTRASEÑA DE APLICACIÓN
-# })
-
-# mail = Mail(app)  # ✅ Inicializa Flask-Mail correctamente
-#FIN CONFIGURACION EMAIL
-
 #CONFIGURACION EMAIL
-
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'  # Usamos Gmail como servidor de correo
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'optima21app@gmail.com'  # Tu correo de Gmail
-app.config['MAIL_PASSWORD'] = 'aiun huoz laev jpsa'  # Tu contraseña de Gmail
-app.config['MAIL_DEFAULT_SENDER'] = 'optima21app@gmail.com'
+app.config['MAIL_USERNAME'] = os.getenv("MAIL_USERNAME")  # Tu correo de Gmail
+app.config['MAIL_PASSWORD'] = os.getenv("MAIL_PASSWORD")  # Tu contraseña de Gmail
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv("MAIL_USERNAME")
 
 mail = Mail(app)
 app.mail= mail
