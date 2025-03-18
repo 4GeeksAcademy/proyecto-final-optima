@@ -25,21 +25,22 @@
 
 @media (max-width: 768px) {  
 .balance-title{
-font-size: larger;
+font-size: large !important;
+text-align: center;
 }
   }
 
 @media (max-width: 480px) {  
     .total-balance{
-      padding-left: 10px !important;
-      font-size: medium;
+      font-size: medium !important;
       margin: 0 !important;
     }
     .form-select{
-      padding-left:1.8rem ;
-      padding-right:.61rem ;
-      padding-top:.325rem ;
-      padding-bottom:.35rem ;
+       padding-left:1.8rem !important;
+      padding-right:.61rem !important;
+      padding-top:.325rem !important;
+      padding-bottom:.35rem !important;
+      color: transparent;
     }
     
        }

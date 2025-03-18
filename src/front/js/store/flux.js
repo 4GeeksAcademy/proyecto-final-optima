@@ -347,7 +347,51 @@ const getState = ({ getStore, getActions, setStore }) => {
 				} catch (error) {
 					console.error(error);
 				};
+
 			},
+			filterPerType: async (type) => {
+				const myHeaders = new Headers();
+				myHeaders.append("Cookie", ".Tunnels.Relay.WebForwarding.Cookies=CfDJ8Cs4yarcs6pKkdu0hlKHsZs4QIjnH5XwZc8r4EV9eZWrSae0Zb1F4WdnE7Ev9oY4WsQBWsicWZUNpx6ZWsGv-Wn3x_D_8Smp803mzklASXl2lEA7pd1-gKaWYVpJqV89E3xDpwb9emCOmfyGyT0wu23zONmmNe8tjf9JQD1ZEQjLeZuA3oWO6SxQTY1Upd-3O9zUY604pNU5_4BWprsnN66EnjeUG5GjHH5uEJIhJwstjSS5BvVukVWrNwfj1DEH69Tz_4I_0JhOtqVwAfb_Bh5YBmLWH3ESGNgzKOzfckF5kWvsYcMLi_kj2UJYxgsfBWrSgkymz1mVgf8gKukkwmR678lWfuJDVrq7ZGN64ZNiK8OUH1cRbN8ehT1xMG-XFCi7XR6fKyJgQKGPBH4sB8koBIzHQxd2RqazUx3sbvYxv4_3PhX6Z0j6Yj5klQadzS1qPqK8FVHqMIdmwPZ0S9PIlD0hDcz1e0gmHVDuk7BTH8W52Ftn5VlS0RB9Ge7hD24-3fytorvEZ6sFVE27xBPv5m7hk2EeCVa6UUQR7rRlFRVHn94C9joOncvUJpfZ7jcNDsK1PQ9tkGUt0HP86D5qdcFENkZraEEmTVU2fcpQ98gG_prmadxOyijK09ccnN917DenzVFaJjId_AK--54GW_tJg_iMoTA-LjuCo-fRRyTWBnV4_5RfsDg3BC8HTCPe7rBNUbCRTr8YemjlYKzREfH4jvwpoKKgaVpNH_SNdqCg7ZFmS4u6DPV71LczGyfFHMD2SCd8LDFhVe7m-0fpWXuDFGsF1zEJWnIwHn-wUWdO6A63QHqSL5V6F7-D0doiUy3j9-Ad3P3e_Z3ImcecNahAqh6YuF3wtg7ePacPp2becXJ4IONIoYuf_ZTKI3r8nfV6LEl0p4LWvBRc4AFGZ88ioPBEJ8HCfPGVU_NjLp6nwH1kDSNfGxTc8UFAV4pemvQ8xV7YVMma5KgdIhn2FFSD6FiKiwQLKvk0UP4OFgtd4y8B0PKJmGXy1phdXg");
+
+				const requestOptions = {
+					method: "GET",
+					headers: myHeaders,
+					redirect: "follow"
+				};
+
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/account-detail-filter/${type}`, requestOptions);
+					const result = await response.json();
+					setStore({ movimientosFiltrados: result });
+				} catch (error) {
+					console.error("Error en la petición:", error);
+				}
+			},
+			setSelectedCategory: (category) => {
+				setStore({ selectedCategory: category });
+			},
+
+			
+			deleteMovement: async (movementId) => {
+				const myHeaders = new Headers();
+				myHeaders.append("Cookie", ".Tunnels.Relay.WebForwarding.Cookies=CfDJ8Cs4yarcs6pKkdu0hlKHsZvgMRXwa2X-9-ozv0O4hEdRO9-FBx5HLMSf9sjKBJxhQVudR_zYviNSXQFhEbiwbCufyM3Eqp_ijD_1eSFd_0f_FtgYfWQMIfeBrsWEaazTHWa81w7hWgAeiX2VF-jEfy_v-1RuKxSuT6FhLjgxOQMv01l_dpMY74s2GaDLDYGUnV3RzgUUCivjn5AIxOZpg1q_-2YRpEbWaE9piRRs6prJA2Nkrkw2XQnSpFUq1WxaiwXBuGFvcjiwZ52o5b8eYkFo6wCnQsmQqGwZiAB-Uwq-K-3o9xdVzqGaIR2pQ3uBx7jen5iISs6X5iIAik3DiTHPUSrzMoN8wMEa5UfxdOoIoJv4JC0ILVHUYrq6HEO59Tml_5-U59kDOfYE1VaoglgZ8mjyWPCfGPQVxfuO6mD_Mi54MXFo0B934EYZ6ZltMm-uLhHJdwo0qT9UaWxaIz2Qff4lwH_gnV-EVRcCOzJNu5_V0jRKKGCLHs3RRFia1QLC9nXB7A7gQQGPVx6evqfFtWGpIg7ucdQtvk9JYlmJeBvzh0oJD-9r7Gqo0nuFf4HySa2qd3yuHQr9lB1XL0VeIRjsxtDygjWzve_M1Wc71SO67YmPQohQcVTRPnZBd3GTsifRREbJ7v3E8-q2B_lQB8c6Fb3Bfn7IQudIawLXqISm9k5M7hWfZx-_Y9p0QjvG3zJADjOW5kn6NXn0-9O4_8TblVsE12g7uRrvTNquVRBGhyZoO891r4aPmFYQaH0psOXPA-uvXb5jv0t04OD6f7ii7zc3I5MMvzMLtycpQOHRJcYJDz1qrScJ38s_Q1mKL14cMaBvRi6hS9vnNKOCefPnyzmvyyxMA-KnkV7k4FogOkwlO2LrGnpH3HYodBSW0Em3ywoAsrX6Feiq-si_zaHFo9Dy0oB9hDcrgqjOMgvUG3JwtzH-OvA2yxiTyqVLjW0fmSdbDL0J7tg8W6bUwiv9M5-sAZbqJu0nBulm");
+
+				const requestOptions = {
+					method: "DELETE",
+					headers: myHeaders,
+					redirect: "follow"
+				};
+
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/account-detail/${movementId}`, requestOptions);
+					const result = await response.json();
+					console.log(result)
+
+				} catch (error) {
+					console.error(error);
+				};
+			},
+
 		}
 	};
 };
