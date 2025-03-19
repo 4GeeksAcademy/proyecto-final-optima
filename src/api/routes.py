@@ -1,19 +1,23 @@
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
-from flask import Flask, request, jsonify, url_for, Blueprint
+from flask import Flask, request, jsonify, url_for, Blueprint, current_app 
 from api.models import db, User, Accounts, Account_details
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required,verify_jwt_in_request, decode_token
 from flask_jwt_extended.exceptions import NoAuthorizationError
 from flask_bcrypt import Bcrypt
+from flask_mail import Message #importamos Message() de flask_mail
+import random #importamos ramdom y string para generar una clave aleatoria nueva
+import string
+
 
 api = Blueprint('api', __name__)
 bcrypt = Bcrypt()
 
 CORS(api)
-
+        
         #este endpoint busca y muestra a todos los usuarios registrados
 @api.route('/users', methods=['GET'])
 def get_users():
@@ -287,10 +291,10 @@ def delete_account_detail(account_detail_id):
         if not account:
             return jsonify({"msg": "Account not found"}), 404
         # resta si es en
-        if movement.type == "deposit":
+        if movement.operation == "ingreso":
             account.balance -= movement.amount  
         # suma si es en debito
-        if movement.type == "debit":
+        if movement.operation == "egreso":
             account.balance += movement.amount  
         db.session.delete(movement)  
         db.session.commit()
@@ -378,7 +382,7 @@ def check_email():
 
 
 # endopoint de filtro por type
-@api.route('/account-detail-filter/<int:accounts_id>', methods=['GET'])
+@api.route('/account-detail-filter', methods=['GET'])
 def get_filtered_account_details(accounts_id):
     try:
         movement_type = request.args.get("type")  # Obtiene el parámetro de tipo desde la URL
@@ -412,6 +416,60 @@ def get_filtered_account_details(accounts_id):
         print(e)
         return jsonify({"msg": "Internal server error"}), 500
 
+@api.route('/recover-password', methods=['POST'])
+def recover_password():
+    email = request.json.get('email')
+
+    if not email:
+        return jsonify({"error": "Email is required"}), 400
+
+    # Buscar el usuario por el correo electrónico
+    user = User.query.filter_by(email=email).first()
+
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    # Generar una nueva contraseña aleatoria
+    recover_password = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(8)) #clave aleatoria nueva
+
+    # Hash de la nueva contraseña
+    hashed_password = bcrypt.generate_password_hash(recover_password).decode("utf-8")
+
+    # Actualizar la contraseña en la base de datos
+    user.password = hashed_password
+    db.session.commit()
+
+    # Enviar la nueva contraseña por correo electrónico
+    msg = Message("Recuperación de contraseña", recipients=[email])
+    msg.html = f"""<h1>Su nueva contraseña es: {recover_password}</h1>"""
+
+    try:
+        current_app.mail.send(msg)
+        return jsonify({"message": "New password sent successfully!"}), 200
+    except Exception as e:
+        return jsonify({"error": f"Error sending email: {str(e)}"}), 500
+
+@api.route('/account-detail/<int:accounts_id>/filter', methods=['GET'])
+def filter_account_details(accounts_id):
+    try:
+        movement_type = request.args.get("type", None)  # Obtener el tipo de movimiento de los parámetros de la URL
+
+        if not movement_type:
+            return jsonify({"msg": "Please provide a movement type"}), 400
+
+        filtered_movements = db.session.execute(
+            db.select(Account_details)
+            .filter_by(accounts_id=accounts_id, type=movement_type)
+            .order_by(Account_details.date.desc(), Account_details.time.desc())
+        ).scalars().all()
+
+        if filtered_movements:
+            return jsonify({"result": [movement.serialize() for movement in filtered_movements]}), 200
+
+        return jsonify({"msg": "No movements found for this type"}), 404
+
+    except Exception as e:
+        return jsonify({"msg": "Error", "error": str(e)}), 500
 
 
 
