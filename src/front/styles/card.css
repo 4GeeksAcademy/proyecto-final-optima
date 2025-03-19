@@ -35,9 +35,13 @@
     gap: 10px;
 }
 
-.buttons-edit-delete {
-    display: flex;
+.card-text{
+    margin: 0 ;
 }
+
+.button-more-info{
+    margin-bottom: 0;
+} 
 
 
 /* RESPONSIVE */
@@ -62,9 +66,27 @@
        padding-left: 0 !important;
        padding-right: 0 !important;
     }
+    .card-text{
+        margin: 0 ;
+    }
+    .buttons-edit-delete{
+        flex-direction: column;
+    }
+    .card-box{
+        padding-top: 45px !important;
+        }
+    .button-more-info{
+        margin-bottom: 0;
+    } 
    }
    
    @media (max-width: 480px) {  
+    .amount-coin{
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
     .last-movement{
        display: none !important;
     }
@@ -103,8 +125,8 @@
        border-bottom-left-radius: 0px !important
     }
     .card-buttons{
- width: 100%;
- justify-content: center !important;
+        width: 100%;
+        justify-content: center !important;
     }
     .button-more-info{
       width: 100px !important;
@@ -123,4 +145,8 @@
     .card-details-2{
         padding: 10px !important;
     }
+    .card-2{
+        padding: 0 !important;
+    }
+
        }
