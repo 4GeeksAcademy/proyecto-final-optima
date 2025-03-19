@@ -83,7 +83,7 @@ export const GeneralBalance = () => {
       <div className="d-flex align-items-center">
         <h4 className="total-balance m-0 fw-bold me-3">{showBalance ? totalBalance : "****"}</h4>
         <i
-        className={`bi ${showBalance ? "bi-eye-fill" : "bi-eye-slash-fill"} fs-4 cursor-pointer`}
+        className={`eye-hide ${showBalance ? "bi-eye-fill" : "bi-eye-slash-fill"} fs-4 cursor-pointer`}
         onClick={toggleBalance}
       ></i>
         <div className="currency-size ms-2">

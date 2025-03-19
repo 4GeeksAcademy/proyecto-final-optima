@@ -22,11 +22,25 @@
     flex-grow: 1;
     text-align: center
 }
-
+  .eye-hide{
+  padding-right: 10px;
+}
+.form-select {
+  display: block;
+  width: 100%;
+  padding: .375rem 2.25rem .375rem .75rem;
+}
 @media (max-width: 768px) {  
 .balance-title{
 font-size: large !important;
 text-align: center;
+}
+.eye-hide{
+  padding-right: 5px;
+  padding-left: 5px;
+}
+.total-balance{
+margin: 0 !important;
 }
   }
 
@@ -36,11 +50,15 @@ text-align: center;
       margin: 0 !important;
     }
     .form-select{
-       padding-left:1.8rem !important;
+      padding-left:1.8rem !important;
       padding-right:.61rem !important;
       padding-top:.325rem !important;
       padding-bottom:.35rem !important;
       color: transparent;
+    }
+    .eye-hide{
+      padding-right: 5px;
+      padding-left: 5px;
     }
     
        }
