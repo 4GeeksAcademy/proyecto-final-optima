@@ -137,10 +137,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 
-			logout: () => {
+			logout: async () => {
 				localStorage.removeItem("token");
 				localStorage.removeItem("userLogged");
 				localStorage.removeItem("userAccounts")
+				localStorage.removeItem("theme")
 				setStore({ auth: false, user: "", accounts: [] });
 			},
 			getUserLogged: async () => {

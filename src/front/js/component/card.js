@@ -36,12 +36,6 @@ export const Card = (props) => {
             <div className="card-body d-flex justify-content-around col-4 align-items-center">
                 <div className="justify-content-center">
                     <h3 className="card-title">{props.name}</h3>
-                    <div>
-                        <p className="last-movement">Último movimiento</p>
-                        <p>{props.detail}</p>
-                        <p>{props.amount}</p>
-                        <p>{props.date}</p>
-                    </div>
                 </div>
             </div>
             <div className="card-body d-flex justify-content-around col-4 align-items-center">
