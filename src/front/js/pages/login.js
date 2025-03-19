@@ -4,10 +4,12 @@ import "../../styles/login.css";
 import { Context } from "../store/appContext";
 
 export const Login = () => {
-    const { actions } = useContext(Context)
+    const { store, actions } = useContext(Context)
 
     useEffect(() => {
-        actions.toggleTheme()
+        if(store.theme === "dark"){
+            actions.toggleTheme()
+        }
     }, [])
     return (
         <div className="container-login">
