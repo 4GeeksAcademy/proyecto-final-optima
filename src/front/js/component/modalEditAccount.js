@@ -4,7 +4,7 @@ import Swal from 'sweetalert2'
 import "../../styles/modal.css";
 
 export const ModalEditAccount = (props) => {
-    const {actions} = useContext(Context)
+    const { actions } = useContext(Context)
     const [currentDate, setCurrentDate] = useState("");
     const [currentTime, setCurrentTime] = useState("");
     const [inputValue, setInputValue] = useState({
@@ -58,11 +58,9 @@ export const ModalEditAccount = (props) => {
                     const response = await fetch(`${process.env.BACKEND_URL}/api/new-account-detail/${result.id}`, requestOptions);
                     const data = await response.json();
                     if (response.status === 200) {
-                        (async () => {
-                            localStorage.removeItem("userAccounts")
-                        })()
-						actions.getAccountsUser();
-					}
+                        localStorage.removeItem("userAccounts")
+                        await actions.getAccountsUser();
+                    }
                 } catch (error) {
                     console.error(error);
                 }
@@ -131,71 +129,71 @@ export const ModalEditAccount = (props) => {
 
     return (
         <>
-            <div className="modal" id="editModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style={{display: props.show ? "block" : "none"}} >
+            <div className="modal" id="editModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style={{ display: props.show ? "block" : "none" }} >
                 <div className="modal-dialog">
                     <div className="modal-content">
                         <div className="modal-header">
                             <h1 className="modal-title fs-5" id="exampleModalLabel">
                                 Editar Espacio
                             </h1>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" onClick={()=>props.onClose()}></button>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" onClick={() => props.onClose()}></button>
                         </div>
-						<div className="modal-body d-flex gap-2">
-							<input
-								type="text"
-								className="form-control input-name"
-								placeholder="Nombre"
-								value={inputValue.name}
-								aria-label="Nombre"
-								name="name"
-								required
-								onChange={handleChange}
-							/>
-							<input
-								type="number"
-								className="form-control input-balance"
-								placeholder="Balance"
-								value={inputValue.balance}
-								aria-label="Balance"
-								name="balance"
-								required
-								onChange={handleChange}
-							/>
-						</div>
-						<div className="px-5 pb-3">
-							<select
-								className="form-select"
-								aria-label="Moneda"
-								name="coin"
-								required
-								value={inputValue.coin}
-								onChange={handleChange}>
-								<option value="">Moneda</option>
-								<option value="EUR">EUR</option>
-								<option value="USD">USD</option>
-								<option value="BTC">BTC</option>
-								<option value="COP">COP</option>
-								<option value="ARS">ARS</option>
-								<option value="KRW">KRW</option>
-								<option value="JPY">JPY</option>
-							</select>
-						</div>
-						<div className="px-5 pb-3">
-							<select
-								className="form-select"
-								aria-label="Tipo de Espacio"
-								name="type"
-								required
-								value={inputValue.type}
-								onChange={handleChange}>
-								<option value="">Tipo de Espacio</option>
-								<option value="Cuenta Ahorros">Cuenta Ahorros</option>
-								<option value="Cuenta Corriente">Cuenta Corriente</option>
-								<option value="Tarjeta de Crédito">Tarjeta de Crédito</option>
-								<option value="Efectivo">Efectivo</option>
-								<option value="Otros">Otros</option>
-							</select>
-						</div>                        <div className="modal-footer">
+                        <div className="modal-body d-flex gap-2">
+                            <input
+                                type="text"
+                                className="form-control input-name"
+                                placeholder="Nombre"
+                                value={inputValue.name}
+                                aria-label="Nombre"
+                                name="name"
+                                required
+                                onChange={handleChange}
+                            />
+                            <input
+                                type="number"
+                                className="form-control input-balance"
+                                placeholder="Balance"
+                                value={inputValue.balance}
+                                aria-label="Balance"
+                                name="balance"
+                                required
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="px-5 pb-3">
+                            <select
+                                className="form-select"
+                                aria-label="Moneda"
+                                name="coin"
+                                required
+                                value={inputValue.coin}
+                                onChange={handleChange}>
+                                <option value="">Moneda</option>
+                                <option value="EUR">EUR</option>
+                                <option value="USD">USD</option>
+                                <option value="BTC">BTC</option>
+                                <option value="COP">COP</option>
+                                <option value="ARS">ARS</option>
+                                <option value="KRW">KRW</option>
+                                <option value="JPY">JPY</option>
+                            </select>
+                        </div>
+                        <div className="px-5 pb-3">
+                            <select
+                                className="form-select"
+                                aria-label="Tipo de Espacio"
+                                name="type"
+                                required
+                                value={inputValue.type}
+                                onChange={handleChange}>
+                                <option value="">Tipo de Espacio</option>
+                                <option value="Cuenta Ahorros">Cuenta Ahorros</option>
+                                <option value="Cuenta Corriente">Cuenta Corriente</option>
+                                <option value="Tarjeta de Crédito">Tarjeta de Crédito</option>
+                                <option value="Efectivo">Efectivo</option>
+                                <option value="Otros">Otros</option>
+                            </select>
+                        </div>                        <div className="modal-footer">
                             <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={editAccount} >
                                 Agregar
                             </button>

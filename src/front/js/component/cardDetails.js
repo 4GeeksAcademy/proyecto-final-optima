@@ -1,10 +1,38 @@
-import React, {useContext} from "react";
+import React, { useContext } from "react";
 import Swal from "sweetalert2";
 import "../../styles/card.css";
 import { Context } from "../store/appContext";
+import { useLocation } from "react-router-dom";
 
 export const CardDetails = (props) => {
-    const {store, actions} = useContext(Context)
+    const { store, actions } = useContext(Context)
+    const path = useLocation()
+    async function deleteMovement(movementId) {
+        const myHeaders = new Headers();
+        myHeaders.append("Cookie", ".Tunnels.Relay.WebForwarding.Cookies=CfDJ8Cs4yarcs6pKkdu0hlKHsZvgMRXwa2X-9-ozv0O4hEdRO9-FBx5HLMSf9sjKBJxhQVudR_zYviNSXQFhEbiwbCufyM3Eqp_ijD_1eSFd_0f_FtgYfWQMIfeBrsWEaazTHWa81w7hWgAeiX2VF-jEfy_v-1RuKxSuT6FhLjgxOQMv01l_dpMY74s2GaDLDYGUnV3RzgUUCivjn5AIxOZpg1q_-2YRpEbWaE9piRRs6prJA2Nkrkw2XQnSpFUq1WxaiwXBuGFvcjiwZ52o5b8eYkFo6wCnQsmQqGwZiAB-Uwq-K-3o9xdVzqGaIR2pQ3uBx7jen5iISs6X5iIAik3DiTHPUSrzMoN8wMEa5UfxdOoIoJv4JC0ILVHUYrq6HEO59Tml_5-U59kDOfYE1VaoglgZ8mjyWPCfGPQVxfuO6mD_Mi54MXFo0B934EYZ6ZltMm-uLhHJdwo0qT9UaWxaIz2Qff4lwH_gnV-EVRcCOzJNu5_V0jRKKGCLHs3RRFia1QLC9nXB7A7gQQGPVx6evqfFtWGpIg7ucdQtvk9JYlmJeBvzh0oJD-9r7Gqo0nuFf4HySa2qd3yuHQr9lB1XL0VeIRjsxtDygjWzve_M1Wc71SO67YmPQohQcVTRPnZBd3GTsifRREbJ7v3E8-q2B_lQB8c6Fb3Bfn7IQudIawLXqISm9k5M7hWfZx-_Y9p0QjvG3zJADjOW5kn6NXn0-9O4_8TblVsE12g7uRrvTNquVRBGhyZoO891r4aPmFYQaH0psOXPA-uvXb5jv0t04OD6f7ii7zc3I5MMvzMLtycpQOHRJcYJDz1qrScJ38s_Q1mKL14cMaBvRi6hS9vnNKOCefPnyzmvyyxMA-KnkV7k4FogOkwlO2LrGnpH3HYodBSW0Em3ywoAsrX6Feiq-si_zaHFo9Dy0oB9hDcrgqjOMgvUG3JwtzH-OvA2yxiTyqVLjW0fmSdbDL0J7tg8W6bUwiv9M5-sAZbqJu0nBulm");
+
+        const requestOptions = {
+            method: "DELETE",
+            headers: myHeaders,
+            redirect: "follow"
+        };
+
+        try {
+            const response = await fetch(`${process.env.BACKEND_URL}/api/account-detail/${movementId}`, requestOptions);
+            const result = await response.json();
+            if (response.status === 200) {
+                localStorage.removeItem("userAccounts")
+                await actions.getAccountsUser();
+                if (path.pathname === "/movimientos") {
+                    await actions.getDetailsUser();
+                } else {
+                    await actions.getAccountsDetail(body.accountId);
+                }
+            }
+        } catch (error) {
+            console.error(error);
+        };
+    }
 
     const handleDelete = () => {
         Swal.fire({
@@ -19,7 +47,7 @@ export const CardDetails = (props) => {
         }).then((result) => {
             if (result.isConfirmed) {
                 console.log("ID del movimiento a eliminar:", props.id);
-                actions.deleteMovement(props.id);
+                deleteMovement(props.id);
             }
         });
     };

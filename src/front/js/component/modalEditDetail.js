@@ -57,13 +57,11 @@ export const ModalEditDetail = (props) => {
             const response = await fetch(`${process.env.BACKEND_URL}/api/account-detail/${props.cardId}`, requestOptions);
             const result = await response.json();
             if (response.status == 200) {
+                localStorage.removeItem("userAccounts")
+                await actions.getAccountsUser()
                 if (path.pathname === "/movimientos") {
-                    localStorage.removeItem("userAccounts")
-                    await actions.getAccountsUser()
                     await actions.getDetailsUser()
                 } else {
-                    localStorage.removeItem("userAccounts")
-                    await actions.getAccountsUser()
                     await actions.getAccountsDetail(body.accountId)
                 }
             }

@@ -291,10 +291,10 @@ def delete_account_detail(account_detail_id):
         if not account:
             return jsonify({"msg": "Account not found"}), 404
         # resta si es en
-        if movement.type == "deposit":
+        if movement.operation == "ingreso":
             account.balance -= movement.amount  
         # suma si es en debito
-        if movement.type == "debit":
+        if movement.operation == "egreso":
             account.balance += movement.amount  
         db.session.delete(movement)  
         db.session.commit()
@@ -382,7 +382,7 @@ def check_email():
 
 
 # endopoint de filtro por type
-@api.route('/account-detail-filter/<int:accounts_id>', methods=['GET'])
+@api.route('/account-detail-filter', methods=['GET'])
 def get_filtered_account_details(accounts_id):
     try:
         movement_type = request.args.get("type")  # Obtiene el parámetro de tipo desde la URL
@@ -448,6 +448,28 @@ def recover_password():
         return jsonify({"message": "New password sent successfully!"}), 200
     except Exception as e:
         return jsonify({"error": f"Error sending email: {str(e)}"}), 500
+
+@api.route('/account-detail/<int:accounts_id>/filter', methods=['GET'])
+def filter_account_details(accounts_id):
+    try:
+        movement_type = request.args.get("type", None)  # Obtener el tipo de movimiento de los parámetros de la URL
+
+        if not movement_type:
+            return jsonify({"msg": "Please provide a movement type"}), 400
+
+        filtered_movements = db.session.execute(
+            db.select(Account_details)
+            .filter_by(accounts_id=accounts_id, type=movement_type)
+            .order_by(Account_details.date.desc(), Account_details.time.desc())
+        ).scalars().all()
+
+        if filtered_movements:
+            return jsonify({"result": [movement.serialize() for movement in filtered_movements]}), 200
+
+        return jsonify({"msg": "No movements found for this type"}), 404
+
+    except Exception as e:
+        return jsonify({"msg": "Error", "error": str(e)}), 500
 
 
 

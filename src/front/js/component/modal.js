@@ -34,37 +34,37 @@ export const Modal = () => {
 			const response = await fetch(`${process.env.BACKEND_URL}/api/${store.user.id}/new-account`, requestOptions);
 			const result = await response.json();
 			if (response.status === 200) {
-				const myHeaders = new Headers();
-				myHeaders.append("Content-Type", "application/json");
-				const raw = JSON.stringify({
-					"detail": "PRIMER INGRESO",
-					"amount": result.balance,
-					"coin": result.coin,
-					"type": "Saldo inicial",
-					"date": currentDate,
-					"time": currentTime,
-					"operation": "ingreso"
-				});
+				(async () => {
+					const myHeaders = new Headers();
+					myHeaders.append("Content-Type", "application/json");
+					const raw = JSON.stringify({
+						"detail": "PRIMER INGRESO",
+						"amount": result.balance,
+						"coin": result.coin,
+						"type": "Saldo inicial",
+						"date": currentDate,
+						"time": currentTime,
+						"operation": "ingreso"
+					});
 
-				const requestOptions = {
-					method: "POST",
-					headers: myHeaders,
-					body: raw,
-					redirect: "follow"
-				};
-				try {
-					const response = await fetch(`${process.env.BACKEND_URL}/api/new-account-detail/${result.id}`, requestOptions);
-					const data = await response.json();
-					if (response.status === 200) {
-                        (async () => {
-                            localStorage.removeItem("userAccounts")
-                        })()
-						actions.getAccountsUser();
-						actions.getDetailsUser()
+					const requestOptions = {
+						method: "POST",
+						headers: myHeaders,
+						body: raw,
+						redirect: "follow"
+					};
+					try {
+						const response = await fetch(`${process.env.BACKEND_URL}/api/new-account-detail/${result.id}`, requestOptions);
+						const data = await response.json();
+						if (response.status === 200) {
+							localStorage.removeItem("userAccounts")
+							await actions.getAccountsUser();
+							await actions.getDetailsUser()
+						}
+					} catch (error) {
+						console.error(error);
 					}
-				} catch (error) {
-					console.error(error);
-				}
+				})()
 			} else {
 				Swal.fire({
 					title: 'Error!',
@@ -91,7 +91,8 @@ export const Modal = () => {
 			});
 			Swal.fire({
 				title: "Movimiento registrado con éxito",
-				icon: "success"
+				icon: "success",
+				confirmButtonColor: "#010D87",
 			});
 		} else {
 			Swal.fire({
