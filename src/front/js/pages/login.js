@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useEffect, useContext } from "react";
 import { LoginForm } from "../component/login-form";
 import "../../styles/login.css";
+import { Context } from "../store/appContext";
 
 export const Login = () => {
+    const { actions } = useContext(Context)
 
+    useEffect(() => {
+        actions.toggleTheme()
+    }, [])
     return (
         <div className="container-login">
             <div className="login w-75">
