@@ -15,7 +15,7 @@ export const GeneralBalance = () => {
   async function getExchangeRates(baseCurrency = "EUR") {
     try {
       const response = await fetch(
-        `https://api.currencyapi.com/v3/latest?apikey=cur_live_FhqiZqdo1KcwopHL5VtRyhK7AALVYdQu3JosDFPt&base_currency=${baseCurrency}`
+        `https://api.currencyapi.com/v3/latest?apikey=cur_live_UGFJrhpZsUWSixKQP4o4x1hGJjbz34egWS2dihK4&base_currency=${baseCurrency}`
       );
       const data = await response.json();
       if (data && data.data) {
