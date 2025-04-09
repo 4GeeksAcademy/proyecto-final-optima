@@ -74,7 +74,8 @@ def verify_token():
 def post_account(user_id):
     try:
         request_body = request.json
-        exist = db.session.query(db.select(Accounts).filter_by(name=request_body["name"]).exists()).scalar()
+        exist = db.session.query(db.select(Accounts).filter_by(name=request_body["name"], user_id=user_id).exists()
+        ).scalar()
         if not exist: 
             new_account = Accounts(user_id=user_id, name=request_body["name"], balance=request_body["balance"], coin=request_body["coin"], type=request_body["type"])
             db.session.add(new_account)
